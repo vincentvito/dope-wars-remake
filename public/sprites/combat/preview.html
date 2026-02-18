@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Combat GIF Preview</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0a; color: #00ffcc; font-family: monospace; padding: 2rem; }
+    h1 { text-align: center; margin-bottom: 2rem; font-size: 1.5rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; max-width: 1400px; margin: 0 auto; }
+    .card { border: 1px solid #00ffcc33; border-radius: 8px; padding: 1rem; text-align: center; }
+    .card h2 { font-size: 0.9rem; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 2px; }
+    .card img { width: 320px; height: 400px; object-fit: contain; image-rendering: pixelated; background: #000; border: 1px solid #00ffcc22; }
+    .card .meta { margin-top: 0.5rem; font-size: 0.75rem; color: #00ffcc88; }
+  </style>
+</head>
+<body>
+  <h1>Combat GIF Preview</h1>
+  <div class="grid">
+    <div class="card">
+      <h2>Idle (loop)</h2>
+      <img src="combat-idle.gif" alt="idle">
+      <div class="meta">1.6s trim / 5 fps / infinite loop</div>
+    </div>
+    <div class="card">
+      <h2>Intro (once)</h2>
+      <img src="combat-intro.gif" alt="intro">
+      <div class="meta">2.0s trim / 8 fps / play once</div>
+    </div>
+    <div class="card">
+      <h2>Fight (once)</h2>
+      <img src="combat-fight.gif" alt="fight">
+      <div class="meta">1.5s trim / 10 fps / play once</div>
+    </div>
+    <div class="card">
+      <h2>Run (once)</h2>
+      <img src="combat-run.gif" alt="run">
+      <div class="meta">1.5s trim / 8 fps / play once</div>
+    </div>
+  </div>
+</body>
+</html>
