@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
 
     try {
       await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL || 'Dope Wars <noreply@dopewars.game>',
+        from: process.env.RESEND_FROM_EMAIL || 'Dope Wars <noreply@playdopewars.com>',
         to: email,
         subject: 'Welcome to Dope Wars Pro!',
         html: `
