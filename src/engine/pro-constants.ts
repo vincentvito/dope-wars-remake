@@ -54,7 +54,7 @@ export const ASSET_DEFINITIONS: AssetDefinition[] = [
   { type: 'Stash House', cost: 40000,   stashBonus: 150, description: '-50% confiscation' },
   { type: 'Warehouse',   cost: 150000,  stashBonus: 300, description: 'Bulk storage' },
   { type: 'Plane',       cost: 300000,  stashBonus: 0,   description: 'Eliminates inter-city travel costs. Required for Medellin' },
-  { type: 'Plantation',  cost: 350000,  stashBonus: 0,   description: 'Produces 2-5 Weed + 1-3 Shrooms/day' },
+  { type: 'Plantation',  cost: 150000000, stashBonus: 0,  description: '50% cocaine discount in Medellin' },
   { type: 'Submarine',   cost: 1000000, stashBonus: 75,  description: '-20% encounters' },
 ];
 
@@ -133,11 +133,7 @@ export const LAB_REPUTATION_PENALTY: Record<number, { cashPercent: number; healt
 // Plantation Constants
 // ============================================================
 
-export const PLANTATION_WEED_MIN = 2;
-export const PLANTATION_WEED_MAX = 5;
-export const PLANTATION_SHROOMS_MIN = 1;
-export const PLANTATION_SHROOMS_MAX = 3;
-export const PLANTATION_BUFFER_MAX = 50;
+export const PLANTATION_COCAINE_DISCOUNT = 0.5;
 
 // ============================================================
 // Combat — Encounter Constants

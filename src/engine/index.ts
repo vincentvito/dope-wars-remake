@@ -58,7 +58,7 @@ export {
 export { createProGame, applyProAction, calculateProNetWorth, isProMode } from './pro-game';
 export { replayProGame } from './pro-replay';
 export { generateProMarketPrices } from './pro-market';
-export { buyAsset, hasAsset, processPlantation } from './assets';
+export { buyAsset, hasAsset } from './assets';
 export { initiateCutting, confirmCutting, cancelCutting } from './lab';
 export {
   addWeapon, discardWeapon, swapWeapon, autoReplaceWeakest,

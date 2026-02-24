@@ -4,8 +4,21 @@ import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-export default async function LeaderboardPage() {
-  const { entries, totalCount } = await getLeaderboard({ gameMode: '30', page: 1 });
+const VALID_MODES = ['pro_30', 'pro_45', 'pro_60'] as const;
+type LeaderboardMode = (typeof VALID_MODES)[number];
+
+function isValidMode(mode: string | undefined): mode is LeaderboardMode {
+  return VALID_MODES.includes(mode as LeaderboardMode);
+}
+
+export default async function LeaderboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ mode?: string }>;
+}) {
+  const params = await searchParams;
+  const mode = isValidMode(params.mode) ? params.mode : 'pro_30';
+  const { entries, totalCount } = await getLeaderboard({ gameMode: mode, page: 1 });
 
   return (
     <main className="min-h-screen max-w-4xl mx-auto px-4 py-8">
@@ -16,7 +29,7 @@ export default async function LeaderboardPage() {
             LEADERBOARD
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
-            Top dealers — 30 Day Classic
+            Top Pro dealers
           </p>
         </div>
         <div className="flex gap-2">
@@ -29,7 +42,11 @@ export default async function LeaderboardPage() {
         </div>
       </div>
 
-      <LeaderboardClient initialEntries={entries} totalCount={totalCount} />
+      <LeaderboardClient
+        initialEntries={entries}
+        totalCount={totalCount}
+        initialMode={mode}
+      />
     </main>
   );
 }

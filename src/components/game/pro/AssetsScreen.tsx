@@ -44,21 +44,8 @@ export function AssetsScreen() {
         <div className="retro-card p-3 border-crt-green/30">
           <div className="font-pixel text-xs text-crt-green mb-1">PLANTATION</div>
           <div className="text-[10px] text-muted-foreground">
-            Produces 2-5 Weed + 1-3 Shrooms daily. Auto-collected when you have stash space.
+            50% cocaine discount in Medellin.
           </div>
-          {state.plantationBuffer.length > 0 && (
-            <div className="mt-2 text-[10px]">
-              <span className="text-crt-cyan">Buffer: </span>
-              {state.plantationBuffer.map((s) => (
-                <span key={s.drug} className="text-foreground mr-2">
-                  {s.quantity} {s.drug}
-                </span>
-              ))}
-              <span className="text-muted-foreground">
-                ({state.plantationBuffer.reduce((sum, s) => sum + s.quantity, 0)}/50)
-              </span>
-            </div>
-          )}
         </div>
       )}
     </div>

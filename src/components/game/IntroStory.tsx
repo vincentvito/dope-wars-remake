@@ -174,13 +174,13 @@ export function IntroStory({ onComplete, onBack }: IntroStoryProps) {
         }`}
       >
         {/* Primary line */}
-        <p className="font-pixel text-sm md:text-base text-crt-cyan text-glow-blue leading-relaxed">
+        <p className="font-pixel text-sm text-crt-cyan text-glow-blue leading-relaxed">
           {slide.primary}
         </p>
 
         {/* Secondary line */}
         <p
-          className={`text-xs md:text-sm leading-relaxed mt-4 ${
+          className={`text-xs leading-relaxed mt-4 ${
             slide.secondaryStyle === 'accent'
               ? 'text-crt-amber text-glow-amber'
               : 'text-muted-foreground'

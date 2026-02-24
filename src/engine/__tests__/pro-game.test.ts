@@ -10,7 +10,6 @@ describe('isProMode', () => {
     expect(isProMode('pro_30')).toBe(true);
     expect(isProMode('pro_45')).toBe(true);
     expect(isProMode('pro_60')).toBe(true);
-    expect(isProMode('pro_90')).toBe(true);
   });
 
   it('returns false for classic modes', () => {
@@ -70,7 +69,6 @@ describe('createProGame', () => {
     expect(createProGame(TEST_SEED, 'pro_30').maxDays).toBe(31);
     expect(createProGame(TEST_SEED, 'pro_45').maxDays).toBe(46);
     expect(createProGame(TEST_SEED, 'pro_60').maxDays).toBe(61);
-    expect(createProGame(TEST_SEED, 'pro_90').maxDays).toBe(91);
   });
 });
 

@@ -28,7 +28,7 @@ export async function getLeaderboard(options: {
   }
 
   const supabase = await createClient();
-  const { gameMode = '30', page = 1, pageSize = 50 } = options;
+  const { gameMode = 'pro_30', page = 1, pageSize = 50 } = options;
 
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
@@ -55,7 +55,7 @@ export async function getLeaderboard(options: {
   };
 }
 
-export async function searchLeaderboard(query: string, gameMode: string = '30') {
+export async function searchLeaderboard(query: string, gameMode: string = 'pro_30') {
   if (!isSupabaseConfigured()) return [];
 
   const supabase = await createClient();

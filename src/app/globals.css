@@ -250,10 +250,22 @@
   }
 }
 
+/* Mobile viewport wrapper — constrains entire app to phone-like column on desktop */
+.app-viewport {
+  max-width: 480px;
+  width: 100%;
+  height: 100dvh;
+  margin: 0 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: relative;
+  contain: paint;
+}
+
 /* CRT scanline overlay */
 .crt-overlay {
   pointer-events: none;
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 9999;
   background: repeating-linear-gradient(

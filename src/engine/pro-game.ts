@@ -20,7 +20,7 @@ import { WEAPON_DEFINITIONS, LAB_REPUTATION_CHANCE, LAB_REPUTATION_PENALTY } fro
 import { generateProMarketPrices } from './pro-market';
 import { generateProTravelEvents } from './pro-events';
 import { initProCombat, resolveProFight, resolveProRun, determineEncounterType } from './pro-combat';
-import { buyAsset, processPlantation } from './assets';
+import { buyAsset, hasAsset } from './assets';
 import { initiateCutting, confirmCutting, cancelCutting } from './lab';
 import { addWeapon, discardWeapon, selectLoadout, autoReplaceWeakest } from './armory';
 import { getEffectiveTravelCost } from './cities';
@@ -68,6 +68,7 @@ export function createProGame(seed: string, gameMode: GameMode): ProGameState {
     labState: null,
     proCombat: null,
     plantationBuffer: [],
+    pendingReputationPenalty: null,
     deaSurvived: 0,
     totalDrugsSold: 0,
     totalDrugsCut: 0,
@@ -174,8 +175,30 @@ function handleProTravel(state: ProGameState, destination: LocationName): ProGam
     proCombat: null,
   };
 
-  // 4. Process Plantation
-  newState = processPlantation(newState);
+  // 4. Apply deferred reputation penalty from previous cut
+  if (newState.pendingReputationPenalty) {
+    const { drug, cutPercentage } = newState.pendingReputationPenalty;
+    const penalty = LAB_REPUTATION_PENALTY[cutPercentage];
+    if (penalty) {
+      const cashLoss = Math.floor(newState.cash * penalty.cashPercent);
+      const newHealth = Math.max(1, newState.health - penalty.healthLoss);
+
+      return {
+        ...newState,
+        cash: newState.cash - cashLoss,
+        health: newHealth,
+        pendingReputationPenalty: null,
+        market: {},
+        marketEvents: [],
+        phase: 'event',
+        activeEvent: {
+          type: 'reputation_penalty',
+          message: `Your regular customers beat you up after finding out you cut the ${drug}! (-$${cashLoss.toLocaleString()}, -${penalty.healthLoss} HP)`,
+        },
+      };
+    }
+    newState = { ...newState, pendingReputationPenalty: null };
+  }
 
   // 5. Check game over
   if (newDay >= state.maxDays) {
@@ -230,7 +253,8 @@ function handleProTravel(state: ProGameState, destination: LocationName): ProGam
   const { prices, events: marketEvents } = generateProMarketPrices(
     state.seed,
     newDay,
-    destination
+    destination,
+    hasAsset(newState, 'Plantation')
   );
 
   return {
@@ -270,7 +294,8 @@ function handleProEventResponse(state: ProGameState, accept: boolean): ProGameSt
   const { prices, events: marketEvents } = generateProMarketPrices(
     newState.seed,
     newState.currentDay,
-    newState.currentDistrict
+    newState.currentDistrict,
+    hasAsset(newState, 'Plantation')
   );
 
   return {
@@ -386,25 +411,16 @@ function handleLabConfirm(state: ProGameState): ProGameState {
     };
   }
 
-  // Successful cut — roll for reputation penalty
+  // Successful cut — roll for deferred reputation penalty (applied on next travel)
   if (result.phase === 'market' && labDrug && labCutPercent != null) {
     const rng = new SeededRNG(`${result.seed}-labrep-day${result.currentDay}-${labDrug}`);
 
     if (rng.chance(LAB_REPUTATION_CHANCE)) {
       const penalty = LAB_REPUTATION_PENALTY[labCutPercent];
       if (penalty) {
-        const cashLoss = Math.floor(result.cash * penalty.cashPercent);
-        const newHealth = Math.max(1, result.health - penalty.healthLoss);
-
         return {
           ...result,
-          cash: result.cash - cashLoss,
-          health: newHealth,
-          phase: 'event',
-          activeEvent: {
-            type: 'reputation_penalty',
-            message: `Your regular customers beat you up after finding out you cut the ${labDrug}! (-$${cashLoss.toLocaleString()}, -${penalty.healthLoss} HP)`,
-          },
+          pendingReputationPenalty: { drug: labDrug, cutPercentage: labCutPercent },
         };
       }
     }

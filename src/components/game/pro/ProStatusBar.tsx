@@ -40,7 +40,7 @@ export function ProStatusBar() {
       </div>
 
       {/* Financial stats grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+      <div className="grid grid-cols-2 gap-2 text-xs">
         <div>
           <span className="text-muted-foreground">Cash:</span>{' '}
           <span className="text-crt-green text-glow-green font-bold">

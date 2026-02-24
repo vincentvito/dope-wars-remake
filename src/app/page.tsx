@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useUIStore } from '@/stores/ui-store';
 import { useGameStore } from '@/stores/game-store';
+import { useAuthStore } from '@/stores/auth-store';
+import { useAuthHydration } from '@/hooks/useAuthHydration';
+import { signOut } from '@/actions/auth';
 import { ModeSelectOverlay } from '@/components/game/ModeSelectOverlay';
 import { IntroStory } from '@/components/game/IntroStory';
 import type { GameMode } from '@/engine/types';
@@ -19,11 +22,17 @@ const THEME_LABELS: Record<string, string> = {
 type Overlay = null | 'how-to-play' | 'options' | 'mode-select' | 'intro-story';
 
 export default function HomePage() {
+  useAuthHydration();
   const [overlay, setOverlay] = useState<Overlay>(null);
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
   const theme = useUIStore((s) => s.theme);
   const setTheme = useUIStore((s) => s.setTheme);
   const startNewGame = useGameStore((s) => s.startNewGame);
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const isPro = useAuthStore((s) => s.isPro);
+  const username = useAuthStore((s) => s.username);
+  const isLoaded = useAuthStore((s) => s.isLoaded);
+  const clearAuth = useAuthStore((s) => s.clear);
   const router = useRouter();
 
   return (
@@ -42,7 +51,7 @@ export default function HomePage() {
         <div className="relative z-10 w-full max-w-sm flex flex-col items-center px-6 gap-8">
           {/* Title */}
           <div className="text-center space-y-4">
-            <h1 className="font-pixel text-4xl md:text-5xl text-crt-cyan text-glow-blue tracking-wider">
+            <h1 className="font-pixel text-4xl text-crt-cyan text-glow-blue tracking-wider">
               DOPE WARS
             </h1>
             <p className="text-sm text-muted-foreground leading-relaxed">
@@ -50,6 +59,24 @@ export default function HomePage() {
               Pay off your debt to the loan shark and build your empire.
             </p>
           </div>
+
+          {/* User Indicator */}
+          {isLoaded && isLoggedIn && (
+            <div className="w-full flex items-center justify-between text-[10px] text-muted-foreground px-1">
+              <span>
+                {isPro && <span className="text-crt-amber mr-1">PRO</span>}
+                @{username}
+              </span>
+              <form action={async () => { clearAuth(); await signOut(); }}>
+                <button
+                  type="submit"
+                  className="text-muted-foreground hover:text-crt-red transition-colors"
+                >
+                  Log out
+                </button>
+              </form>
+            </div>
+          )}
 
           {/* Menu Buttons */}
           <div className="w-full space-y-3">
@@ -77,15 +104,28 @@ export default function HomePage() {
             >
               LEADERBOARD
             </Link>
+            {isLoaded && !isPro && (
+              <Link
+                href="/upgrade"
+                className="retro-btn retro-btn-amber block w-full py-3 text-xs text-center font-pixel"
+              >
+                GO PRO — $7.99
+              </Link>
+            )}
           </div>
 
         </div>
       )}
 
       {/* Footer — always pinned to bottom */}
-      <p className="absolute bottom-4 z-10 text-[10px] text-muted-foreground/50">
-        A modern remake of the classic 1984 game by John E. Dell
-      </p>
+      <div className="absolute bottom-4 z-10 text-[10px] text-muted-foreground/50 text-center space-y-1">
+        <p>A modern remake of the classic 1984 game by John E. Dell</p>
+        <p>
+          <Link href="/terms" className="hover:text-muted-foreground transition-colors">Terms</Link>
+          {' · '}
+          <Link href="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</Link>
+        </p>
+      </div>
 
       {/* How to Play Overlay */}
       {overlay === 'how-to-play' && (

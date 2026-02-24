@@ -19,19 +19,15 @@ export async function submitGameScore(input: {
     return { error: 'Authentication required to submit scores' };
   }
 
-  // 2. Replay the game server-side to validate the score
-  const result = isProMode(input.gameMode)
-    ? replayProGame(input.seed, input.gameMode, input.actions as ProPlayerAction[])
-    : replayGame(input.seed, input.gameMode, input.actions as PlayerAction[]);
-
-  if (!result.valid) {
-    return { error: `Game validation failed: ${result.error}` };
+  // 2. Gate: Classic mode has no leaderboard, pro modes require Pro status
+  if (input.gameMode === '30') {
+    return { error: 'Leaderboard is only available for Pro game modes' };
   }
 
-  // 3. Fetch user profile
+  // Fetch profile once — used for both Pro check and leaderboard entry
   const { data: profile } = await supabase
     .from('profiles')
-    .select('username, display_name')
+    .select('is_pro, username, display_name')
     .eq('id', user.id)
     .single();
 
@@ -39,8 +35,35 @@ export async function submitGameScore(input: {
     return { error: 'Profile not found' };
   }
 
+  if (isProMode(input.gameMode) && !profile.is_pro) {
+    return { error: 'Pro membership required to submit scores' };
+  }
+
+  // 3. Replay the game server-side to validate the score
+  const result = isProMode(input.gameMode)
+    ? replayProGame(input.seed, input.gameMode, input.actions as ProPlayerAction[])
+    : replayGame(input.seed, input.gameMode, input.actions as PlayerAction[]);
+
+  if (!result.valid) {
+    return { error: 'Game validation failed' };
+  }
+
   // 4. Use service client to write to leaderboard (bypasses RLS)
   const serviceClient = await createServiceClient();
+
+  // Check for duplicate submission (same user, seed, mode)
+  const { data: existingSession } = await serviceClient
+    .from('game_sessions')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('seed', input.seed)
+    .eq('game_mode', input.gameMode)
+    .eq('status', 'completed')
+    .maybeSingle();
+
+  if (existingSession) {
+    return { error: 'This game has already been submitted' };
+  }
 
   // Create game session record
   const { data: session, error: sessionError } = await serviceClient
@@ -66,7 +89,7 @@ export async function submitGameScore(input: {
     return { error: 'Failed to save game session' };
   }
 
-  // 5. Insert validated leaderboard entry
+  // 6. Insert validated leaderboard entry
   const { error: leaderboardError } = await serviceClient
     .from('leaderboard')
     .insert({
@@ -98,23 +121,50 @@ export async function saveGameProgress(stateBlob: string, seed: string, gameMode
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: 'Authentication required' };
 
-  // Upsert: update existing active session or create new one
-  const { error } = await supabase
+  let parsedState;
+  try {
+    parsedState = JSON.parse(stateBlob);
+  } catch {
+    return { error: 'Invalid state data' };
+  }
+
+  // Check for existing active session to update
+  const { data: existing } = await supabase
     .from('game_sessions')
-    .upsert(
-      {
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('status', 'active')
+    .order('started_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) {
+    // Update existing session
+    const { error } = await supabase
+      .from('game_sessions')
+      .update({
+        seed,
+        game_mode: gameMode,
+        state_blob: parsedState,
+      })
+      .eq('id', existing.id);
+
+    if (error) return { error: 'Failed to save progress' };
+  } else {
+    // Create new session
+    const { error } = await supabase
+      .from('game_sessions')
+      .insert({
         user_id: user.id,
         seed,
         game_mode: gameMode,
-        state_blob: JSON.parse(stateBlob),
+        state_blob: parsedState,
         status: 'active',
-      },
-      {
-        onConflict: 'id',
-      }
-    );
+      });
 
-  if (error) return { error: 'Failed to save progress' };
+    if (error) return { error: 'Failed to save progress' };
+  }
+
   return { success: true };
 }
 
@@ -130,7 +180,7 @@ export async function loadGameProgress() {
     .eq('status', 'active')
     .order('started_at', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   return data?.state_blob ?? null;
 }

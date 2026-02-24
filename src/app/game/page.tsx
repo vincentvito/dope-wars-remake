@@ -2,13 +2,31 @@
 
 import { useEffect } from 'react';
 import { useGameStore } from '@/stores/game-store';
+import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { GameShell } from '@/components/game/GameShell';
 
+function getBackgroundForLocation(location?: string): string {
+  switch (location) {
+    case 'Miami':
+      return '/sprites/game/miami-bg.png';
+    case 'Los Angeles':
+      return '/sprites/game/la-bg.png';
+    case 'Medellin':
+      return '/sprites/game/medellin-bg.png';
+    default:
+      return '/sprites/game/bronx-alley-bg.png';
+  }
+}
+
 export default function GamePage() {
+  useAuthHydration();
   const gameState = useGameStore((s) => s.gameState);
   const proGameState = useGameStore((s) => s.proGameState);
   const isPro = useGameStore((s) => s.isPro);
   const startNewGame = useGameStore((s) => s.startNewGame);
+  const currentDistrict = useGameStore((s) =>
+    s.isPro ? s.proGameState?.currentDistrict : s.gameState?.currentDistrict
+  );
 
   // Auto-start only if no game exists at all (direct URL visit)
   useEffect(() => {
@@ -28,12 +46,15 @@ export default function GamePage() {
     );
   }
 
+  const bgSrc = getBackgroundForLocation(currentDistrict);
+
   return (
     <main className="min-h-screen pb-8 relative">
-      {/* NYC street background */}
+      {/* Location-specific background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <img
-          src="/sprites/game/bronx-alley-bg.png"
+          key={bgSrc}
+          src={bgSrc}
           alt=""
           className="absolute inset-0 w-full h-full object-cover object-bottom opacity-45"
           style={{ imageRendering: 'pixelated' }}

@@ -19,9 +19,29 @@ const modernFont = Inter({
   variable: "--font-modern",
 });
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
 export const metadata: Metadata = {
-  title: "Dope Wars",
-  description: "The classic drug trading game — reimagined for the web",
+  metadataBase: new URL(appUrl),
+  title: {
+    default: 'Dope Wars — The Classic Drug Trading Game',
+    template: '%s',
+  },
+  description:
+    'Buy low, sell high, and survive 30 days on the streets of New York. A modern remake of the classic 1984 game by John E. Dell.',
+  openGraph: {
+    title: 'Dope Wars — The Classic Drug Trading Game',
+    description:
+      'Buy low, sell high, and survive 30 days on the streets of New York. A modern remake of the classic 1984 game.',
+    siteName: 'Dope Wars',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Dope Wars — The Classic Drug Trading Game',
+    description:
+      'Buy low, sell high, and survive 30 days on the streets of New York.',
+  },
 };
 
 export default function RootLayout({
@@ -31,10 +51,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${pixelFont.variable} ${monoFont.variable} ${modernFont.variable} antialiased`}>
+      <body className={`${pixelFont.variable} ${monoFont.variable} ${modernFont.variable} antialiased bg-black`}>
         <ThemeSync />
-        <div className="crt-overlay" />
-        {children}
+        <div className="app-viewport">
+          <div className="crt-overlay" />
+          {children}
+        </div>
       </body>
     </html>
   );

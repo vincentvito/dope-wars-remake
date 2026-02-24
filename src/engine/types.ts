@@ -23,7 +23,7 @@ export type DistrictName =
   | 'Coney Island'
   | 'Brooklyn';
 
-export type GameMode = '30' | 'pro_30' | 'pro_45' | 'pro_60' | 'pro_90';
+export type GameMode = '30' | 'pro_30' | 'pro_45' | 'pro_60';
 
 export type GamePhase =
   | 'market'
@@ -326,6 +326,9 @@ export interface ProGameState extends Omit<GameState, 'actionLog' | 'currentDist
 
   // Plantation overflow buffer (max 50 units)
   plantationBuffer: InventorySlot[];
+
+  // Deferred reputation penalty (applied on next travel arrival)
+  pendingReputationPenalty: { drug: DrugName; cutPercentage: number } | null;
 
   // Tracking
   deaSurvived: number;
