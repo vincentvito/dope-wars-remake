@@ -1,0 +1,223 @@
+'use client';
+
+import { useState, type ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useUIStore } from '@/stores/ui-store';
+import { useGameStore } from '@/stores/game-store';
+import { useAuthStore } from '@/stores/auth-store';
+import { useAuthHydration } from '@/hooks/useAuthHydration';
+import { signOut } from '@/actions/auth';
+import { ModeSelectOverlay } from '@/components/game/ModeSelectOverlay';
+import { IntroStory } from '@/components/game/IntroStory';
+import { StatisticsOverlay } from '@/components/statistics/StatisticsOverlay';
+import type { GameMode } from '@/engine/types';
+
+const THEME_ORDER = ['crt', 'synthwave', 'miami'] as const;
+const THEME_LABELS: Record<string, string> = {
+  crt: 'CRT',
+  synthwave: 'Synthwave',
+  miami: 'Miami',
+};
+
+type Overlay = null | 'how-to-play' | 'options' | 'mode-select' | 'intro-story' | 'statistics';
+
+export function HomeClient({ heroContent }: { heroContent: ReactNode }) {
+  useAuthHydration();
+  const [overlay, setOverlay] = useState<Overlay>(null);
+  const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
+  const theme = useUIStore((s) => s.theme);
+  const setTheme = useUIStore((s) => s.setTheme);
+  const startNewGame = useGameStore((s) => s.startNewGame);
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const isPro = useAuthStore((s) => s.isPro);
+  const username = useAuthStore((s) => s.username);
+  const isLoaded = useAuthStore((s) => s.isLoaded);
+  const clearAuth = useAuthStore((s) => s.clear);
+  const router = useRouter();
+
+  return (
+    <>
+      {/* Main Menu Content */}
+      {overlay === null && (
+        <div className="relative z-10 w-full max-w-sm flex flex-col items-center px-6 gap-8">
+          {heroContent}
+
+          {/* User Indicator */}
+          {isLoaded && (
+            isLoggedIn ? (
+              <div className="w-full flex items-center justify-between text-sm text-muted-foreground px-1">
+                <span>
+                  {isPro && <span className="text-crt-amber mr-1">PRO</span>}
+                  @{username}
+                </span>
+                <form action={async () => { clearAuth(); await signOut(); }}>
+                  <button
+                    type="submit"
+                    className="text-muted-foreground hover:text-crt-red transition-colors"
+                  >
+                    Log out
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <div className="w-full flex items-center justify-end gap-3 text-sm px-1">
+                <Link
+                  href="/login"
+                  className="text-muted-foreground hover:text-crt-green transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-muted-foreground hover:text-crt-green transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )
+          )}
+
+          {/* Menu Buttons */}
+          <div className="w-full space-y-3">
+            <button
+              className="retro-btn block w-full py-4 text-sm font-bold text-center font-pixel"
+              onClick={() => setOverlay('mode-select')}
+            >
+              NEW GAME
+            </button>
+            <button
+              className="retro-btn block w-full py-3 text-xs text-center font-pixel"
+              onClick={() => setOverlay('how-to-play')}
+            >
+              HOW TO PLAY
+            </button>
+            <button
+              className="retro-btn block w-full py-3 text-xs text-center font-pixel"
+              onClick={() => setOverlay('options')}
+            >
+              OPTIONS
+            </button>
+            <Link
+              href="/leaderboard"
+              className="retro-btn retro-btn-amber block w-full py-3 text-xs text-center font-pixel"
+            >
+              LEADERBOARD
+            </Link>
+            <button
+              className="retro-btn block w-full py-3 text-xs text-center font-pixel"
+              onClick={() => setOverlay('statistics')}
+            >
+              STATISTICS
+            </button>
+            {isLoaded && !isPro && (
+              <Link
+                href="/upgrade"
+                className="retro-btn retro-btn-amber block w-full py-3 text-xs text-center font-pixel"
+              >
+                GO PRO — $7.99
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* How to Play Overlay */}
+      {overlay === 'how-to-play' && (
+        <div className="relative z-10 w-full max-w-sm flex flex-col items-center px-6 gap-6">
+          <h2 className="font-pixel text-sm text-crt-amber text-glow-amber">
+            HOW TO PLAY
+          </h2>
+
+          <div className="space-y-3 text-xs text-muted-foreground leading-relaxed">
+            <p>
+              You are a drug dealer on the streets of New York. Your goal is to
+              make as much money as possible in <span className="text-crt-cyan">30 days</span>.
+            </p>
+            <div className="space-y-1.5">
+              <p>&#8226; You start with <span className="text-crt-green">$2,000</span> cash and <span className="text-crt-red">$5,000</span> debt</p>
+              <p>&#8226; Travel between 6 districts — each trip advances one day</p>
+              <p>&#8226; Drug prices fluctuate daily — buy low, sell high</p>
+              <p>&#8226; Your debt grows <span className="text-crt-red">10%</span> per day — pay it off fast</p>
+              <p>&#8226; Watch out for cops, muggers, and other hazards</p>
+              <p>&#8226; Deposit cash at the bank to earn <span className="text-crt-green">5%</span> daily interest</p>
+              <p>&#8226; Find guns to fight cops, or run and risk getting caught</p>
+              <p>&#8226; After 30 days, your <span className="text-crt-cyan">net worth</span> is your final score</p>
+            </div>
+          </div>
+
+          <button
+            className="retro-btn w-full py-3 text-xs font-pixel"
+            onClick={() => setOverlay(null)}
+          >
+            BACK
+          </button>
+        </div>
+      )}
+
+      {/* Mode Select Overlay */}
+      {overlay === 'mode-select' && (
+        <ModeSelectOverlay
+          onClose={() => setOverlay(null)}
+          onModeSelected={(mode) => {
+            setSelectedMode(mode);
+            setOverlay('intro-story');
+          }}
+        />
+      )}
+
+      {/* Intro Story */}
+      {overlay === 'intro-story' && selectedMode && (
+        <IntroStory
+          onComplete={() => {
+            startNewGame(selectedMode);
+            router.push('/game');
+          }}
+          onBack={() => setOverlay('mode-select')}
+        />
+      )}
+
+      {/* Statistics Overlay */}
+      {overlay === 'statistics' && (
+        <StatisticsOverlay onClose={() => setOverlay(null)} />
+      )}
+
+      {/* Options Overlay */}
+      {overlay === 'options' && (
+        <div className="relative z-10 w-full max-w-sm flex flex-col items-center px-6 gap-6">
+          <h2 className="font-pixel text-sm text-crt-amber text-glow-amber">
+            OPTIONS
+          </h2>
+
+          <div className="w-full space-y-4">
+            <div className="space-y-2">
+              <p className="text-xs text-muted-foreground">Theme</p>
+              <div className="flex gap-2">
+                {THEME_ORDER.map((t) => (
+                  <button
+                    key={t}
+                    className={`retro-btn flex-1 py-2 text-[10px] font-pixel ${
+                      theme === t
+                        ? 'bg-crt-cyan text-black'
+                        : ''
+                    }`}
+                    onClick={() => setTheme(t)}
+                  >
+                    {THEME_LABELS[t]}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <button
+            className="retro-btn w-full py-3 text-xs font-pixel"
+            onClick={() => setOverlay(null)}
+          >
+            BACK
+          </button>
+        </div>
+      )}
+    </>
+  );
+}

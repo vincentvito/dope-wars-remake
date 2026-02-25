@@ -1,8 +1,17 @@
+import type { Metadata } from 'next';
 import { getLeaderboard } from '@/actions/leaderboard';
 import { LeaderboardClient } from '@/components/leaderboard/LeaderboardClient';
+import { JsonLd } from '@/components/seo/JsonLd';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+export const metadata: Metadata = {
+  title: 'Leaderboard — Top Drug Dealers',
+  description: 'See who rules the streets. Top Dope Wars scores from players worldwide. Can you beat the best drug dealers in the game?',
+};
+
+export const revalidate = 300; // Revalidate every 5 minutes
 
 const VALID_MODES = ['pro_30', 'pro_45', 'pro_60'] as const;
 type LeaderboardMode = (typeof VALID_MODES)[number];
@@ -47,6 +56,15 @@ export default async function LeaderboardPage({
         totalCount={totalCount}
         initialMode={mode}
       />
+
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: appUrl },
+          { '@type': 'ListItem', position: 2, name: 'Leaderboard', item: `${appUrl}/leaderboard` },
+        ],
+      }} />
     </main>
   );
 }

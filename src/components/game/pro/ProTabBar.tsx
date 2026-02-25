@@ -17,7 +17,7 @@ export function ProTabBar() {
   if (phase !== 'market') return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 text-shadow-sm bg-black/70 backdrop-blur-sm">
+    <div className="fixed bottom-0 left-0 right-0 z-40 text-shadow-sm bg-gradient-to-b from-black/30 to-black/60 backdrop-blur-sm">
       <div className="max-w-3xl mx-auto grid grid-cols-3 gap-0">
         {TABS.map((tab) => (
           <button
