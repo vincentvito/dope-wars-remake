@@ -61,21 +61,38 @@ export default function HomePage() {
           </div>
 
           {/* User Indicator */}
-          {isLoaded && isLoggedIn && (
-            <div className="w-full flex items-center justify-between text-[10px] text-muted-foreground px-1">
-              <span>
-                {isPro && <span className="text-crt-amber mr-1">PRO</span>}
-                @{username}
-              </span>
-              <form action={async () => { clearAuth(); await signOut(); }}>
-                <button
-                  type="submit"
-                  className="text-muted-foreground hover:text-crt-red transition-colors"
+          {isLoaded && (
+            isLoggedIn ? (
+              <div className="w-full flex items-center justify-between text-[10px] text-muted-foreground px-1">
+                <span>
+                  {isPro && <span className="text-crt-amber mr-1">PRO</span>}
+                  @{username}
+                </span>
+                <form action={async () => { clearAuth(); await signOut(); }}>
+                  <button
+                    type="submit"
+                    className="text-muted-foreground hover:text-crt-red transition-colors"
+                  >
+                    Log out
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <div className="w-full flex items-center justify-end gap-3 text-[10px] px-1">
+                <Link
+                  href="/login"
+                  className="text-muted-foreground hover:text-crt-green transition-colors"
                 >
-                  Log out
-                </button>
-              </form>
-            </div>
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-muted-foreground hover:text-crt-green transition-colors"
+                >
+                  Sign Up
+                </Link>
+              </div>
+            )
           )}
 
           {/* Menu Buttons */}

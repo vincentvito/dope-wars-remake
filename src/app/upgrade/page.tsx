@@ -42,7 +42,8 @@ export default function UpgradePage() {
         setError('Failed to create checkout session. Please try again.');
         setIsLoading(false);
       }
-    } catch {
+    } catch (err) {
+      console.error('Checkout failed:', err);
       setError('Something went wrong. Please try again.');
       setIsLoading(false);
     }

@@ -10,9 +10,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/upgrade', appUrl));
   }
 
+  let loggedInUserId: string | null = null;
+
   // Verify the Stripe session is paid (fallback in case webhook hasn't fired yet)
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    loggedInUserId = session.metadata?.user_id ?? null;
 
     if (session.payment_status === 'paid') {
       const email = session.customer_details?.email;
@@ -35,6 +39,7 @@ export async function GET(request: NextRequest) {
             currency: session.currency ?? 'usd',
             status: 'completed',
             completed_at: new Date().toISOString(),
+            ...(loggedInUserId ? { user_id: loggedInUserId } : {}),
           },
           { onConflict: 'stripe_checkout_session_id' }
         );
@@ -42,12 +47,32 @@ export async function GET(request: NextRequest) {
         if (upsertError) {
           console.error('Failed to upsert purchase:', upsertError);
         }
+
+        // Logged-in user: upgrade their profile directly
+        if (loggedInUserId) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .update({
+              is_pro: true,
+              pro_purchased_at: new Date().toISOString(),
+            })
+            .eq('id', loggedInUserId);
+
+          if (profileError) {
+            console.error('Failed to upgrade profile in success route:', profileError);
+          }
+        }
       }
     }
   } catch (err) {
     console.error('Error verifying Stripe session:', err);
   }
 
-  // Redirect to setup-account page
+  // Logged-in user: skip setup-account, go straight to game with mode select
+  if (loggedInUserId) {
+    return NextResponse.redirect(new URL('/game?pro_success=1', appUrl));
+  }
+
+  // Anonymous user: existing setup-account flow
   return NextResponse.redirect(new URL(`/setup-account?session_id=${sessionId}`, appUrl));
 }

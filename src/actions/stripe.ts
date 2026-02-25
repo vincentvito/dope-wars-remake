@@ -21,7 +21,9 @@ export async function createCheckoutSession() {
     }
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
   const priceId = process.env.STRIPE_PRO_PRICE_ID;
 
   if (!priceId) {
@@ -29,14 +31,19 @@ export async function createCheckoutSession() {
     return { error: 'Payment system not configured. Please try again later.' };
   }
 
-  const session = await stripe.checkout.sessions.create({
-    mode: 'payment',
-    line_items: [{ price: priceId, quantity: 1 }],
-    success_url: `${appUrl}/api/stripe/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${appUrl}/upgrade`,
-  });
-
-  return { url: session.url };
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${appUrl}/api/stripe/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${appUrl}/upgrade`,
+      ...(user ? { metadata: { user_id: user.id } } : {}),
+    });
+    return { url: session.url };
+  } catch (err) {
+    console.error('Stripe checkout error:', err);
+    return { error: 'Unable to start checkout. Please try again later.' };
+  }
 }
 
 export async function setupProAccount(formData: FormData) {

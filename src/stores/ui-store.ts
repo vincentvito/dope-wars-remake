@@ -30,12 +30,14 @@ interface UIStore {
   theme: Theme;
   notifications: GameNotification[];
   activeProTab: ProTab;
+  showModeSelect: boolean;
 
   openModal: (modal: ModalType, drug?: string) => void;
   closeModal: () => void;
   setSettingsOpen: (open: boolean) => void;
   setTheme: (theme: Theme) => void;
   setActiveProTab: (tab: ProTab) => void;
+  setShowModeSelect: (show: boolean) => void;
   addNotification: (message: string, type: 'profit' | 'loss' | 'neutral') => void;
   removeNotification: (id: string) => void;
 }
@@ -47,6 +49,7 @@ export const useUIStore = create<UIStore>()((set) => ({
   theme: 'crt',
   notifications: [],
   activeProTab: 'market',
+  showModeSelect: false,
 
   openModal: (modal, drug) =>
     set({ activeModal: modal, selectedDrug: drug ?? null }),
@@ -64,6 +67,8 @@ export const useUIStore = create<UIStore>()((set) => ({
   },
 
   setActiveProTab: (tab) => set({ activeProTab: tab }),
+
+  setShowModeSelect: (show) => set({ showModeSelect: show }),
 
   addNotification: (message, type) => {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
