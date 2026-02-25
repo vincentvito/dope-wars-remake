@@ -4,7 +4,6 @@ import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { replayGame } from '@/engine/replay';
 import { replayProGame } from '@/engine/pro-replay';
 import { isProMode } from '@/engine/pro-game';
-import { extractStats } from '@/engine/stats-extractor';
 import type { PlayerAction, ProPlayerAction, GameMode } from '@/engine/types';
 
 export async function submitGameScore(input: {
@@ -40,10 +39,10 @@ export async function submitGameScore(input: {
     return { error: 'Pro membership required to submit scores' };
   }
 
-  // 3. Replay the game server-side to validate the score
+  // 3. Replay the game server-side to validate the score (with stats collection in single pass)
   const result = isProMode(input.gameMode)
-    ? replayProGame(input.seed, input.gameMode, input.actions as ProPlayerAction[])
-    : replayGame(input.seed, input.gameMode, input.actions as PlayerAction[]);
+    ? replayProGame(input.seed, input.gameMode, input.actions as ProPlayerAction[], true)
+    : replayGame(input.seed, input.gameMode, input.actions as PlayerAction[], true);
 
   if (!result.valid) {
     return { error: 'Game validation failed' };
@@ -66,8 +65,12 @@ export async function submitGameScore(input: {
     return { error: 'This game has already been submitted' };
   }
 
-  // Extract trade-level stats from the replay
-  const tradeStats = extractStats(input.seed, input.gameMode, input.actions);
+  // Trade stats were collected during the replay pass above
+  const tradeStats = result.tradeStats ?? {
+    bestTradeProfit: 0, bestTradeDrug: null,
+    worstTradeLoss: 0, worstTradeDrug: null,
+    drugTradeCounts: {}, biggestMugging: 0,
+  };
 
   // Create game session record
   const { data: session, error: sessionError } = await serviceClient

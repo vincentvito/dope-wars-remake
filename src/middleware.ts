@@ -48,8 +48,12 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh the session — this keeps the auth cookie alive
-  await supabase.auth.getUser();
+  // Only refresh the session on paths that need auth (avoids 50-200ms latency on public pages)
+  const authPaths = ['/game', '/profile', '/leaderboard', '/settings'];
+  const needsAuth = authPaths.some(p => request.nextUrl.pathname.startsWith(p));
+  if (needsAuth) {
+    await supabase.auth.getUser();
+  }
 
   return applySecurityHeaders(supabaseResponse);
 }

@@ -2,30 +2,43 @@
 
 import { useGameStore } from '@/stores/game-store';
 import { useUIStore } from '@/stores/ui-store';
+import { useShallow } from 'zustand/react/shallow';
 import { formatCurrency } from '@/lib/utils';
 import { SettingsMenu } from '../SettingsMenu';
 
 export function ProStatusBar() {
-  const state = useGameStore((s) => s.proGameState);
+  const { cash, bank, debt, health, inventory, currentDay, maxDays, currentDistrict, trenchcoatSpace, armoryLength } =
+    useGameStore(useShallow((s) => ({
+      cash: s.proGameState?.cash ?? 0,
+      bank: s.proGameState?.bank ?? 0,
+      debt: s.proGameState?.debt ?? 0,
+      health: s.proGameState?.health ?? 0,
+      inventory: s.proGameState?.inventory ?? [],
+      currentDay: s.proGameState?.currentDay ?? 1,
+      maxDays: s.proGameState?.maxDays ?? 31,
+      currentDistrict: s.proGameState?.currentDistrict ?? '',
+      trenchcoatSpace: s.proGameState?.trenchcoatSpace ?? 0,
+      armoryLength: s.proGameState?.armory.length ?? 0,
+    })));
   const netWorth = useGameStore((s) => s.netWorth);
   const openModal = useUIStore((s) => s.openModal);
 
-  if (!state) return null;
+  if (!currentDistrict) return null;
 
-  const usedSpace = state.inventory.reduce((sum, s) => sum + s.quantity, 0);
-  const healthPercent = state.health;
-  const dayProgress = ((state.currentDay - 1) / (state.maxDays - 2)) * 100;
+  const usedSpace = inventory.reduce((sum, s) => sum + s.quantity, 0);
+  const healthPercent = health;
+  const dayProgress = ((currentDay - 1) / (maxDays - 2)) * 100;
 
   return (
     <div className="glass-panel p-4 space-y-2 text-shadow-sm">
       {/* Day counter */}
       <div className="flex items-center justify-between">
         <span className="font-pixel text-sm text-crt-cyan">
-          Day {state.currentDay} / {state.maxDays - 1}
+          Day {currentDay} / {maxDays - 1}
         </span>
         <div className="flex items-center gap-2">
           <span className="font-pixel text-xs text-crt-cyan">
-            {state.currentDistrict}
+            {currentDistrict}
           </span>
           <SettingsMenu />
         </div>
@@ -44,7 +57,7 @@ export function ProStatusBar() {
         <div>
           <span className="text-muted-foreground">Cash:</span>{' '}
           <span className="text-crt-green text-glow-green font-bold">
-            {formatCurrency(state.cash)}
+            {formatCurrency(cash)}
           </span>
         </div>
         <button
@@ -53,7 +66,7 @@ export function ProStatusBar() {
         >
           <span className="text-muted-foreground">Bank:</span>{' '}
           <span className="text-foreground">
-            {formatCurrency(state.bank)}
+            {formatCurrency(bank)}
           </span>
         </button>
         <button
@@ -61,8 +74,8 @@ export function ProStatusBar() {
           onClick={() => openModal('loanShark')}
         >
           <span className="text-muted-foreground">Debt:</span>{' '}
-          <span className={`text-crt-red ${state.debt > 0 ? 'text-glow-red' : ''}`}>
-            {formatCurrency(state.debt)}
+          <span className={`text-crt-red ${debt > 0 ? 'text-glow-red' : ''}`}>
+            {formatCurrency(debt)}
           </span>
         </button>
         <div>
@@ -92,7 +105,7 @@ export function ProStatusBar() {
         {/* Stash space */}
         <div>
           <span className="text-muted-foreground">Stash:</span>{' '}
-          <span className="text-foreground">{usedSpace}/{state.trenchcoatSpace}</span>
+          <span className="text-foreground">{usedSpace}/{trenchcoatSpace}</span>
         </div>
 
         {/* Armory */}
@@ -101,7 +114,7 @@ export function ProStatusBar() {
           onClick={() => openModal('armory')}
         >
           <span className="text-muted-foreground">Armory:</span>{' '}
-          <span className="text-crt-cyan">{state.armory.length}/10</span>
+          <span className="text-crt-cyan">{armoryLength}/10</span>
         </button>
 
       </div>

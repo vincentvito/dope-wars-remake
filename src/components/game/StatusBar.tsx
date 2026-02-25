@@ -2,31 +2,43 @@
 
 import { useGameStore } from '@/stores/game-store';
 import { useUIStore } from '@/stores/ui-store';
+import { useShallow } from 'zustand/react/shallow';
 import { formatCurrency } from '@/lib/utils';
 import { SettingsMenu } from './SettingsMenu';
 
 export function StatusBar() {
-  const gameState = useGameStore((s) => s.gameState);
+  const { cash, bank, debt, health, inventory, currentDay, maxDays, currentDistrict, trenchcoatSpace, guns } =
+    useGameStore(useShallow((s) => ({
+      cash: s.gameState?.cash ?? 0,
+      bank: s.gameState?.bank ?? 0,
+      debt: s.gameState?.debt ?? 0,
+      health: s.gameState?.health ?? 0,
+      inventory: s.gameState?.inventory ?? [],
+      currentDay: s.gameState?.currentDay ?? 1,
+      maxDays: s.gameState?.maxDays ?? 31,
+      currentDistrict: s.gameState?.currentDistrict ?? '',
+      trenchcoatSpace: s.gameState?.trenchcoatSpace ?? 0,
+      guns: s.gameState?.guns ?? 0,
+    })));
   const netWorth = useGameStore((s) => s.netWorth);
   const openModal = useUIStore((s) => s.openModal);
 
-  if (!gameState) return null;
+  if (!currentDistrict) return null;
 
-  const usedSpace = gameState.inventory.reduce((sum, s) => sum + s.quantity, 0);
-  const availableSpace = gameState.trenchcoatSpace - usedSpace;
-  const healthPercent = gameState.health;
-  const dayProgress = ((gameState.currentDay - 1) / (gameState.maxDays - 2)) * 100;
+  const usedSpace = inventory.reduce((sum, s) => sum + s.quantity, 0);
+  const healthPercent = health;
+  const dayProgress = ((currentDay - 1) / (maxDays - 2)) * 100;
 
   return (
     <div className="glass-panel p-4 space-y-2 text-shadow-sm">
       {/* Day counter */}
       <div className="flex items-center justify-between">
         <span className="font-pixel text-sm text-crt-cyan">
-          Day {gameState.currentDay} / {gameState.maxDays - 1}
+          Day {currentDay} / {maxDays - 1}
         </span>
         <div className="flex items-center gap-2">
           <span className="font-pixel text-xs text-crt-cyan">
-            {gameState.currentDistrict}
+            {currentDistrict}
           </span>
           <SettingsMenu />
         </div>
@@ -45,7 +57,7 @@ export function StatusBar() {
         <div>
           <span className="text-muted-foreground">Cash:</span>{' '}
           <span className="text-crt-green text-glow-green font-bold">
-            {formatCurrency(gameState.cash)}
+            {formatCurrency(cash)}
           </span>
         </div>
         <button
@@ -54,7 +66,7 @@ export function StatusBar() {
         >
           <span className="text-muted-foreground">Bank:</span>{' '}
           <span className="text-foreground">
-            {formatCurrency(gameState.bank)}
+            {formatCurrency(bank)}
           </span>
         </button>
         <button
@@ -62,8 +74,8 @@ export function StatusBar() {
           onClick={() => openModal('loanShark')}
         >
           <span className="text-muted-foreground">Debt:</span>{' '}
-          <span className={`text-crt-red ${gameState.debt > 0 ? 'text-glow-red' : ''}`}>
-            {formatCurrency(gameState.debt)}
+          <span className={`text-crt-red ${debt > 0 ? 'text-glow-red' : ''}`}>
+            {formatCurrency(debt)}
           </span>
         </button>
         <div>
@@ -95,13 +107,13 @@ export function StatusBar() {
         {/* Trenchcoat space */}
         <div>
           <span className="text-muted-foreground">Coat:</span>{' '}
-          <span className="text-foreground">{usedSpace}/{gameState.trenchcoatSpace}</span>
+          <span className="text-foreground">{usedSpace}/{trenchcoatSpace}</span>
         </div>
 
         {/* Guns */}
         <div>
           <span className="text-muted-foreground">Guns:</span>{' '}
-          <span className="text-foreground">{gameState.guns}</span>
+          <span className="text-foreground">{guns}</span>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { createNewGame, applyAction, calculateNetWorth } from './game';
 import type { PlayerAction, GameMode } from './types';
+import { emptyStats, collectActionStats, type GameTradeStats } from './stats-extractor';
 
 export interface ReplayResult {
   valid: boolean;
@@ -9,6 +10,7 @@ export interface ReplayResult {
   finalBank: number;
   finalDebt: number;
   finalInventoryValue: number;
+  tradeStats?: GameTradeStats;
   error?: string;
 }
 
@@ -18,16 +20,22 @@ export interface ReplayResult {
  *
  * Because the engine is fully deterministic (seeded RNG, pure functions),
  * replaying the same seed + actions always produces the same final state.
+ *
+ * When withStats is true, trade statistics are collected during the same
+ * pass, avoiding a second full replay via extractStats.
  */
 export function replayGame(
   seed: string,
   gameMode: GameMode,
-  actions: PlayerAction[]
+  actions: PlayerAction[],
+  withStats = false
 ): ReplayResult {
   try {
     let state = createNewGame(seed, gameMode);
+    const stats = withStats ? emptyStats() : undefined;
 
     for (const action of actions) {
+      if (stats) collectActionStats(state, action, stats);
       state = applyAction(state, action);
     }
 
@@ -45,6 +53,7 @@ export function replayGame(
       finalBank: state.bank,
       finalDebt: state.debt,
       finalInventoryValue: inventoryValue,
+      tradeStats: stats,
     };
   } catch (error) {
     return {

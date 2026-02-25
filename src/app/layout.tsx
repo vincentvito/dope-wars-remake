@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Press_Start_2P, JetBrains_Mono, Inter } from "next/font/google";
+import { Press_Start_2P, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeSync } from "@/components/ThemeSync";
 import "./globals.css";
@@ -13,11 +13,6 @@ const pixelFont = Press_Start_2P({
 const monoFont = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
-});
-
-const modernFont = Inter({
-  subsets: ["latin"],
-  variable: "--font-modern",
 });
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -63,7 +58,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${pixelFont.variable} ${monoFont.variable} ${modernFont.variable} antialiased bg-black`}>
+      <body className={`${pixelFont.variable} ${monoFont.variable} antialiased bg-black`}>
         <ThemeSync />
         <div className="app-viewport">
           <div className="crt-overlay" />

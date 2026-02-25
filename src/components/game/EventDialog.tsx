@@ -29,15 +29,13 @@ const NEGATIVE_EVENTS = new Set([
 ]);
 
 export function EventDialog() {
-  const gameState = useGameStore((s) => s.gameState);
-  const proGameState = useGameStore((s) => s.proGameState);
-  const isPro = useGameStore((s) => s.isPro);
+  const phase = useGameStore((s) => s.isPro ? s.proGameState?.phase : s.gameState?.phase);
+  const activeEvent = useGameStore((s) => s.isPro ? s.proGameState?.activeEvent : s.gameState?.activeEvent);
   const acceptEvent = useGameStore((s) => s.acceptEvent);
   const declineEvent = useGameStore((s) => s.declineEvent);
 
-  const state = isPro ? proGameState : gameState;
-  const isOpen = state?.phase === 'event' && state.activeEvent != null;
-  const event = state?.activeEvent;
+  const isOpen = phase === 'event' && activeEvent != null;
+  const event = activeEvent;
 
   if (!isOpen || !event) return null;
 

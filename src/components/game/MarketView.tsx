@@ -1,5 +1,6 @@
 'use client';
 
+import { memo, useMemo } from 'react';
 import { useGameStore } from '@/stores/game-store';
 import { useUIStore } from '@/stores/ui-store';
 import { DRUGS } from '@/engine/constants';
@@ -8,15 +9,25 @@ import { CUTTABLE_DRUGS } from '@/engine/pro-constants';
 import type { DrugName } from '@/engine/types';
 
 export function MarketView() {
-  const gameState = useGameStore((s) => s.gameState);
-  const proGameState = useGameStore((s) => s.proGameState);
+  const phase = useGameStore((s) => s.isPro ? s.proGameState?.phase : s.gameState?.phase);
+  const market = useGameStore((s) => s.isPro ? s.proGameState?.market : s.gameState?.market);
+  const inventory = useGameStore((s) => s.isPro ? s.proGameState?.inventory : s.gameState?.inventory);
   const isPro = useGameStore((s) => s.isPro);
-  const state = isPro ? proGameState : gameState;
   const hasLab = useGameStore((s) => s.proGameState?.assets.some((a) => a.type === 'Lab') ?? false);
   const showCut = isPro && hasLab;
 
-  if (!state || state.phase !== 'market') return null;
-  const gameState_ = state; // alias for template compatibility
+  // Pre-compute inventory lookup map to avoid O(n) .find() per drug
+  const inventoryMap = useMemo(() => {
+    const map = new Map<string, { quantity: number; avgBuyPrice?: number }>();
+    if (inventory) {
+      for (const slot of inventory) {
+        map.set(slot.drug, { quantity: slot.quantity, avgBuyPrice: slot.avgBuyPrice });
+      }
+    }
+    return map;
+  }, [inventory]);
+
+  if (!market || phase !== 'market') return null;
 
   return (
     <div className="space-y-3">
@@ -36,27 +47,26 @@ export function MarketView() {
           </div>
         </div>
         <div>
-          {DRUGS.map((drug) => (
-            <DrugRow
-              key={drug.name}
-              drug={drug.name}
-              price={gameState_.market[drug.name] ?? null}
-              owned={
-                gameState_.inventory.find((s) => s.drug === drug.name)?.quantity ?? 0
-              }
-              avgBuyPrice={
-                gameState_.inventory.find((s) => s.drug === drug.name)?.avgBuyPrice
-              }
-              showCut={showCut}
-            />
-          ))}
+          {DRUGS.map((drug) => {
+            const slot = inventoryMap.get(drug.name);
+            return (
+              <DrugRow
+                key={drug.name}
+                drug={drug.name}
+                price={market[drug.name] ?? null}
+                owned={slot?.quantity ?? 0}
+                avgBuyPrice={slot?.avgBuyPrice}
+                showCut={showCut}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
 
-function DrugRow({
+const DrugRow = memo(function DrugRow({
   drug,
   price,
   owned,
@@ -70,7 +80,6 @@ function DrugRow({
   showCut: boolean;
 }) {
   const openModal = useUIStore((s) => s.openModal);
-  const isPro = useGameStore((s) => s.isPro);
   const cash = useGameStore((s) => s.isPro ? (s.proGameState?.cash ?? 0) : (s.gameState?.cash ?? 0));
   const availableSpace = useGameStore((s) => s.getAvailableSpace());
 
@@ -140,4 +149,4 @@ function DrugRow({
       </div>
     </div>
   );
-}
+});

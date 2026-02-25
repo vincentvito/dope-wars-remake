@@ -16,20 +16,20 @@ const ENCOUNTER_TITLES: Record<string, string> = {
 };
 
 export function CombatDialog() {
-  const gameState = useGameStore((s) => s.gameState);
-  const proGameState = useGameStore((s) => s.proGameState);
   const isPro = useGameStore((s) => s.isPro);
+  const phase = useGameStore((s) => s.isPro ? s.proGameState?.phase : s.gameState?.phase);
+  const health = useGameStore((s) => s.isPro ? (s.proGameState?.health ?? 0) : (s.gameState?.health ?? 0));
+  const combat = useGameStore((s) => s.isPro ? s.proGameState?.proCombat : s.gameState?.combat);
+  const proCombat = useGameStore((s) => s.proGameState?.proCombat);
+  const guns = useGameStore((s) => s.gameState?.guns ?? 0);
   const { isAnimating, isShaking, buffered, handleFight, handleRun } =
     useCombatAnimation();
 
-  // Determine which state to use
-  const state = isPro ? proGameState : gameState;
-  const combat = isPro ? proGameState?.proCombat : gameState?.combat;
-  const isOpen = state?.phase === 'combat' && combat != null;
+  const isOpen = phase === 'combat' && combat != null;
 
-  if (!isOpen || !combat || !state) return null;
+  if (!isOpen || !combat) return null;
 
-  const displayHealth = buffered?.playerHealth ?? state.health;
+  const displayHealth = buffered?.playerHealth ?? health;
   const displayOfficerHealth = buffered?.officerHealth ?? combat.officerHealth;
   const displayOfficerMax = buffered?.officerMaxHealth ?? combat.officerMaxHealth;
   const displayMessage = buffered?.lastMessage ?? combat.lastMessage;
@@ -38,7 +38,6 @@ export function CombatDialog() {
   const playerHealthPct = displayHealth;
 
   // Pro mode details
-  const proCombat = isPro ? proGameState?.proCombat : null;
   const encounterType = proCombat?.encounterType ?? 'police';
   const enemyName = ENCOUNTER_NAMES[encounterType] ?? 'Officer Hardass';
   const title = ENCOUNTER_TITLES[encounterType] ?? 'Police Encounter!';
@@ -47,7 +46,7 @@ export function CombatDialog() {
   // Player info line
   const playerInfo = isPro
     ? `${displayHealth}HP`
-    : `${displayHealth}HP | ${buffered?.guns ?? (gameState?.guns ?? 0)} gun${(buffered?.guns ?? gameState?.guns ?? 0) !== 1 ? 's' : ''}`;
+    : `${displayHealth}HP | ${buffered?.guns ?? guns} gun${(buffered?.guns ?? guns) !== 1 ? 's' : ''}`;
 
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-start pt-[15vh] overflow-hidden">
@@ -58,6 +57,7 @@ export function CombatDialog() {
         className="absolute inset-0 w-full h-full object-cover object-center opacity-35 pointer-events-none"
         style={{ imageRendering: 'pixelated' }}
         draggable={false}
+        decoding="async"
       />
 
       {/* Vignette overlay for text readability */}

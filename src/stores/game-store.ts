@@ -58,9 +58,7 @@ interface GameStore {
   canTravelToPro: (destination: LocationName) => boolean;
 }
 
-export const useGameStore = create<GameStore>()(
-  devtools(
-    (set, get) => ({
+const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
       gameState: null,
       proGameState: null,
       isPlaying: false,
@@ -255,7 +253,10 @@ export const useGameStore = create<GameStore>()(
         if (!proGameState) return false;
         return canTravelTo(proGameState, destination);
       },
-    }),
-    { name: 'dope-wars-game' }
-  )
+});
+
+export const useGameStore = create<GameStore>()(
+  process.env.NODE_ENV === 'development'
+    ? devtools(storeImpl, { name: 'dope-wars-game' })
+    : storeImpl as import('zustand').StateCreator<GameStore, [], [["zustand/devtools", never]]>
 );

@@ -85,6 +85,8 @@ function GamePageContent() {
           className="absolute inset-0 w-full h-full object-cover object-bottom opacity-35 pointer-events-none"
           style={{ imageRendering: 'pixelated' }}
           draggable={false}
+          loading="lazy"
+          decoding="async"
         />
         <ModeSelectOverlay
           onClose={() => {
@@ -144,6 +146,7 @@ function GamePageContent() {
           className="absolute inset-0 w-full h-full object-cover object-bottom opacity-45"
           style={{ imageRendering: 'pixelated' }}
           draggable={false}
+          decoding="async"
         />
         {/* Theme-tinted gradient overlay for readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)]/50 via-[var(--background)]/40 to-[var(--background)]/60" />

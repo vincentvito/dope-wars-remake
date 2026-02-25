@@ -11,7 +11,7 @@ export interface GameTradeStats {
   biggestMugging: number;
 }
 
-function emptyStats(): GameTradeStats {
+export function emptyStats(): GameTradeStats {
   return {
     bestTradeProfit: 0,
     bestTradeDrug: null,
@@ -36,7 +36,7 @@ export function extractGameStats(
     let state = createNewGame(seed, gameMode);
 
     for (const action of actions) {
-      collectStats(state, action, stats);
+      collectActionStats(state, action, stats);
       state = applyAction(state, action);
     }
   } catch {
@@ -60,7 +60,7 @@ export function extractProGameStats(
     let state: ProGameState = createProGame(seed, gameMode);
 
     for (const action of actions) {
-      collectStats(state, action, stats);
+      collectActionStats(state, action, stats);
 
       // Celebrity buyer events count as trades when accepted
       if (
@@ -99,7 +99,7 @@ export function extractProGameStats(
 /**
  * Collect stats from a single action, inspecting state before the action is applied.
  */
-function collectStats(
+export function collectActionStats(
   state: GameState | ProGameState,
   action: PlayerAction | ProPlayerAction,
   stats: GameTradeStats

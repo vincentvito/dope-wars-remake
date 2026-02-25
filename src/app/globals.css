@@ -218,13 +218,13 @@
   --btn-glow-danger: transparent;
 }
 
-/* Miami: modern sans-serif font */
+/* Miami: modern sans-serif font (system-ui avoids loading an extra Google Font) */
 [data-theme="miami"] .font-pixel {
-  font-family: var(--font-modern), system-ui, sans-serif;
+  font-family: system-ui, sans-serif;
   letter-spacing: normal;
 }
 [data-theme="miami"] body {
-  font-family: var(--font-modern), system-ui, sans-serif;
+  font-family: system-ui, sans-serif;
 }
 
 /* Miami: hide CRT scanlines */
@@ -262,7 +262,7 @@
   contain: paint;
 }
 
-/* CRT scanline overlay */
+/* CRT scanline overlay — promoted to own GPU layer to avoid repainting with content */
 .crt-overlay {
   pointer-events: none;
   position: absolute;
@@ -275,6 +275,8 @@
     transparent 1px,
     transparent 3px
   );
+  transform: translateZ(0);
+  contain: strict;
 }
 
 .font-pixel {

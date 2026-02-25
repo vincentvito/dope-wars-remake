@@ -19,7 +19,9 @@ export function BuySellDialog() {
   const selectedDrug = useUIStore((s) => s.selectedDrug) as DrugName | null;
   const closeModal = useUIStore((s) => s.closeModal);
   const addNotification = useUIStore((s) => s.addNotification);
-  const gameState = useGameStore((s) => s.isPro ? s.proGameState : s.gameState);
+  const market = useGameStore((s) => s.isPro ? s.proGameState?.market : s.gameState?.market);
+  const inventory = useGameStore((s) => s.isPro ? s.proGameState?.inventory : s.gameState?.inventory);
+  const cash = useGameStore((s) => s.isPro ? (s.proGameState?.cash ?? 0) : (s.gameState?.cash ?? 0));
   const buyDrug = useGameStore((s) => s.buyDrug);
   const sellDrug = useGameStore((s) => s.sellDrug);
   const getMaxBuy = useGameStore((s) => s.getMaxBuy);
@@ -30,9 +32,9 @@ export function BuySellDialog() {
   const isSell = activeModal === 'sell';
   const isOpen = (isBuy || isSell) && selectedDrug != null;
 
-  const price = selectedDrug && gameState ? (gameState.market[selectedDrug] ?? 0) : 0;
+  const price = selectedDrug && market ? (market[selectedDrug] ?? 0) : 0;
   const owned = selectedDrug
-    ? gameState?.inventory.find((s) => s.drug === selectedDrug)?.quantity ?? 0
+    ? inventory?.find((s) => s.drug === selectedDrug)?.quantity ?? 0
     : 0;
 
   const maxQty = isBuy
@@ -56,7 +58,7 @@ export function BuySellDialog() {
         'neutral'
       );
     } else {
-      const avgBuyPrice = gameState?.inventory.find((s) => s.drug === selectedDrug)?.avgBuyPrice ?? price;
+      const avgBuyPrice = inventory?.find((s) => s.drug === selectedDrug)?.avgBuyPrice ?? price;
       const pnl = (price - avgBuyPrice) * quantity;
       sellDrug(selectedDrug, quantity);
       const sign = pnl >= 0 ? '+' : '-';
@@ -69,7 +71,7 @@ export function BuySellDialog() {
 
     setQuantity(0);
     closeModal();
-  }, [selectedDrug, quantity, isBuy, price, gameState, buyDrug, sellDrug, addNotification, closeModal]);
+  }, [selectedDrug, quantity, isBuy, price, inventory, buyDrug, sellDrug, addNotification, closeModal]);
 
   const handleOpenChange = useCallback((open: boolean) => {
     if (!open) {
@@ -97,7 +99,7 @@ export function BuySellDialog() {
           {isBuy && (
             <div className="flex justify-between text-xs">
               <span className="text-muted-foreground">Your cash:</span>
-              <span className="text-crt-green">{formatCurrency(gameState?.cash ?? 0)}</span>
+              <span className="text-crt-green">{formatCurrency(cash)}</span>
             </div>
           )}
 

@@ -15,13 +15,14 @@ import { GameOverScreen } from './GameOverScreen';
 import { ProGameShell } from './pro/ProGameShell';
 
 export function GameShell() {
-  const gameState = useGameStore((s) => s.gameState);
   const isPro = useGameStore((s) => s.isPro);
+  const phase = useGameStore((s) => s.gameState?.phase);
+  const marketEvents = useGameStore((s) => s.gameState?.marketEvents);
 
   if (isPro) return <ProGameShell />;
-  if (!gameState) return null;
+  if (!phase) return null;
 
-  if (gameState.phase === 'game_over') {
+  if (phase === 'game_over') {
     return <GameOverScreen />;
   }
 
@@ -30,9 +31,9 @@ export function GameShell() {
       <div className="flex flex-col h-[100dvh] max-w-3xl mx-auto px-3 relative z-10">
         <div className="shrink-0 pt-3 space-y-3">
           <StatusBar />
-          {gameState.marketEvents.length > 0 && (
+          {marketEvents && marketEvents.length > 0 && (
             <div className="space-y-1">
-              {gameState.marketEvents.map((event, i) => (
+              {marketEvents.map((event, i) => (
                 <div
                   key={i}
                   className="px-3 py-2 text-xs border border-crt-cyan text-crt-cyan bg-[var(--card)]/90 backdrop-blur-sm"

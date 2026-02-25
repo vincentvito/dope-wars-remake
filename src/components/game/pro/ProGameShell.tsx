@@ -16,11 +16,12 @@ import { GameToast } from '../GameToast';
 import { GameOverScreen } from '../GameOverScreen';
 
 export function ProGameShell() {
-  const state = useGameStore((s) => s.proGameState);
+  const phase = useGameStore((s) => s.proGameState?.phase);
+  const marketEvents = useGameStore((s) => s.proGameState?.marketEvents);
 
-  if (!state) return null;
+  if (!phase) return null;
 
-  if (state.phase === 'game_over') {
+  if (phase === 'game_over') {
     return <GameOverScreen />;
   }
 
@@ -29,9 +30,9 @@ export function ProGameShell() {
       <div className="flex flex-col h-[100dvh] max-w-3xl mx-auto px-3 relative z-10">
         <div className="shrink-0 pt-3 space-y-3">
           <ProStatusBar />
-          {state.marketEvents.length > 0 && (
+          {marketEvents && marketEvents.length > 0 && (
             <div className="space-y-1">
-              {state.marketEvents.map((event, i) => (
+              {marketEvents.map((event, i) => (
                 <div
                   key={i}
                   className="px-3 py-2 text-xs border border-crt-cyan text-crt-cyan bg-[var(--card)]/90 backdrop-blur-sm"

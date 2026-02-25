@@ -32,7 +32,7 @@ function Toast({ notification }: { notification: GameNotification }) {
       `}
       style={{
         boxShadow: style.shadow,
-        animation: `toast-in 0.35s cubic-bezier(0.34,1.56,0.64,1), toast-out 0.3s ease-in ${exitDelay}ms forwards, toast-glow-pulse 1.5s ease-in-out infinite`,
+        animation: `toast-in 0.35s cubic-bezier(0.34,1.56,0.64,1), toast-out 0.3s ease-in ${exitDelay}ms forwards`,
       }}
       onClick={() => removeNotification(notification.id)}
     >

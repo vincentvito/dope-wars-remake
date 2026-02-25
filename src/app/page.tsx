@@ -14,6 +14,8 @@ export default function HomePage() {
         className="absolute inset-0 w-full h-full object-cover object-bottom opacity-35 pointer-events-none"
         style={{ imageRendering: 'pixelated' as const }}
         draggable={false}
+        loading="lazy"
+        decoding="async"
       />
 
       {/* Interactive content — heroContent is server-rendered in initial HTML */}
