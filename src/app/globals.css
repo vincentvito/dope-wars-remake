@@ -98,7 +98,7 @@
 
   /* Surface shades */
   --surface: #0d0d0d;
-  --row-hover: #141414;
+  --row-hover: rgba(20, 20, 20, 0.5);
   --divider: #181818;
   --border-strong: #333333;
 
@@ -150,7 +150,7 @@
   --crt-dim: #553355;
 
   --surface: #130330;
-  --row-hover: #170838;
+  --row-hover: rgba(23, 8, 56, 0.5);
   --divider: #1c0c40;
   --border-strong: #3d2d6b;
 
@@ -201,7 +201,7 @@
   --crt-dim: #3d5468;
 
   --surface: #111d2b;
-  --row-hover: #152535;
+  --row-hover: rgba(21, 37, 53, 0.5);
   --divider: #1a2838;
   --border-strong: #2f4562;
 
