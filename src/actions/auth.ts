@@ -11,26 +11,68 @@ function sanitizeRedirect(url: string | null): string {
 }
 
 export async function signUp(formData: FormData) {
-  const supabase = await createClient();
-
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const username = formData.get('username') as string;
   const redirectTo = sanitizeRedirect(formData.get('redirectTo') as string);
 
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
+  if (!email || !password || !username) {
+    return { error: 'All fields are required' };
+  }
+  if (username.length < 3 || username.length > 20) {
+    return { error: 'Username must be 3-20 characters' };
+  }
+  if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+    return { error: 'Username can only contain letters, numbers, hyphens, and underscores' };
+  }
+  if (password.length < 6) {
+    return { error: 'Password must be at least 6 characters' };
+  }
+
+  try {
+    const serviceClient = await createServiceClient();
+
+    // Check username uniqueness
+    const { data: existing } = await serviceClient
+      .from('profiles')
+      .select('id')
+      .eq('username', username)
+      .single();
+
+    if (existing) {
+      return { error: 'Username is already taken' };
+    }
+
+    // Create user via admin API (email auto-confirmed, no confirmation email needed)
+    const { data: authData, error: authError } = await serviceClient.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: {
         username,
         display_name: username,
       },
-    },
-  });
+    });
 
-  if (error) {
-    return { error: error.message };
+    if (authError || !authData.user) {
+      if (authError?.message?.includes('already been registered')) {
+        return { error: 'An account with this email already exists. Please log in instead.' };
+      }
+      return { error: authError?.message || 'Failed to create account' };
+    }
+
+    // Sign in immediately (sets session cookies)
+    const supabase = await createClient();
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      return { error: 'Account created but sign-in failed. Please log in manually.' };
+    }
+  } catch {
+    return { error: 'An unexpected error occurred. Please try again.' };
   }
 
   redirect(redirectTo);
@@ -43,13 +85,20 @@ export async function signIn(formData: FormData) {
   const password = formData.get('password') as string;
   const redirectTo = sanitizeRedirect(formData.get('redirectTo') as string);
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
-    return { error: error.message };
+    if (error) {
+      if (error.message === 'Email not confirmed') {
+        return { error: 'Your email is not confirmed. Please register again to create a new account.' };
+      }
+      return { error: error.message };
+    }
+  } catch {
+    return { error: 'An unexpected error occurred. Please try again.' };
   }
 
   redirect(redirectTo);

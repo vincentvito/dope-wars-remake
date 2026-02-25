@@ -15,9 +15,14 @@ function LoginForm() {
     setLoading(true);
     setError(null);
     if (redirect) formData.set('redirectTo', redirect);
-    const result = await signIn(formData);
-    if (result?.error) {
-      setError(result.error);
+    try {
+      const result = await signIn(formData);
+      if (result?.error) {
+        setError(result.error);
+        setLoading(false);
+      }
+    } catch {
+      setError('Something went wrong. Please try again.');
       setLoading(false);
     }
   }
