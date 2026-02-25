@@ -1,6 +1,6 @@
 'use server';
 
-import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
+import { createClient, createServiceClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
 function sanitizeRedirect(url: string | null): string {
@@ -83,6 +83,40 @@ export async function getProStatus(): Promise<{
       .select('is_pro, username')
       .eq('id', user.id)
       .single();
+
+    // If not pro, check for orphaned purchases with this email
+    if (!profile?.is_pro && user.email) {
+      try {
+        const serviceClient = await createServiceClient();
+        const { data: purchase } = await serviceClient
+          .from('purchases')
+          .select('id')
+          .eq('email', user.email)
+          .eq('status', 'completed')
+          .is('user_id', null)
+          .limit(1)
+          .single();
+
+        if (purchase) {
+          await serviceClient
+            .from('purchases')
+            .update({ user_id: user.id })
+            .eq('id', purchase.id);
+          await serviceClient
+            .from('profiles')
+            .update({ is_pro: true, pro_purchased_at: new Date().toISOString() })
+            .eq('id', user.id);
+
+          return {
+            isLoggedIn: true,
+            isPro: true,
+            username: profile?.username ?? null,
+          };
+        }
+      } catch {
+        // Purchase linking failed — not critical, user can still play
+      }
+    }
 
     return {
       isLoggedIn: true,
