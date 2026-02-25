@@ -4,6 +4,7 @@ import { createClient, createServiceClient } from '@/lib/supabase/server';
 import { replayGame } from '@/engine/replay';
 import { replayProGame } from '@/engine/pro-replay';
 import { isProMode } from '@/engine/pro-game';
+import { extractStats } from '@/engine/stats-extractor';
 import type { PlayerAction, ProPlayerAction, GameMode } from '@/engine/types';
 
 export async function submitGameScore(input: {
@@ -65,6 +66,9 @@ export async function submitGameScore(input: {
     return { error: 'This game has already been submitted' };
   }
 
+  // Extract trade-level stats from the replay
+  const tradeStats = extractStats(input.seed, input.gameMode, input.actions);
+
   // Create game session record
   const { data: session, error: sessionError } = await serviceClient
     .from('game_sessions')
@@ -81,6 +85,12 @@ export async function submitGameScore(input: {
       final_day: result.finalDay,
       status: 'completed',
       completed_at: new Date().toISOString(),
+      best_trade_profit: tradeStats.bestTradeProfit,
+      best_trade_drug: tradeStats.bestTradeDrug,
+      worst_trade_loss: tradeStats.worstTradeLoss,
+      worst_trade_drug: tradeStats.worstTradeDrug,
+      drug_trade_counts: tradeStats.drugTradeCounts,
+      biggest_mugging: tradeStats.biggestMugging,
     })
     .select('id')
     .single();

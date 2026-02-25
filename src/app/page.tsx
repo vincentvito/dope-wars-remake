@@ -10,6 +10,7 @@ import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { signOut } from '@/actions/auth';
 import { ModeSelectOverlay } from '@/components/game/ModeSelectOverlay';
 import { IntroStory } from '@/components/game/IntroStory';
+import { StatisticsOverlay } from '@/components/statistics/StatisticsOverlay';
 import type { GameMode } from '@/engine/types';
 
 const THEME_ORDER = ['crt', 'synthwave', 'miami'] as const;
@@ -19,7 +20,7 @@ const THEME_LABELS: Record<string, string> = {
   miami: 'Miami',
 };
 
-type Overlay = null | 'how-to-play' | 'options' | 'mode-select' | 'intro-story';
+type Overlay = null | 'how-to-play' | 'options' | 'mode-select' | 'intro-story' | 'statistics';
 
 export default function HomePage() {
   useAuthHydration();
@@ -63,7 +64,7 @@ export default function HomePage() {
           {/* User Indicator */}
           {isLoaded && (
             isLoggedIn ? (
-              <div className="w-full flex items-center justify-between text-[10px] text-muted-foreground px-1">
+              <div className="w-full flex items-center justify-between text-sm text-muted-foreground px-1">
                 <span>
                   {isPro && <span className="text-crt-amber mr-1">PRO</span>}
                   @{username}
@@ -78,7 +79,7 @@ export default function HomePage() {
                 </form>
               </div>
             ) : (
-              <div className="w-full flex items-center justify-end gap-3 text-[10px] px-1">
+              <div className="w-full flex items-center justify-end gap-3 text-sm px-1">
                 <Link
                   href="/login"
                   className="text-muted-foreground hover:text-crt-green transition-colors"
@@ -121,6 +122,12 @@ export default function HomePage() {
             >
               LEADERBOARD
             </Link>
+            <button
+              className="retro-btn block w-full py-3 text-xs text-center font-pixel"
+              onClick={() => setOverlay('statistics')}
+            >
+              STATISTICS
+            </button>
             {isLoaded && !isPro && (
               <Link
                 href="/upgrade"
@@ -197,6 +204,11 @@ export default function HomePage() {
           }}
           onBack={() => setOverlay('mode-select')}
         />
+      )}
+
+      {/* Statistics Overlay */}
+      {overlay === 'statistics' && (
+        <StatisticsOverlay onClose={() => setOverlay(null)} />
       )}
 
       {/* Options Overlay */}
