@@ -4,6 +4,7 @@ import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { signIn } from '@/actions/auth';
+import { useAuthStore } from '@/stores/auth-store';
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -14,6 +15,7 @@ function LoginForm() {
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
+    useAuthStore.getState().clear();
     if (redirect) formData.set('redirectTo', redirect);
     try {
       const result = await signIn(formData);

@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 
 function sanitizeRedirect(url: string | null): string {
   if (!url || !url.startsWith('/') || url.startsWith('//')) {
-    return '/game';
+    return '/';
   }
   return url;
 }

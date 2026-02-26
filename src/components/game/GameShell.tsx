@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useGameStore } from '@/stores/game-store';
 import { StatusBar } from './StatusBar';
 import { MarketView } from './MarketView';
@@ -14,10 +15,28 @@ import { GameToast } from './GameToast';
 import { GameOverScreen } from './GameOverScreen';
 import { ProGameShell } from './pro/ProGameShell';
 
+const PRELOAD_GIFS = [
+  '/sprites/events/event-mugging.gif',
+  '/sprites/events/event-find-drugs.gif',
+  '/sprites/events/event-find-gun.gif',
+  '/sprites/events/event-find-coat.gif',
+  '/sprites/events/event-loan-shark.gif',
+  '/sprites/combat/combat-idle.gif',
+  '/sprites/combat/combat-fight.gif',
+  '/sprites/combat/combat-run.gif',
+];
+
 export function GameShell() {
   const isPro = useGameStore((s) => s.isPro);
   const phase = useGameStore((s) => s.gameState?.phase);
   const marketEvents = useGameStore((s) => s.gameState?.marketEvents);
+
+  useEffect(() => {
+    PRELOAD_GIFS.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   if (isPro) return <ProGameShell />;
   if (!phase) return null;

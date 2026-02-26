@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { resend } from '@/lib/resend';
 import { createServiceClient } from '@/lib/supabase/server';
+import { buildProWelcomeEmail } from '@/lib/email-templates';
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -86,41 +87,13 @@ export async function POST(request: NextRequest) {
       const fromEmail = process.env.RESEND_FROM_EMAIL || 'Dope Wars <noreply@playdopewars.com>';
       const isExistingUser = !!loggedInUserId;
 
-      const emailHtml = isExistingUser
-        ? `
-          <div style="font-family: monospace; background: #0a0a0a; color: #00ff41; padding: 32px; max-width: 500px;">
-            <h1 style="color: #00ff41; font-size: 20px;">DOPE WARS: PRO</h1>
-            <p style="color: #ccc;">Your payment of <strong style="color: #00ff41;">$7.99</strong> has been confirmed.</p>
-            <p style="color: #ccc;">Your account has been upgraded to Pro! You now have access to:</p>
-            <ul style="color: #ccc;">
-              <li>Pro game modes (30, 45, 60 days)</li>
-              <li>Assets, weapons, labs &amp; extra cities</li>
-              <li>Pro leaderboards</li>
-            </ul>
-            <a href="${appUrl}/game" style="display: inline-block; background: #00ff41; color: #000; padding: 12px 24px; text-decoration: none; font-weight: bold; margin-top: 8px;">
-              PLAY NOW
-            </a>
-          </div>
-        `
-        : `
-          <div style="font-family: monospace; background: #0a0a0a; color: #00ff41; padding: 32px; max-width: 500px;">
-            <h1 style="color: #00ff41; font-size: 20px;">DOPE WARS: PRO</h1>
-            <p style="color: #ccc;">Your payment of <strong style="color: #00ff41;">$7.99</strong> has been confirmed.</p>
-            <p style="color: #ccc;">You now have access to:</p>
-            <ul style="color: #ccc;">
-              <li>Pro game modes (30, 45, 60 days)</li>
-              <li>Assets, weapons, labs &amp; extra cities</li>
-              <li>Pro leaderboards</li>
-            </ul>
-            <p style="color: #ccc;">Set up your account to start playing:</p>
-            <a href="${appUrl}/setup-account?session_id=${session.id}" style="display: inline-block; background: #00ff41; color: #000; padding: 12px 24px; text-decoration: none; font-weight: bold; margin-top: 8px;">
-              CREATE YOUR ACCOUNT
-            </a>
-            <p style="color: #666; font-size: 12px; margin-top: 24px;">
-              If you already set up your account, you can ignore this email.
-            </p>
-          </div>
-        `;
+      const emailHtml = buildProWelcomeEmail({
+        appUrl,
+        isExistingUser,
+        sessionId: session.id,
+      });
+
+      console.log('[webhook] Sending welcome email', { from: fromEmail, to: email, isExistingUser });
 
       try {
         const { data, error: emailError } = await resend.emails.send({
@@ -131,12 +104,12 @@ export async function POST(request: NextRequest) {
         });
 
         if (emailError) {
-          console.error('Resend API returned error:', emailError);
+          console.error('[webhook] Resend API error:', JSON.stringify(emailError));
         } else {
-          console.log('Confirmation email sent successfully, id:', data?.id);
+          console.log('[webhook] Welcome email sent, id:', data?.id);
         }
       } catch (emailErr) {
-        console.error('Failed to send confirmation email:', emailErr);
+        console.error('[webhook] Email send threw:', emailErr instanceof Error ? emailErr.message : emailErr);
         // Don't fail the webhook — email is non-critical
       }
     }
