@@ -19,9 +19,13 @@ const PRO_BENEFITS_SHORT = [
 
 export function ModeSelectOverlay({ onClose, onModeSelected }: ModeSelectOverlayProps) {
   const isPro = useAuthStore((s) => s.isPro);
+  const isLoaded = useAuthStore((s) => s.isLoaded);
   const [showUpgrade, setShowUpgrade] = useState(false);
 
+  const proLocked = isLoaded && !isPro;
+
   const handleProClick = (mode: GameMode) => {
+    if (!isLoaded) return;
     if (isPro) {
       onModeSelected(mode);
     } else {
@@ -56,7 +60,7 @@ export function ModeSelectOverlay({ onClose, onModeSelected }: ModeSelectOverlay
       <div className="w-full retro-card p-4 space-y-3 border-crt-amber/30">
         <div className="text-center">
           <span className="font-pixel text-xs text-crt-amber text-glow-amber">PRO</span>
-          {!isPro && (
+          {proLocked && (
             <span className="text-[10px] text-crt-amber ml-2">$7.99</span>
           )}
           <p className="text-[10px] text-muted-foreground mt-1">
@@ -68,11 +72,11 @@ export function ModeSelectOverlay({ onClose, onModeSelected }: ModeSelectOverlay
             <button
               key={d}
               className={`retro-btn retro-btn-amber py-2 text-[10px] font-pixel relative ${
-                !isPro ? 'opacity-70' : ''
+                proLocked ? 'opacity-70' : ''
               }`}
               onClick={() => handleProClick(d)}
             >
-              {!isPro && (
+              {proLocked && (
                 <span className="absolute -top-1 -right-1 text-[8px]">&#128274;</span>
               )}
               {d.replace('pro_', '')} DAYS
@@ -81,7 +85,7 @@ export function ModeSelectOverlay({ onClose, onModeSelected }: ModeSelectOverlay
         </div>
 
         {/* Upgrade prompt */}
-        {showUpgrade && !isPro && (
+        {showUpgrade && proLocked && (
           <div className="border border-crt-amber/20 bg-black/60 p-3 space-y-2 mt-2">
             <p className="text-[10px] text-crt-amber text-center font-pixel">
               UNLOCK PRO

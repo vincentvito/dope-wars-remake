@@ -50,42 +50,44 @@ export function SettingsMenu() {
       {settingsOpen && (
         <div className="absolute right-0 top-full mt-1 z-50 bg-[var(--surface)] border border-[var(--border-strong)] min-w-[180px] py-1">
           {/* User identity */}
-          {isLoaded && isLoggedIn ? (
-            <>
-              <div className="px-3 py-2 text-xs text-foreground border-b border-border">
-                {isPro && (
-                  <span className="text-crt-amber font-pixel text-[10px] mr-1">PRO</span>
-                )}
-                <span className="text-crt-green">@{username}</span>
-              </div>
-              <button
-                className="block w-full text-left px-3 py-2 text-xs text-muted-foreground hover:bg-muted hover:text-crt-red transition-colors"
-                onClick={async () => {
-                  setSettingsOpen(false);
-                  clearAuth();
-                  await signOut();
-                }}
-              >
-                Log Out
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="block px-3 py-2 text-xs text-foreground hover:bg-muted hover:text-crt-green transition-colors"
-                onClick={() => setSettingsOpen(false)}
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/register"
-                className="block px-3 py-2 text-xs text-foreground hover:bg-muted hover:text-crt-green transition-colors"
-                onClick={() => setSettingsOpen(false)}
-              >
-                Sign Up
-              </Link>
-            </>
+          {isLoaded && (
+            isLoggedIn ? (
+              <>
+                <div className="px-3 py-2 text-xs text-foreground border-b border-border">
+                  {isPro && (
+                    <span className="text-crt-amber font-pixel text-[10px] mr-1">PRO</span>
+                  )}
+                  <span className="text-crt-green">@{username}</span>
+                </div>
+                <button
+                  className="block w-full text-left px-3 py-2 text-xs text-muted-foreground hover:bg-muted hover:text-crt-red transition-colors"
+                  onClick={async () => {
+                    setSettingsOpen(false);
+                    clearAuth();
+                    await signOut();
+                  }}
+                >
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="block px-3 py-2 text-xs text-foreground hover:bg-muted hover:text-crt-green transition-colors"
+                  onClick={() => setSettingsOpen(false)}
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/register"
+                  className="block px-3 py-2 text-xs text-foreground hover:bg-muted hover:text-crt-green transition-colors"
+                  onClick={() => setSettingsOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </>
+            )
           )}
 
           <div className="border-t border-border my-1" />

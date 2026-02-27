@@ -21,6 +21,7 @@ export function GameOverScreen() {
   const isProGame = useGameStore((s) => s.isPro);
   const startNewGame = useGameStore((s) => s.startNewGame);
   const isProUser = useAuthStore((s) => s.isPro);
+  const isAuthLoaded = useAuthStore((s) => s.isLoaded);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -35,7 +36,7 @@ export function GameOverScreen() {
   const maxDays = state.maxDays - 1;
 
   // Leaderboard only for Pro game modes played by Pro users
-  const canSubmit = isProGame && isProUser;
+  const canSubmit = isAuthLoaded && isProGame && isProUser;
 
   const handleSubmitScore = async () => {
     setSubmitStatus('submitting');
@@ -153,7 +154,7 @@ export function GameOverScreen() {
         </button>
 
         {/* Go Pro CTA (non-pro users only) */}
-        {!isProUser && (
+        {isAuthLoaded && !isProUser && (
           <Link
             href="/upgrade"
             className="retro-btn retro-btn-amber w-full py-3 text-xs font-bold font-pixel text-center block"
