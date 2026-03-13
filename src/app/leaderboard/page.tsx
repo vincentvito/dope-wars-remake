@@ -9,6 +9,7 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 export const metadata: Metadata = {
   title: 'Leaderboard — Top Drug Dealers',
   description: 'See who rules the streets. Top Dope Wars scores from players worldwide. Can you beat the best drug dealers in the game?',
+  alternates: { canonical: '/leaderboard' },
 };
 
 export const revalidate = 300; // Revalidate every 5 minutes
@@ -56,6 +57,19 @@ export default async function LeaderboardPage({
         totalCount={totalCount}
         initialMode={mode}
       />
+
+      {/* Cross-links for SEO */}
+      <div className="text-xs text-muted-foreground leading-relaxed mt-8 space-y-2 border-t border-crt-green/10 pt-6">
+        <p>
+          Want to climb the ranks? Read the{' '}
+          <Link href="/how-to-play" className="text-crt-cyan hover:underline">strategy guide</Link>{' '}
+          for tips on maximizing your net worth.
+        </p>
+        <p>
+          Unlock extended campaigns and compete on Pro leaderboards with{' '}
+          <Link href="/upgrade" className="text-crt-amber hover:underline">Dope Wars Pro</Link>.
+        </p>
+      </div>
 
       <JsonLd data={{
         '@context': 'https://schema.org',

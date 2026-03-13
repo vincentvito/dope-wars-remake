@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: 'How to Play Dope Wars — Rules, Tips & Strategy Guide',
   description:
     'Learn how to play Dope Wars. Complete guide to drug trading, districts, events, combat, and strategies to maximize your score in this classic drug game.',
+  alternates: { canonical: '/how-to-play' },
 };
 
 export default function HowToPlayPage() {
@@ -57,10 +58,16 @@ export default function HowToPlayPage() {
               district advances the clock by one day. Each district has its own danger
               level that affects how likely you are to encounter cops or muggers.
             </p>
+            <h3 className="font-pixel text-xs text-crt-cyan">Safe Zones</h3>
             <div className="retro-card p-4 border-crt-green/20">
               <ul className="space-y-2">
                 <li><span className="text-crt-cyan">Manhattan</span> — Safest area, lower prices on upscale goods</li>
                 <li><span className="text-crt-cyan">Central Park</span> — Relatively safe, balanced market</li>
+              </ul>
+            </div>
+            <h3 className="font-pixel text-xs text-crt-cyan">Danger Zones</h3>
+            <div className="retro-card p-4 border-crt-green/20">
+              <ul className="space-y-2">
                 <li><span className="text-crt-cyan">Brooklyn</span> — Moderate danger, good deals on street drugs</li>
                 <li><span className="text-crt-cyan">Bronx</span> — Dangerous, higher risk but better prices</li>
                 <li><span className="text-crt-cyan">Coney Island</span> — Dangerous, volatile drug market</li>
@@ -110,9 +117,13 @@ export default function HowToPlayPage() {
               When traveling between districts, you may encounter random events that can
               help or hurt your game:
             </p>
+            <h3 className="font-pixel text-xs text-crt-red">Threats</h3>
             <ul className="space-y-2">
               <li><span className="text-crt-red">Cop encounters</span> — Police may catch you carrying drugs. Fight or run.</li>
               <li><span className="text-crt-red">Muggers</span> — Thugs may try to steal your cash.</li>
+            </ul>
+            <h3 className="font-pixel text-xs text-crt-green">Opportunities</h3>
+            <ul className="space-y-2">
               <li><span className="text-crt-green">Coat finds</span> — Find a larger trenchcoat, increasing your inventory space.</li>
               <li><span className="text-crt-green">Drug finds</span> — Discover free drugs to add to your stash.</li>
               <li><span className="text-crt-green">Gun finds</span> — Pick up weapons to improve your odds in combat.</li>
@@ -179,6 +190,19 @@ export default function HowToPlayPage() {
           </div>
         </section>
 
+        {/* Cross-links */}
+        <div className="text-sm text-muted-foreground leading-relaxed space-y-2 border-t border-crt-green/10 pt-6">
+          <p>
+            Want to learn the full story? Read about the{' '}
+            <Link href="/about" className="text-crt-cyan hover:underline">history of Dope Wars</Link> from
+            the original 1984 game to this modern remake.
+          </p>
+          <p>
+            See how you compare on the{' '}
+            <Link href="/leaderboard" className="text-crt-cyan hover:underline">global leaderboard</Link>.
+          </p>
+        </div>
+
         {/* CTA */}
         <div className="space-y-3 pt-4">
           <Link
@@ -195,10 +219,16 @@ export default function HowToPlayPage() {
               LEADERBOARD
             </Link>
             <Link
+              href="/about"
+              className="retro-btn flex-1 py-2 text-[10px] text-center font-pixel"
+            >
+              ABOUT
+            </Link>
+            <Link
               href="/"
               className="retro-btn flex-1 py-2 text-[10px] text-center font-pixel"
             >
-              BACK TO MENU
+              MENU
             </Link>
           </div>
         </div>
@@ -210,6 +240,52 @@ export default function HowToPlayPage() {
         itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: appUrl },
           { '@type': 'ListItem', position: 2, name: 'How to Play', item: `${appUrl}/how-to-play` },
+        ],
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'How do you play Dope Wars?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Dope Wars is a drug trading game where you buy drugs at low prices and sell them at high prices across New York City districts. You start with $2,000 cash and $5,000 in debt. Travel between 6 districts over 30 days to maximize your net worth.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'What is the best strategy for Dope Wars?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Pay off your loan shark debt first — it grows at 10% daily. Then use the bank to earn 5% daily compound interest. Buy cheap drugs like Weed and Speed early to build capital, then invest in Cocaine and Heroin for the highest profit margins.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'Which districts are safest in Dope Wars?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Manhattan is the safest district with the lowest danger level. Central Park is also relatively safe. Brooklyn has moderate danger, while the Bronx, Coney Island, and the Ghetto are increasingly dangerous but offer better drug prices and bigger rewards.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'How does the bank work in Dope Wars?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'The bank pays 5% daily interest on deposits. Meanwhile, your loan shark debt grows at 10% per day. Smart players pay off debt first, then deposit cash to earn compound interest for the rest of the game.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'What is Dope Wars Pro?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Dope Wars Pro is a $7.99 one-time upgrade that unlocks extended campaigns (30, 45, or 60 days), drug labs, warehouses, international plane routes to Miami, LA, and Medellin, plantations, weapons, and Pro leaderboards.',
+            },
+          },
         ],
       }} />
     </main>

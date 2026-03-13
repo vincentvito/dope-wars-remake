@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: 'About Dope Wars — History of the Original 1984 Game',
   description:
     'The history of Dope Wars, from John E. Dell\'s original 1984 game to this modern web remake. Learn about the classic drug dealing game that started it all.',
+  alternates: { canonical: '/about' },
 };
 
 export default function AboutPage() {
@@ -58,18 +59,25 @@ export default function AboutPage() {
               making it a staple of high school classrooms everywhere. Students would pass
               calculators between classes, competing for the highest net worth.
             </p>
+
+            <h3 className="font-pixel text-xs text-crt-cyan">Platform Evolution</h3>
             <p>
               In the late 1990s, a Palm Pilot version brought the game to the emerging
-              mobile platform. The early 2000s saw versions appear on Java-enabled cell phones,
-              and eventually as apps on iOS and Android. Each version preserved the core
-              gameplay loop while adding its own twist — new cities, new drugs, new events.
+              mobile platform. The early 2000s saw versions appear on Java-enabled cell phones
+              and Windows Mobile devices. When the iPhone launched in 2007, Dope Wars was
+              among the earliest games ported to iOS, and Android versions soon followed.
+              Each version preserved the core gameplay loop while adding its own twist —
+              new cities, new drugs, new events.
             </p>
+
+            <h3 className="font-pixel text-xs text-crt-cyan">Legacy & Influence</h3>
             <p>
               The Dope Wars formula also inspired countless clones and spiritual successors.
               The basic video game dealer simulation — buy low, sell high, manage risk,
               survive a time limit — became its own sub-genre. Titles like &ldquo;Drugwars,&rdquo;
               &ldquo;Dealer,&rdquo; and &ldquo;Pusher&rdquo; all trace their lineage back to Dell&apos;s
-              original creation.
+              original creation. The game&apos;s economic mechanics have been echoed in trading
+              sims across genres, from space trading games to merchant RPGs.
             </p>
           </div>
         </section>
@@ -100,6 +108,20 @@ export default function AboutPage() {
             </p>
           </div>
         </section>
+
+        {/* Cross-links */}
+        <div className="text-sm text-muted-foreground leading-relaxed space-y-2 border-t border-crt-green/10 pt-6">
+          <p>
+            Ready to play? Check the{' '}
+            <Link href="/how-to-play" className="text-crt-cyan hover:underline">rules and strategy guide</Link>{' '}
+            for tips on maximizing your score.
+          </p>
+          <p>
+            Want the full experience? Upgrade to{' '}
+            <Link href="/upgrade" className="text-crt-amber hover:underline">Dope Wars Pro</Link>{' '}
+            for extended campaigns, drug labs, and international routes.
+          </p>
+        </div>
 
         {/* CTA */}
         <div className="space-y-3 pt-4">

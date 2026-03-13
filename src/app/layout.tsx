@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Press_Start_2P, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeSync } from "@/components/ThemeSync";
+import { JsonLd } from "@/components/seo/JsonLd";
 import "./globals.css";
 
 const pixelFont = Press_Start_2P({
@@ -64,6 +65,13 @@ export default function RootLayout({
           <div className="crt-overlay" />
           {children}
         </div>
+        <JsonLd data={{
+          '@context': 'https://schema.org',
+          '@type': 'Organization',
+          name: 'Dope Wars',
+          url: appUrl,
+          logo: `${appUrl}/icon-512.png`,
+        }} />
         <Analytics />
       </body>
     </html>
