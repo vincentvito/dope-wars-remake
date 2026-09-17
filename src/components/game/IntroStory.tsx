@@ -103,6 +103,7 @@ export function IntroStory({ onComplete, onBack }: IntroStoryProps) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.key === 'Enter' || e.key === ' ') && (e.target as HTMLElement).closest('button')) return;
       if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         handleAdvance();
@@ -121,7 +122,7 @@ export function IntroStory({ onComplete, onBack }: IntroStoryProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-start"
+      className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-start overflow-y-auto"
       onClick={(e) => {
         if (!isLastSlide && !(e.target as HTMLElement).closest('button')) {
           handleAdvance();
@@ -146,7 +147,7 @@ export function IntroStory({ onComplete, onBack }: IntroStoryProps) {
       {/* Back button */}
       {currentSlide > 0 && (
         <button
-          className="absolute top-4 left-4 z-10 text-[10px] text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors font-pixel"
+          className="absolute top-4 left-4 z-20 min-h-11 min-w-11 text-[10px] text-muted-foreground hover:text-foreground transition-colors font-pixel"
           onClick={(e) => {
             e.stopPropagation();
             handleBack();
@@ -158,7 +159,7 @@ export function IntroStory({ onComplete, onBack }: IntroStoryProps) {
 
       {/* Skip button */}
       <button
-        className="absolute top-4 right-4 z-10 text-[10px] text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors font-pixel"
+        className="absolute top-4 right-4 z-20 min-h-11 min-w-11 text-[10px] text-muted-foreground hover:text-foreground transition-colors font-pixel"
         onClick={(e) => {
           e.stopPropagation();
           onComplete();
@@ -169,7 +170,7 @@ export function IntroStory({ onComplete, onBack }: IntroStoryProps) {
 
       {/* Text content — upper half */}
       <div
-        className={`relative z-10 w-full max-w-md px-8 text-center pt-[20vh] transition-all duration-[250ms] ease-out ${
+        className={`relative z-10 shrink-0 pb-8 w-full max-w-md px-8 text-center pt-[20vh] transition-all duration-[250ms] ease-out ${
           visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
         }`}
       >
@@ -217,9 +218,9 @@ export function IntroStory({ onComplete, onBack }: IntroStoryProps) {
             START GAME
           </button>
         ) : (
-          <p className="text-[9px] text-muted-foreground/30 mt-6 animate-pulse font-pixel">
-            tap to continue
-          </p>
+          <button className="retro-btn mt-6 font-pixel text-xs" onClick={e => { e.stopPropagation(); handleAdvance(); }}>
+            CONTINUE
+          </button>
         )}
       </div>
     </div>

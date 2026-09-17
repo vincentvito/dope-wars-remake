@@ -22,6 +22,7 @@ export function ProTabBar() {
         {TABS.map((tab) => (
           <button
             key={tab.key}
+            aria-pressed={activeTab === tab.key}
             onClick={() => setTab(tab.key)}
             className={`py-3 text-center transition-colors ${
               activeTab === tab.key

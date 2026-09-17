@@ -1,8 +1,10 @@
 'use client';
 
+import { MotionImage } from '@/components/game/MotionImage';
 import { Suspense, useEffect, useState, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useGameStore } from '@/stores/game-store';
+import { useAuthStore } from '@/stores/auth-store';
 import { useUIStore } from '@/stores/ui-store';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
 import { GameShell } from '@/components/game/GameShell';
@@ -13,13 +15,13 @@ import type { GameMode } from '@/engine/types';
 function getBackgroundForLocation(location?: string): string {
   switch (location) {
     case 'Miami':
-      return '/sprites/game/miami-bg.png';
+      return '/sprites/game/miami-bg.webp';
     case 'Los Angeles':
-      return '/sprites/game/la-bg.png';
+      return '/sprites/game/la-bg.webp';
     case 'Medellin':
-      return '/sprites/game/medellin-bg.png';
+      return '/sprites/game/medellin-bg.webp';
     default:
-      return '/sprites/game/bronx-alley-bg.png';
+      return '/sprites/game/bronx-alley-bg.webp';
   }
 }
 
@@ -30,6 +32,8 @@ function GamePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
+  const saveError = useGameStore(s => s.saveError);
+  const hydrated = useGameStore((s) => s.hydrated);
   const gameState = useGameStore((s) => s.gameState);
   const proGameState = useGameStore((s) => s.proGameState);
   const isPro = useGameStore((s) => s.isPro);
@@ -49,37 +53,25 @@ function GamePageContent() {
 
   // On mount: decide whether to show mode select or auto-start classic
   useEffect(() => {
-    if (initDone.current) return;
-    if (!gameState && !proGameState) {
-      if (proSuccess) {
-        setOverlay('mode-select');
-        initDone.current = true;
-      } else {
-        startNewGame();
-        initDone.current = true;
-      }
-    }
-  }, [gameState, proGameState, startNewGame, proSuccess]);
-
-  // React to "New Game" from settings menu
-  useEffect(() => {
-    if (showModeSelect) {
-      setOverlay('mode-select');
-    }
-  }, [showModeSelect]);
+    if (initDone.current || !hydrated || saveError) return;
+    if (proSuccess) setShowModeSelect(true);
+    else if (!gameState && !proGameState) startNewGame();
+    initDone.current = true;
+  }, [gameState, proGameState, startNewGame, proSuccess, hydrated, saveError, setShowModeSelect]);
 
   // Clean pro_success from URL after reading it
   useEffect(() => {
     if (proSuccess) {
+      useAuthStore.getState().clear();
       router.replace('/game', { scroll: false });
     }
   }, [proSuccess, router]);
 
   // Mode select overlay (shown after Pro purchase or from settings "New Game")
-  if (overlay === 'mode-select') {
+  if (overlay === 'mode-select' || (showModeSelect && overlay !== 'intro-story')) {
     return (
-      <main className="fixed inset-0 bg-black flex flex-col items-center justify-center overflow-hidden">
-        <img
+      <main className="fixed inset-0 bg-black flex flex-col items-center justify-start overflow-y-auto py-8">
+        <MotionImage
           src="/sprites/landing/landing-bg.gif"
           alt=""
           className="absolute inset-0 w-full h-full object-cover object-bottom opacity-35 pointer-events-none"
@@ -109,7 +101,7 @@ function GamePageContent() {
   // Intro story overlay
   if (overlay === 'intro-story' && selectedMode) {
     return (
-      <main className="fixed inset-0 bg-black flex flex-col items-center justify-center overflow-hidden">
+      <main className="fixed inset-0 bg-black flex flex-col items-center justify-start overflow-y-auto py-8">
         <IntroStory
           onComplete={() => {
             startNewGame(selectedMode);
@@ -123,6 +115,12 @@ function GamePageContent() {
   }
 
   const hasGame = isPro ? !!proGameState : !!gameState;
+  if (!hasGame && hydrated && saveError) {
+    return <main className="min-h-screen flex flex-col items-center justify-center p-6 gap-4">
+      <p role="alert" className="text-crt-amber">{saveError}</p>
+      <button className="retro-btn" onClick={() => startNewGame()}>START NEW GAME</button>
+    </main>;
+  }
   if (!hasGame) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -136,10 +134,10 @@ function GamePageContent() {
   const bgSrc = getBackgroundForLocation(currentDistrict);
 
   return (
-    <main className="min-h-screen pb-8 relative">
+    <main className="min-h-screen relative">
       {/* Location-specific background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <img
+        <MotionImage
           key={bgSrc}
           src={bgSrc}
           alt=""

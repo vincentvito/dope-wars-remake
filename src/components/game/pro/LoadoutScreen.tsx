@@ -1,5 +1,6 @@
 'use client';
 
+import { ScreenDialog } from '../ScreenDialog';
 import { useState } from 'react';
 import { useGameStore } from '@/stores/game-store';
 import { WEAPON_DEFINITIONS, MAX_LOADOUT_SIZE } from '@/engine/pro-constants';
@@ -13,6 +14,11 @@ const TIER_COLORS: Record<string, string> = {
 };
 
 export function LoadoutScreen() {
+  const active = useGameStore(s => s.proGameState?.phase === 'loadout');
+  return active ? <LoadoutEditor /> : null;
+}
+
+function LoadoutEditor() {
   const state = useGameStore((s) => s.proGameState);
   const selectLoadoutAction = useGameStore((s) => s.selectLoadout);
   const [selected, setSelected] = useState<number[]>([]);
@@ -48,7 +54,7 @@ export function LoadoutScreen() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-start pt-[10vh] overflow-y-auto">
+    <ScreenDialog title="Choose your loadout" className="justify-start py-8">
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-sm flex flex-col items-center px-6 gap-4 pb-10">
@@ -72,6 +78,7 @@ export function LoadoutScreen() {
             return (
               <button
                 key={index}
+                aria-pressed={isSelected}
                 onClick={() => toggleWeapon(index)}
                 className={`retro-card w-full p-3 text-left transition-all ${
                   isSelected
@@ -122,6 +129,6 @@ export function LoadoutScreen() {
           ARM & FIGHT!
         </button>
       </div>
-    </div>
+    </ScreenDialog>
   );
 }

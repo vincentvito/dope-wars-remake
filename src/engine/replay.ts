@@ -1,9 +1,11 @@
+import { assertRun } from './validation';
 import { createNewGame, applyAction, calculateNetWorth } from './game';
 import type { PlayerAction, GameMode } from './types';
 import { emptyStats, collectActionStats, type GameTradeStats } from './stats-extractor';
 
 export interface ReplayResult {
   valid: boolean;
+  completed?: boolean;
   finalNetWorth: number;
   finalDay: number;
   finalCash: number;
@@ -31,12 +33,13 @@ export function replayGame(
   withStats = false
 ): ReplayResult {
   try {
+    assertRun({ seed, gameMode, actions });
     let state = createNewGame(seed, gameMode);
     const stats = withStats ? emptyStats() : undefined;
 
     for (const action of actions) {
       if (stats) collectActionStats(state, action, stats);
-      state = applyAction(state, action);
+      state = applyAction(state, action, false);
     }
 
     const netWorth = calculateNetWorth(state);
@@ -47,6 +50,7 @@ export function replayGame(
 
     return {
       valid: true,
+      completed: state.phase === 'game_over',
       finalNetWorth: netWorth,
       finalDay: state.currentDay,
       finalCash: state.cash,

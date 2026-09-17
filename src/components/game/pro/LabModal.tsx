@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { ScreenDialog } from '../ScreenDialog';
+import { useState } from 'react';
 import { useGameStore } from '@/stores/game-store';
 import { useUIStore } from '@/stores/ui-store';
 import { LAB_CUT_OPTIONS, LAB_CUT_MULTIPLIER, LAB_CUT_BUST_CHANCE, CUTTABLE_DRUGS } from '@/engine/pro-constants';
@@ -14,29 +15,23 @@ const RISK_LABELS: Record<number, { text: string; color: string }> = {
 };
 
 export function LabModal() {
+  const modal = useUIStore(s => s.activeModal);
+  const drug = useUIStore(s => s.selectedDrug) as DrugName | null;
+  const pending = useGameStore(s => s.proGameState?.labState);
+  if (modal !== 'lab' && !pending) return null;
+  return <LabEditor key={drug ?? pending?.drug ?? 'lab'} initialDrug={pending?.drug ?? drug} />;
+}
+
+function LabEditor({ initialDrug }: { initialDrug: DrugName | null }) {
   const state = useGameStore((s) => s.proGameState);
   const cutDrugs = useGameStore((s) => s.cutDrugs);
   const confirmLab = useGameStore((s) => s.confirmLab);
-  const activeModal = useUIStore((s) => s.activeModal);
-  const selectedDrugFromModal = useUIStore((s) => s.selectedDrug) as DrugName | null;
   const closeModal = useUIStore((s) => s.closeModal);
 
-  const [selectedDrug, setSelectedDrug] = useState<DrugName | null>(null);
-  const [cutPercent, setCutPercent] = useState<number>(25);
+  const [selectedDrug, setSelectedDrug] = useState<DrugName | null>(initialDrug);
+  const [cutPercent, setCutPercent] = useState<number>(state?.labState?.cutPercentage ?? 25);
 
-  const isOpen = activeModal === 'lab';
-
-  // Pre-select drug when opened from market CUT button
-  useEffect(() => {
-    if (isOpen && selectedDrugFromModal) {
-      setSelectedDrug(selectedDrugFromModal);
-    } else if (!isOpen) {
-      setSelectedDrug(null);
-      setCutPercent(25);
-    }
-  }, [isOpen, selectedDrugFromModal]);
-
-  if (!isOpen || !state) return null;
+  if (!state) return null;
 
   const drugsInInventory = state.inventory.filter((s) => s.quantity > 0 && CUTTABLE_DRUGS.has(s.drug));
   const selected = drugsInInventory.find((s) => s.drug === selectedDrug);
@@ -46,14 +41,13 @@ export function LabModal() {
 
   const handleCut = () => {
     if (selectedDrug) {
-      cutDrugs(selectedDrug, cutPercent);
-      confirmLab();
-      closeModal();
+      if (state.phase !== 'lab' && !cutDrugs(selectedDrug, cutPercent)) return;
+      if (confirmLab()) closeModal();
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-start pt-[10vh] overflow-y-auto">
+    <ScreenDialog title="Lab" className="justify-start py-8" onClose={() => { if (state.phase === 'lab') useGameStore.getState().cancelLab(); closeModal(); }}>
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-sm flex flex-col items-center px-6 gap-4 pb-10">
@@ -139,11 +133,11 @@ export function LabModal() {
         {/* Cancel button */}
         <button
           className="retro-btn w-full py-2 text-xs font-pixel"
-          onClick={closeModal}
+          onClick={() => { if (state.phase === 'lab') useGameStore.getState().cancelLab(); closeModal(); }}
         >
           CANCEL
         </button>
       </div>
-    </div>
+    </ScreenDialog>
   );
 }

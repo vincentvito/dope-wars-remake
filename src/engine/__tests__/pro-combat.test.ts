@@ -10,7 +10,7 @@ import { createProGame } from '../pro-game';
 import { buyAsset } from '../assets';
 import { addWeapon } from '../armory';
 import { SeededRNG } from '../rng';
-import type { Weapon } from '../types';
+import type { Weapon, ProGameState } from '../types';
 
 const TEST_SEED = 'combat-test-seed';
 
@@ -143,7 +143,7 @@ describe('resolveProFight', () => {
   });
 
   it('ends combat when officer defeated', () => {
-    let state = createCombatState();
+    let state: ProGameState = createCombatState();
     state = {
       ...state,
       proCombat: { ...state.proCombat!, officerHealth: 1 },
@@ -155,7 +155,7 @@ describe('resolveProFight', () => {
   });
 
   it('game over when player dies', () => {
-    let state = createCombatState();
+    let state: ProGameState = createCombatState();
     state = { ...state, health: 1 };
     state = {
       ...state,
@@ -191,7 +191,7 @@ describe('resolveProFight', () => {
 
 describe('resolveProRun', () => {
   it('applies fines and confiscation on successful escape', () => {
-    let state = createCombatState();
+    let state: ProGameState = createCombatState();
     state = {
       ...state,
       proCombat: { ...state.proCombat!, roundsElapsed: 10 },
@@ -227,7 +227,7 @@ describe('resolveProRun', () => {
   });
 
   it('preserves loadout weapons on successful escape', () => {
-    let state = createCombatState();
+    let state: ProGameState = createCombatState();
     state = addWeapon(state, PISTOL);
     state = {
       ...state,
@@ -255,7 +255,7 @@ describe('resolveProRun', () => {
 
 describe('resolveProFight — weapon consumption', () => {
   it('removes loadout weapons from armory when officer is defeated', () => {
-    let state = createCombatState();
+    let state: ProGameState = createCombatState();
     const uzi: Weapon = { name: 'Uzi', tier: 'SMG', foundDay: 1 };
     state = addWeapon(state, PISTOL);
     state = addWeapon(state, uzi);
@@ -278,7 +278,7 @@ describe('resolveProFight — weapon consumption', () => {
   });
 
   it('does not consume weapons during mid-combat rounds', () => {
-    let state = createCombatState();
+    let state: ProGameState = createCombatState();
     state = addWeapon(state, PISTOL);
     state = {
       ...state,

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Press_Start_2P, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { GamePersistence } from "@/components/game/GamePersistence";
 import { ThemeSync } from "@/components/ThemeSync";
 import { JsonLd } from "@/components/seo/JsonLd";
 import "./globals.css";
@@ -61,6 +62,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${pixelFont.variable} ${monoFont.variable} antialiased bg-black`}>
         <ThemeSync />
+        <GamePersistence />
         <div className="app-viewport">
           <div className="crt-overlay" />
           {children}
@@ -72,7 +74,7 @@ export default function RootLayout({
           url: appUrl,
           logo: `${appUrl}/icon-512.png`,
         }} />
-        <Analytics />
+        {process.env.VERCEL === '1' && <Analytics />}
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import { useRef, useEffect } from 'react';
 import { Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useUIStore } from '@/stores/ui-store';
+import { useGameStore } from '@/stores/game-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { signOut } from '@/actions/auth';
 
@@ -33,8 +34,10 @@ export function SettingsMenu() {
       }
     }
 
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') { setSettingsOpen(false); ref.current?.querySelector('button')?.focus(); } };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', onKey);
+    return () => { document.removeEventListener('mousedown', handleClickOutside); document.removeEventListener('keydown', onKey); };
   }, [settingsOpen, setSettingsOpen]);
 
   return (
@@ -43,12 +46,14 @@ export function SettingsMenu() {
         onClick={() => setSettingsOpen(!settingsOpen)}
         className="text-muted-foreground hover:text-crt-green transition-colors p-1"
         aria-label="Settings"
+        aria-expanded={settingsOpen}
+        aria-controls="game-settings"
       >
         <Settings size={16} />
       </button>
 
       {settingsOpen && (
-        <div className="absolute right-0 top-full mt-1 z-50 bg-[var(--surface)] border border-[var(--border-strong)] min-w-[180px] py-1">
+        <div id="game-settings" className="absolute right-0 top-full mt-1 z-50 bg-[var(--surface)] border border-[var(--border-strong)] min-w-[180px] py-1">
           {/* User identity */}
           {isLoaded && (
             isLoggedIn ? (
@@ -109,7 +114,8 @@ export function SettingsMenu() {
             className="block w-full text-left px-3 py-2 text-xs text-foreground hover:bg-muted hover:text-crt-cyan transition-colors"
             onClick={() => {
               setSettingsOpen(false);
-              useUIStore.getState().setShowModeSelect(true);
+              const store = useGameStore.getState();
+              if (!store.isPlaying || window.confirm('Start a new game? This replaces your saved run.')) useUIStore.getState().setShowModeSelect(true);
             }}
           >
             New Game

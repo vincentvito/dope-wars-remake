@@ -15,13 +15,11 @@ export function StatisticsOverlay({ onClose }: StatisticsOverlayProps) {
   const isPro = useAuthStore((s) => s.isPro);
   const isLoaded = useAuthStore((s) => s.isLoaded);
   const [stats, setStats] = useState<UserStats | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isLoaded && isLoggedIn && isPro) {
-      setLoading(true);
-      setError(null);
       getUserStats()
         .then(({ stats, error }) => {
           if (error) setError(error);

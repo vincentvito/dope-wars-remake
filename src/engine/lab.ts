@@ -130,7 +130,7 @@ function resolveBust(
   const lostQuantity = Math.floor(originalQuantity * LAB_BUST_DRUG_LOSS);
   const remainingQuantity = originalQuantity - lostQuantity;
 
-  let newInventory = state.inventory.map((s) =>
+  const newInventory = state.inventory.map((s) =>
     s.drug === drug ? { ...s, quantity: remainingQuantity } : s
   ).filter((s) => s.quantity > 0);
 

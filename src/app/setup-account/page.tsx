@@ -3,9 +3,13 @@
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { setupProAccount } from '@/actions/stripe';
+import { useAuthHydration } from '@/hooks/useAuthHydration';
+import { useAuthStore } from '@/stores/auth-store';
+import { setupProAccount, claimProPurchase } from '@/actions/stripe';
 
 function SetupAccountForm() {
+  useAuthHydration();
+  const loggedIn = useAuthStore(s => s.isLoggedIn);
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [error, setError] = useState<string | null>(null);
@@ -54,18 +58,30 @@ function SetupAccountForm() {
           WELCOME TO PRO
         </h1>
         <p className="text-xs text-muted-foreground">
-          Payment confirmed. Create your account to start playing.
+          Create an account or sign in to activate your purchase.
         </p>
       </div>
 
+      {loggedIn ? (
+        <button className="retro-btn w-full" disabled={isSubmitting} onClick={async () => {
+          setIsSubmitting(true);
+          try { const result = await claimProPurchase(sessionId); if (result?.error) setError(result.error); }
+          catch { setError('Could not activate Pro. Please try again.'); }
+          finally { setIsSubmitting(false); }
+        }}>ACTIVATE PRO ON MY ACCOUNT</button>
+      ) : (
+        <Link className="text-crt-cyan text-sm underline" href={`/login?redirect=${encodeURIComponent(`/setup-account?session_id=${sessionId}`)}`}>
+          Already have an account? Sign in to activate Pro
+        </Link>
+      )}
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+          <label htmlFor="username" className="text-[10px] text-muted-foreground uppercase tracking-wider">
             Username
           </label>
           <input
-            name="username"
+            id="username" name="username"
             type="text"
             required
             minLength={3}
@@ -81,11 +97,11 @@ function SetupAccountForm() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-[10px] text-muted-foreground uppercase tracking-wider">
+          <label htmlFor="password" className="text-[10px] text-muted-foreground uppercase tracking-wider">
             Password
           </label>
           <input
-            name="password"
+            id="password" name="password"
             type="password"
             required
             minLength={6}

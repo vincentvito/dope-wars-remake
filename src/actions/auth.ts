@@ -3,20 +3,15 @@
 import { createClient, createServiceClient, isSupabaseConfigured } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 
-function sanitizeRedirect(url: string | null): string {
-  if (!url || !url.startsWith('/') || url.startsWith('//')) {
-    return '/';
-  }
-  return url;
-}
+import { sanitizeRedirect } from '@/lib/redirect';
 
 export async function signUp(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-  const username = formData.get('username') as string;
+  const email = formData.get('email');
+  const password = formData.get('password');
+  const username = formData.get('username');
   const redirectTo = sanitizeRedirect(formData.get('redirectTo') as string);
 
-  if (!email || !password || !username) {
+  if (typeof email !== 'string' || typeof password !== 'string' || typeof username !== 'string' || !email || !password || !username) {
     return { error: 'All fields are required' };
   }
   if (username.length < 3 || username.length > 20) {
@@ -25,7 +20,7 @@ export async function signUp(formData: FormData) {
   if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
     return { error: 'Username can only contain letters, numbers, hyphens, and underscores' };
   }
-  if (password.length < 6) {
+  if (password.length < 6 || password.length > 128) {
     return { error: 'Password must be at least 6 characters' };
   }
 
@@ -43,34 +38,14 @@ export async function signUp(formData: FormData) {
       return { error: 'Username is already taken' };
     }
 
-    // Create user via admin API (email auto-confirmed, no confirmation email needed)
-    const { data: authData, error: authError } = await serviceClient.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: {
-        username,
-        display_name: username,
-      },
-    });
-
-    if (authError || !authData.user) {
-      if (authError?.message?.includes('already been registered')) {
-        return { error: 'An account with this email already exists. Please log in instead.' };
-      }
-      return { error: authError?.message || 'Failed to create account' };
-    }
-
-    // Sign in immediately (sets session cookies)
+    // Use normal signup so the configured email verification and abuse controls apply.
     const supabase = await createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+    const { data, error } = await supabase.auth.signUp({
+      email, password,
+      options: { data: { username, display_name: username } },
     });
-
-    if (signInError) {
-      return { error: 'Account created but sign-in failed. Please log in manually.' };
-    }
+    if (error) return { error: 'Unable to create account. Check your details or sign in.' };
+    if (!data.session) return { message: 'Check your email to confirm your account, then sign in.' };
   } catch {
     return { error: 'An unexpected error occurred. Please try again.' };
   }
@@ -79,12 +54,14 @@ export async function signUp(formData: FormData) {
 }
 
 export async function signIn(formData: FormData) {
+  if (!isSupabaseConfigured()) return { error: 'Sign in is temporarily unavailable. You can still play as a guest.' };
   const supabase = await createClient();
 
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+  const email = formData.get('email');
+  const password = formData.get('password');
   const redirectTo = sanitizeRedirect(formData.get('redirectTo') as string);
 
+  if (typeof email !== 'string' || typeof password !== 'string' || !email || !password || password.length > 128) return { error: 'Enter a valid email and password.' };
   try {
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -93,7 +70,7 @@ export async function signIn(formData: FormData) {
 
     if (error) {
       if (error.message === 'Email not confirmed') {
-        return { error: 'Your email is not confirmed. Please register again to create a new account.' };
+        return { error: 'Confirm your email using the link in your inbox, then sign in.' };
       }
       return { error: error.message };
     }
@@ -133,40 +110,8 @@ export async function getProStatus(): Promise<{
       .eq('id', user.id)
       .single();
 
-    // If not pro, check for orphaned purchases with this email
-    if (!profile?.is_pro && user.email) {
-      try {
-        const serviceClient = await createServiceClient();
-        const { data: purchase } = await serviceClient
-          .from('purchases')
-          .select('id')
-          .eq('email', user.email)
-          .eq('status', 'completed')
-          .is('user_id', null)
-          .limit(1)
-          .single();
-
-        if (purchase) {
-          await serviceClient
-            .from('purchases')
-            .update({ user_id: user.id })
-            .eq('id', purchase.id);
-          await serviceClient
-            .from('profiles')
-            .update({ is_pro: true, pro_purchased_at: new Date().toISOString() })
-            .eq('id', user.id);
-
-          return {
-            isLoggedIn: true,
-            isPro: true,
-            username: profile?.username ?? null,
-          };
-        }
-      } catch {
-        // Purchase linking failed — not critical, user can still play
-      }
-    }
-
+    // Never claim purchases using email alone. Legacy accounts were auto-confirmed.
+    // A guest purchase is claimed with its private checkout setup link instead.
     return {
       isLoggedIn: true,
       isPro: profile?.is_pro ?? false,

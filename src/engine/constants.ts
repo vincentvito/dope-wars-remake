@@ -52,6 +52,7 @@ export const STARTING_TRENCHCOAT_SPACE = 100;
 export const STARTING_DISTRICT: DistrictName = 'Bronx';
 
 export const LOAN_SHARK_INTEREST_RATE = 0.10; // 10% per day
+export const BANK_INTEREST_RATE = 0.05;
 export const MAX_GUNS = 5;
 export const GUN_PRICE = 400;
 export const GUN_DAMAGE_BONUS = 5;

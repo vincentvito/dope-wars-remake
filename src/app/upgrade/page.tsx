@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/auth-store';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
@@ -15,6 +16,14 @@ const PRO_BENEFITS = [
   'Collect weapons & survive DEA raids',
   'Compete on the Pro Leaderboards',
 ];
+
+function PaymentNotice() {
+  const status = useSearchParams().get('payment');
+  if (!status) return null;
+  return <p role="status" className="text-sm text-crt-amber">{status === 'pending'
+    ? 'Your payment is still processing. Wait for the confirmation email before starting another checkout.'
+    : 'We could not verify your payment yet. Check your confirmation email for the setup link before paying again.'}</p>;
+}
 
 export default function UpgradePage() {
   useAuthHydration();
@@ -52,6 +61,7 @@ export default function UpgradePage() {
   return (
     <main className="fixed inset-0 bg-black flex flex-col items-center justify-center overflow-y-auto">
       <div className="w-full max-w-sm px-6 py-10 space-y-8">
+        <Suspense><PaymentNotice /></Suspense>
         {/* Header */}
         <div className="text-center space-y-3">
           <h1 className="font-pixel text-2xl text-crt-amber text-glow-amber">

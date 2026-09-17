@@ -115,7 +115,7 @@ export function generateTravelEvents(
  * Returns the updated state.
  */
 export function applyEventEffects(state: GameState, event: GameEvent): GameState {
-  let newState = { ...state };
+  const newState = { ...state };
 
   if (event.cashChange) {
     newState.cash = Math.max(0, newState.cash + event.cashChange);

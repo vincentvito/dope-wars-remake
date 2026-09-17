@@ -1,4 +1,4 @@
-import type { ProGameState, ProCombatState, EncounterType, Weapon } from './types';
+import type { ProGameState, ProCombatState, EncounterType, Weapon, LocationName } from './types';
 import { SeededRNG } from './rng';
 import {
   ENCOUNTER_STATS,
@@ -20,8 +20,8 @@ import { meetsUnlockRequirements } from './cities';
  * Get encounter chance for a destination. Returns 1-in-N.
  * Factors: destination danger level, Submarine (-20%).
  */
-export function getEncounterChance(state: ProGameState, destination: string): number {
-  const dangerLevel = getLocationDangerLevel(destination as any);
+export function getEncounterChance(state: ProGameState, destination: LocationName): number {
+  const dangerLevel = getLocationDangerLevel(destination);
 
   // Base chance: 1 in (10 - dangerLevel), capped at min 4
   let baseChance = Math.max(4, 10 - dangerLevel);

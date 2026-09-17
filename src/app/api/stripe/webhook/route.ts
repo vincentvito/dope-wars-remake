@@ -1,3 +1,4 @@
+import { isPaidProCheckout } from '@/lib/checkout';
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { resend } from '@/lib/resend';
@@ -26,8 +27,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
-  if (event.type === 'checkout.session.completed') {
+  if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
     const session = event.data.object;
+    if (session.payment_status !== 'paid') return NextResponse.json({ received: true });
+    const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 2 });
+    if (!isPaidProCheckout(session, items.data.map(item => item.price?.id), process.env.STRIPE_PRO_PRICE_ID)) {
+      return NextResponse.json({ received: true });
+    }
     const email = session.customer_details?.email;
     const loggedInUserId = session.metadata?.user_id ?? null;
 
@@ -76,6 +82,7 @@ export async function POST(request: NextRequest) {
 
       if (profileError) {
         console.error('Failed to upgrade profile in webhook:', profileError);
+        return NextResponse.json({ error: 'Activation failed' }, { status: 500 });
       }
     }
 
@@ -93,7 +100,6 @@ export async function POST(request: NextRequest) {
         sessionId: session.id,
       });
 
-      console.log('[webhook] Sending welcome email', { from: fromEmail, to: email, isExistingUser });
 
       try {
         const { data, error: emailError } = await resend.emails.send({
@@ -101,7 +107,7 @@ export async function POST(request: NextRequest) {
           to: email,
           subject: 'Welcome to Dope Wars Pro!',
           html: emailHtml,
-        });
+        }, { idempotencyKey: `pro-welcome/${session.id}` });
 
         if (emailError) {
           console.error('[webhook] Resend API error:', JSON.stringify(emailError));

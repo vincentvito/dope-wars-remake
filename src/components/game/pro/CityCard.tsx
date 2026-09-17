@@ -16,24 +16,29 @@ interface CityCardProps {
   isCurrent: boolean;
   isUnlocked: boolean;
   travelCost: number;
+  canAfford: boolean;
   onTravel: () => void;
 }
 
-export function CityCard({ city, isCurrent, isUnlocked, travelCost, onTravel }: CityCardProps) {
+export function CityCard({ city, isCurrent, isUnlocked, travelCost, canAfford, onTravel }: CityCardProps) {
   const danger = DANGER_LABELS[city.dangerLevel] ?? DANGER_LABELS[3];
   const isLocked = !isUnlocked && !isCurrent;
 
   return (
-    <div
-      className={`retro-card p-3 transition-all ${
+    <button
+      type="button"
+      aria-label={`Travel to ${city.name}`}
+      disabled={isLocked || isCurrent || !canAfford}
+      className={`w-full text-left retro-card p-3 transition-all ${
         isLocked
           ? 'border-dashed border-muted-foreground/30 opacity-60'
           : isCurrent
             ? 'border-crt-cyan/30 opacity-50'
             : 'border-border hover:border-crt-cyan/50 cursor-pointer'
       }`}
-      onClick={!isLocked && !isCurrent ? onTravel : undefined}
+      onClick={onTravel}
     >
+      {!isLocked && !isCurrent && !canAfford && <p className="text-xs text-crt-amber mb-2">Not enough cash for this trip</p>}
       <div className="flex items-center justify-between">
         <div>
           <div className="font-pixel text-xs text-foreground">
@@ -60,6 +65,6 @@ export function CityCard({ city, isCurrent, isUnlocked, travelCost, onTravel }: 
           ) : null}
         </div>
       </div>
-    </div>
+    </button>
   );
 }

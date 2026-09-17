@@ -1,7 +1,9 @@
 'use client';
 
+import { MotionImage } from '@/components/game/MotionImage';
 import { useState } from 'react';
 import Link from 'next/link';
+import { ScreenDialog } from './ScreenDialog';
 import { useGameStore } from '@/stores/game-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { formatCurrency } from '@/lib/utils';
@@ -46,7 +48,7 @@ export function GameOverScreen() {
       const result = await submitGameScore({
         seed: state.seed,
         gameMode: state.gameMode,
-        actions: state.actionLog as any,
+        actions: state.actionLog,
       });
 
       if ('error' in result && result.error) {
@@ -62,9 +64,9 @@ export function GameOverScreen() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center overflow-y-auto overflow-x-hidden">
+    <ScreenDialog title="Game over" className="justify-start py-8">
       {/* Full-screen GIF background */}
-      <img
+      <MotionImage
         src={getGameOverGif(netWorth)}
         alt=""
         className="absolute inset-0 w-full h-full object-cover object-center opacity-35 pointer-events-none"
@@ -76,7 +78,7 @@ export function GameOverScreen() {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
 
       {/* Content overlay */}
-      <div className="relative z-10 w-full max-w-sm flex flex-col items-center px-6 gap-6 py-10">
+      <div className="relative z-10 my-auto shrink-0 w-full max-w-sm flex flex-col items-center px-6 gap-6 py-10">
         {/* Title */}
         <div className="text-center space-y-3">
           <h2 className={`font-pixel text-2xl ${isDead || !isPositive ? 'text-crt-red text-glow-red' : 'text-crt-green text-glow-green'}`}>
@@ -163,6 +165,6 @@ export function GameOverScreen() {
           </Link>
         )}
       </div>
-    </div>
+    </ScreenDialog>
   );
 }

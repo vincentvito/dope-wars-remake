@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { MotionImage } from '@/components/game/MotionImage';
 import { HomeClient } from '@/components/home/HomeClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 
@@ -7,15 +8,15 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 export default function HomePage() {
   return (
     <>
-      <main className="fixed inset-0 bg-black flex flex-col items-center justify-start pt-[6vh] overflow-hidden">
+      <main className="relative min-h-[100dvh] bg-black flex flex-col items-center justify-start pt-8 pb-6 gap-8">
         {/* GIF Background */}
-        <img
+        <MotionImage
           src="/sprites/landing/landing-bg.gif"
           alt="Pixel art city street scene from the Dope Wars drug trading game"
           className="absolute inset-0 w-full h-full object-cover object-bottom opacity-35 pointer-events-none"
           style={{ imageRendering: 'pixelated' as const }}
           draggable={false}
-          loading="lazy"
+          fetchPriority="high"
           decoding="async"
         />
 
@@ -23,7 +24,7 @@ export default function HomePage() {
         <HomeClient
           heroContent={
             <div className="text-center space-y-4">
-              <h1 className="font-pixel text-4xl text-crt-cyan text-glow-blue tracking-wider">
+              <h1 className="font-pixel text-3xl text-crt-cyan text-glow-blue tracking-wider">
                 DOPE WARS
               </h1>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -35,7 +36,7 @@ export default function HomePage() {
         />
 
         {/* Footer — always pinned to bottom */}
-        <div className="absolute bottom-4 z-10 text-[10px] text-muted-foreground/50 text-center space-y-1">
+        <div className="relative mt-auto px-4 z-10 text-[10px] text-muted-foreground text-center space-y-1">
           <p>A modern remake of the original 1984 dope wars game by John E. Dell</p>
           <p>
             <Link href="/how-to-play" className="hover:text-muted-foreground transition-colors">How to Play</Link>

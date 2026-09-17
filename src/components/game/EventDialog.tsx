@@ -1,5 +1,7 @@
 'use client';
 
+import { MotionImage } from '@/components/game/MotionImage';
+import { ScreenDialog } from './ScreenDialog';
 import { useGameStore } from '@/stores/game-store';
 
 const EVENT_GIFS: Record<string, string> = {
@@ -46,10 +48,10 @@ export function EventDialog() {
   const gifSrc = EVENT_GIFS[event.type];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center overflow-hidden">
+    <ScreenDialog title="Street event" className="justify-start py-8">
       {/* Full-screen GIF background */}
       {gifSrc && (
-        <img
+        <MotionImage
           src={gifSrc}
           alt=""
           className="absolute inset-0 w-full h-full object-cover object-center opacity-35 pointer-events-none"
@@ -62,7 +64,7 @@ export function EventDialog() {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
 
       {/* Content overlay */}
-      <div className="relative z-10 w-full max-w-sm flex flex-col items-center px-6 gap-4">
+      <div className="relative z-10 my-auto shrink-0 w-full max-w-sm flex flex-col items-center px-6 gap-4">
         {/* Title */}
         <h2 className={`font-pixel text-lg ${
           isPositive ? 'text-crt-green text-glow-green' :
@@ -114,6 +116,6 @@ export function EventDialog() {
           </button>
         )}
       </div>
-    </div>
+    </ScreenDialog>
   );
 }

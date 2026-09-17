@@ -1,3 +1,4 @@
+import { assertAction, CHOICE_EVENTS } from './validation';
 import type { GameState, PlayerAction, DistrictName, DrugName, GameMode } from './types';
 import {
   STARTING_CASH,
@@ -49,7 +50,8 @@ export function createNewGame(seed: string, gameMode: GameMode = '30'): GameStat
  * Apply a player action to the game state.
  * This is the main dispatch function — all game logic flows through here.
  */
-export function applyAction(state: GameState, action: PlayerAction): GameState {
+export function applyAction(state: GameState, action: PlayerAction, recordAction = true): GameState {
+  assertAction(action, false);
   if (!isValidAction(state.phase, action.type)) {
     throw new Error(`Invalid action "${action.type}" in phase "${state.phase}"`);
   }
@@ -57,7 +59,7 @@ export function applyAction(state: GameState, action: PlayerAction): GameState {
   // Record action in the log (for replay validation)
   const stateWithLog: GameState = {
     ...state,
-    actionLog: [...state.actionLog, action],
+    actionLog: recordAction ? [...state.actionLog, action] : state.actionLog,
   };
 
   switch (action.type) {
@@ -171,6 +173,10 @@ function handleEventResponse(state: GameState, accept: boolean): GameState {
   }
 
   let newState: GameState;
+
+  if (!accept && !CHOICE_EVENTS.has(state.activeEvent.type)) {
+    throw new Error("This event must be resolved");
+  }
 
   if (accept) {
     // Apply the event's effects

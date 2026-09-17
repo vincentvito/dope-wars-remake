@@ -49,10 +49,10 @@ export function BuySellDialog() {
   const totalCost = price * quantity;
 
   const handleConfirm = useCallback(() => {
-    if (!selectedDrug || quantity <= 0) return;
+    if (!selectedDrug || !Number.isSafeInteger(quantity) || quantity <= 0 || quantity > maxQty) return;
 
     if (isBuy) {
-      buyDrug(selectedDrug, quantity);
+      if (!buyDrug(selectedDrug, quantity)) return;
       addNotification(
         `Bought ${quantity} ${selectedDrug} @ ${formatCurrency(price)}`,
         'neutral'
@@ -60,7 +60,7 @@ export function BuySellDialog() {
     } else {
       const avgBuyPrice = inventory?.find((s) => s.drug === selectedDrug)?.avgBuyPrice ?? price;
       const pnl = (price - avgBuyPrice) * quantity;
-      sellDrug(selectedDrug, quantity);
+      if (!sellDrug(selectedDrug, quantity)) return;
       const sign = pnl >= 0 ? '+' : '-';
       const colorType = pnl > 0 ? 'profit' : pnl < 0 ? 'loss' : 'neutral';
       addNotification(
@@ -71,7 +71,7 @@ export function BuySellDialog() {
 
     setQuantity(0);
     closeModal();
-  }, [selectedDrug, quantity, isBuy, price, inventory, buyDrug, sellDrug, addNotification, closeModal]);
+  }, [selectedDrug, quantity, maxQty, isBuy, price, inventory, buyDrug, sellDrug, addNotification, closeModal]);
 
   const handleOpenChange = useCallback((open: boolean) => {
     if (!open) {
@@ -165,6 +165,7 @@ export function BuySellDialog() {
                 <div className="flex items-center gap-2">
                   <input
                     type="range"
+                    aria-label="Quantity"
                     min={0}
                     max={maxQty}
                     value={quantity}
@@ -197,6 +198,14 @@ export function BuySellDialog() {
             )}
           </div>
 
+          <label className="block text-xs text-muted-foreground">
+            Exact quantity
+            <input type="number" inputMode="numeric" min={0} max={maxQty} step={1} value={quantity}
+              onChange={e => clampAndSet(Math.floor(Number(e.target.value) || 0))}
+              className="mt-1 w-full border border-border bg-background p-2 text-base text-foreground" />
+          </label>
+          {isSell && selectedDrug && <p className="text-xs text-muted-foreground">Trade profit / loss: {formatCurrency((price - (inventory?.find(s => s.drug === selectedDrug)?.avgBuyPrice ?? price)) * quantity)}</p>}
+          {maxQty === 0 && <p className="text-xs text-crt-amber">{isBuy ? 'Not enough cash or coat space for this drug.' : 'Nothing available to sell here.'}</p>}
           {/* Total */}
           <div className="flex justify-between text-xs border-t border-border pt-2">
             <span className="text-muted-foreground">

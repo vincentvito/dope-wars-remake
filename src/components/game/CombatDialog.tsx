@@ -1,5 +1,7 @@
 'use client';
 
+import { MotionImage } from '@/components/game/MotionImage';
+import { ScreenDialog } from './ScreenDialog';
 import { useGameStore } from '@/stores/game-store';
 import { useCombatAnimation } from './combat/useCombatAnimation';
 
@@ -49,9 +51,9 @@ export function CombatDialog() {
     : `${displayHealth}HP | ${buffered?.guns ?? guns} gun${(buffered?.guns ?? guns) !== 1 ? 's' : ''}`;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-start pt-[15vh] overflow-hidden">
+    <ScreenDialog title="Combat encounter" className="justify-start py-8">
       {/* Full-screen GIF background */}
-      <img
+      <MotionImage
         src="/sprites/combat/combat-idle.gif"
         alt=""
         className="absolute inset-0 w-full h-full object-cover object-center opacity-35 pointer-events-none"
@@ -73,7 +75,7 @@ export function CombatDialog() {
 
       {/* Content overlay */}
       <div
-        className="relative z-10 w-full max-w-sm flex flex-col items-center px-6 gap-4"
+        className="relative z-10 my-auto shrink-0 w-full max-w-sm flex flex-col items-center px-6 gap-4"
         style={isShaking ? { animation: 'combat-shake 0.4s ease-out' } : undefined}
       >
         {/* Title */}
@@ -147,6 +149,6 @@ export function CombatDialog() {
           </button>
         </div>
       </div>
-    </div>
+    </ScreenDialog>
   );
 }

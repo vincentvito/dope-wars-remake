@@ -424,3 +424,40 @@
   border-color: var(--crt-red);
   color: var(--crt-red);
 }
+
+/* Keep the compact terminal identity without truncating prices or touch controls. */
+.market-table { container-type: inline-size; container-name: market; }
+.market-row {
+  display: grid;
+  grid-template-columns: minmax(58px, 1.1fr) minmax(62px, 1fr) minmax(28px, .55fr) minmax(62px, 1fr) 104px;
+  gap: 4px;
+  align-items: center;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.market-actions { display: flex; gap: 4px; padding-left: 12px; }
+@container market (max-width: 339px) {
+  .market-row {
+    grid-template-columns: minmax(58px, 1.1fr) minmax(62px, 1fr) minmax(28px, .55fr) minmax(62px, 1fr) 56px;
+  }
+  .market-actions { flex-direction: column; }
+  .market-action-headings { gap: 2px; }
+}
+.retro-btn { min-height: 44px; touch-action: manipulation; }
+button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--crt-cyan);
+  outline-offset: 3px;
+}
+input[type="range"] { min-height: 32px; }
+[data-slot="dialog-header"] { padding-inline: 16px; }
+[data-theme="synthwave"] { --muted-foreground: #ab9bc5; }
+[data-theme="miami"] { --muted-foreground: #9aafc4; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .crt-overlay { display: none; }
+}
+@supports (padding: env(safe-area-inset-bottom)) {
+  .fixed.bottom-0 { padding-bottom: env(safe-area-inset-bottom); }
+}
+
+.game-scroll { padding-bottom: calc(10rem + env(safe-area-inset-bottom, 0px)); }

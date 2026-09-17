@@ -1,14 +1,13 @@
 import type { GameState } from './types';
-import { LOAN_SHARK_INTEREST_RATE } from './constants';
+import { LOAN_SHARK_INTEREST_RATE, BANK_INTEREST_RATE } from './constants';
 
 /**
  * Accrue daily loan shark interest on outstanding debt.
  * Called automatically when traveling (day advances).
  */
 export function accrueInterest(state: GameState): GameState {
-  if (state.debt <= 0) return state;
   const interest = Math.floor(state.debt * LOAN_SHARK_INTEREST_RATE);
-  return { ...state, debt: state.debt + interest };
+  return { ...state, debt: state.debt + interest, bank: state.bank + Math.floor(state.bank * BANK_INTEREST_RATE) };
 }
 
 /**

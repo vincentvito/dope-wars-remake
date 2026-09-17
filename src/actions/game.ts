@@ -1,6 +1,8 @@
 'use server';
 
 import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { assertRun, MAX_SAVE_BYTES } from '@/engine/validation';
+import { restoreGame, serializeGame } from '@/engine/saved-game';
 import { replayGame } from '@/engine/replay';
 import { replayProGame } from '@/engine/pro-replay';
 import { isProMode } from '@/engine/pro-game';
@@ -11,6 +13,8 @@ export async function submitGameScore(input: {
   gameMode: GameMode;
   actions: (PlayerAction | ProPlayerAction)[];
 }) {
+  try { assertRun(input); if (JSON.stringify(input).length > MAX_SAVE_BYTES) throw new Error(); }
+  catch { return { error: 'Invalid game data' }; }
   const supabase = await createClient();
 
   // 1. Authenticate
@@ -44,26 +48,12 @@ export async function submitGameScore(input: {
     ? replayProGame(input.seed, input.gameMode, input.actions as ProPlayerAction[], true)
     : replayGame(input.seed, input.gameMode, input.actions as PlayerAction[], true);
 
-  if (!result.valid) {
+  if (!result.valid || !result.completed) {
     return { error: 'Game validation failed' };
   }
 
   // 4. Use service client to write to leaderboard (bypasses RLS)
   const serviceClient = await createServiceClient();
-
-  // Check for duplicate submission (same user, seed, mode)
-  const { data: existingSession } = await serviceClient
-    .from('game_sessions')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('seed', input.seed)
-    .eq('game_mode', input.gameMode)
-    .eq('status', 'completed')
-    .maybeSingle();
-
-  if (existingSession) {
-    return { error: 'This game has already been submitted' };
-  }
 
   // Trade stats were collected during the replay pass above
   const tradeStats = result.tradeStats ?? {
@@ -72,56 +62,19 @@ export async function submitGameScore(input: {
     drugTradeCounts: {}, biggestMugging: 0,
   };
 
-  // Create game session record
-  const { data: session, error: sessionError } = await serviceClient
-    .from('game_sessions')
-    .insert({
-      user_id: user.id,
-      seed: input.seed,
-      game_mode: input.gameMode,
-      action_log: input.actions,
-      final_cash: result.finalCash,
-      final_bank: result.finalBank,
-      final_debt: result.finalDebt,
-      final_inventory_value: result.finalInventoryValue,
-      final_net_worth: result.finalNetWorth,
-      final_day: result.finalDay,
-      status: 'completed',
-      completed_at: new Date().toISOString(),
-      best_trade_profit: tradeStats.bestTradeProfit,
-      best_trade_drug: tradeStats.bestTradeDrug,
-      worst_trade_loss: tradeStats.worstTradeLoss,
-      worst_trade_drug: tradeStats.worstTradeDrug,
-      drug_trade_counts: tradeStats.drugTradeCounts,
-      biggest_mugging: tradeStats.biggestMugging,
-    })
-    .select('id')
-    .single();
-
-  if (sessionError || !session) {
-    return { error: 'Failed to save game session' };
-  }
-
-  // 6. Insert validated leaderboard entry
-  const { error: leaderboardError } = await serviceClient
-    .from('leaderboard')
-    .insert({
-      user_id: user.id,
-      game_session_id: session.id,
-      username: profile.username,
-      display_name: profile.display_name,
-      net_worth: result.finalNetWorth,
-      final_cash: result.finalCash,
-      final_bank: result.finalBank,
-      final_debt: result.finalDebt,
-      final_day: result.finalDay,
-      game_mode: input.gameMode,
-      validated: true,
-    });
-
-  if (leaderboardError) {
-    return { error: 'Failed to write leaderboard entry' };
-  }
+  // One transaction serializes repeat submissions and writes both records together.
+  const { error: submissionError } = await serviceClient.rpc('record_game_score', {
+    payload: {
+      user_id: user.id, seed: input.seed, game_mode: input.gameMode, action_log: input.actions,
+      final_cash: result.finalCash, final_bank: result.finalBank, final_debt: result.finalDebt,
+      final_inventory_value: result.finalInventoryValue, final_net_worth: result.finalNetWorth,
+      final_day: result.finalDay, username: profile.username, display_name: profile.display_name,
+      best_trade_profit: tradeStats.bestTradeProfit, best_trade_drug: tradeStats.bestTradeDrug,
+      worst_trade_loss: tradeStats.worstTradeLoss, worst_trade_drug: tradeStats.worstTradeDrug,
+      drug_trade_counts: tradeStats.drugTradeCounts, biggest_mugging: tradeStats.biggestMugging,
+    },
+  });
+  if (submissionError) return { error: 'Failed to save score. Please try again.' };
 
   return {
     success: true,
@@ -136,7 +89,10 @@ export async function saveGameProgress(stateBlob: string, seed: string, gameMode
 
   let parsedState;
   try {
-    parsedState = JSON.parse(stateBlob);
+    if (typeof stateBlob !== 'string' || stateBlob.length > MAX_SAVE_BYTES) throw new Error();
+    const state = restoreGame(stateBlob);
+    if (state.seed !== seed || state.gameMode !== gameMode || state.phase === 'game_over') throw new Error();
+    parsedState = JSON.parse(serializeGame(state));
   } catch {
     return { error: 'Invalid state data' };
   }

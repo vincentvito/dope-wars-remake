@@ -42,9 +42,9 @@ function LoginForm() {
 
       <form action={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <label className="text-xs text-muted-foreground">Email</label>
+          <label htmlFor="email" className="text-xs text-muted-foreground">Email</label>
           <input
-            name="email"
+            id="email" name="email"
             type="email"
             required
             className="w-full bg-background border border-[var(--border-strong)] text-xs text-foreground px-3 py-2"
@@ -53,9 +53,9 @@ function LoginForm() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs text-muted-foreground">Password</label>
+          <label htmlFor="password" className="text-xs text-muted-foreground">Password</label>
           <input
-            name="password"
+            id="password" name="password"
             type="password"
             required
             minLength={6}

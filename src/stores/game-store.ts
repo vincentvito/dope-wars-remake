@@ -10,10 +10,15 @@ import { createNewGame, applyAction, calculateNetWorth, getUsedInventorySpace } 
 import { createProGame, applyProAction, calculateProNetWorth, isProMode } from '@/engine/pro-game';
 import { getMaxBuyQuantity } from '@/engine/inventory';
 import { getAvailableDestinations, getEffectiveTravelCost, canTravelTo } from '@/engine/cities';
+import { restoreGame, serializeGame, SAVE_KEY } from '@/engine/saved-game';
 import { useUIStore } from '@/stores/ui-store';
 
 
 interface GameStore {
+  hydrated: boolean;
+  saveError: string | null;
+  hydrate: () => void;
+  saveProgress: () => void;
   // State
   gameState: GameState | null;
   proGameState: ProGameState | null;
@@ -23,29 +28,29 @@ interface GameStore {
 
   // Actions
   startNewGame: (gameMode?: GameMode) => void;
-  dispatch: (action: PlayerAction) => void;
-  dispatchPro: (action: ProPlayerAction) => void;
+  dispatch: (action: PlayerAction) => boolean;
+  dispatchPro: (action: ProPlayerAction) => boolean;
 
   // Classic convenience actions
-  buyDrug: (drug: DrugName, quantity: number) => void;
-  sellDrug: (drug: DrugName, quantity: number) => void;
-  travel: (destination: DistrictName) => void;
-  depositToBank: (amount: number) => void;
-  withdrawFromBank: (amount: number) => void;
-  payLoanShark: (amount: number) => void;
-  fight: () => void;
-  run: () => void;
-  acceptEvent: () => void;
-  declineEvent: () => void;
+  buyDrug: (drug: DrugName, quantity: number) => boolean;
+  sellDrug: (drug: DrugName, quantity: number) => boolean;
+  travel: (destination: DistrictName) => boolean;
+  depositToBank: (amount: number) => boolean;
+  withdrawFromBank: (amount: number) => boolean;
+  payLoanShark: (amount: number) => boolean;
+  fight: () => boolean;
+  run: () => boolean;
+  acceptEvent: () => boolean;
+  declineEvent: () => boolean;
 
   // Pro convenience actions
-  travelPro: (destination: LocationName) => void;
-  buyAsset: (assetType: AssetType) => void;
-  cutDrugs: (drug: DrugName, cutPercentage: number) => void;
-  confirmLab: () => void;
-  cancelLab: () => void;
-  selectLoadout: (weaponIndices: number[]) => void;
-  discardWeapon: (weaponIndex: number) => void;
+  travelPro: (destination: LocationName) => boolean;
+  buyAsset: (assetType: AssetType) => boolean;
+  cutDrugs: (drug: DrugName, cutPercentage: number) => boolean;
+  confirmLab: () => boolean;
+  cancelLab: () => boolean;
+  selectLoadout: (weaponIndices: number[]) => boolean;
+  discardWeapon: (weaponIndex: number) => boolean;
 
   // Derived helpers
   getMaxBuy: (drug: DrugName) => number;
@@ -59,6 +64,34 @@ interface GameStore {
 }
 
 const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
+      hydrated: false,
+      saveError: null,
+      hydrate: () => {
+        if (get().hydrated) return;
+        try {
+          const saved = localStorage.getItem(SAVE_KEY);
+          if (saved && !get().gameState && !get().proGameState) {
+            const state = restoreGame(saved);
+            const pro = isProMode(state.gameMode);
+            set({ gameState: pro ? null : state as GameState, proGameState: pro ? state as ProGameState : null,
+              isPro: pro, isPlaying: state.phase !== 'game_over',
+              netWorth: pro ? calculateProNetWorth(state as ProGameState) : calculateNetWorth(state as GameState) });
+          }
+        } catch {
+          set({ saveError: 'Saved progress could not be loaded. You can start a new game.' });
+        }
+        set({ hydrated: true });
+      },
+      saveProgress: () => {
+        const state = get().isPro ? get().proGameState : get().gameState;
+        if (!state) return;
+        try {
+          localStorage.setItem(SAVE_KEY, serializeGame(state));
+          set({ saveError: null });
+        } catch {
+          set({ saveError: 'Progress could not be saved on this device. Keep this tab open to continue.' });
+        }
+      },
       gameState: null,
       proGameState: null,
       isPlaying: false,
@@ -66,6 +99,7 @@ const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
       isPro: false,
 
       startNewGame: (gameMode: GameMode = '30') => {
+        useUIStore.setState({ activeModal: null, selectedDrug: null, settingsOpen: false, activeProTab: 'market', notifications: [] });
         const seed = typeof crypto !== 'undefined' && crypto.randomUUID
           ? crypto.randomUUID()
           : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -89,11 +123,12 @@ const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
             isPro: false,
           });
         }
+        get().saveProgress();
       },
 
       dispatch: (action: PlayerAction) => {
         const { gameState } = get();
-        if (!gameState) return;
+        if (!gameState) return false;
 
         try {
           const newState = applyAction(gameState, action);
@@ -102,14 +137,17 @@ const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
             isPlaying: newState.phase !== 'game_over',
             netWorth: calculateNetWorth(newState),
           });
+          get().saveProgress();
+          return true;
         } catch (error) {
-          console.error('Invalid action:', error);
+          useUIStore.getState().addNotification(error instanceof Error ? error.message : 'Action failed. Please try again.', 'loss');
+          return false;
         }
       },
 
       dispatchPro: (action: ProPlayerAction) => {
         const { proGameState } = get();
-        if (!proGameState) return;
+        if (!proGameState) return false;
 
         try {
           const newState = applyProAction(proGameState, action);
@@ -118,8 +156,11 @@ const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
             isPlaying: newState.phase !== 'game_over',
             netWorth: calculateProNetWorth(newState),
           });
+          get().saveProgress();
+          return true;
         } catch (error) {
-          console.error('Invalid pro action:', error);
+          useUIStore.getState().addNotification(error instanceof Error ? error.message : 'Action failed. Please try again.', 'loss');
+          return false;
         }
       },
 
@@ -127,83 +168,84 @@ const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
       buyDrug: (drug, quantity) => {
         const { isPro } = get();
         if (isPro) {
-          get().dispatchPro({ type: 'BUY', drug, quantity });
+          return get().dispatchPro({ type: 'BUY', drug, quantity });
         } else {
-          get().dispatch({ type: 'BUY', drug, quantity });
+          return get().dispatch({ type: 'BUY', drug, quantity });
         }
       },
       sellDrug: (drug, quantity) => {
         const { isPro } = get();
         if (isPro) {
-          get().dispatchPro({ type: 'SELL', drug, quantity });
+          return get().dispatchPro({ type: 'SELL', drug, quantity });
         } else {
-          get().dispatch({ type: 'SELL', drug, quantity });
+          return get().dispatch({ type: 'SELL', drug, quantity });
         }
       },
       travel: (destination) => {
-        get().dispatch({ type: 'TRAVEL', destination });
+        return get().dispatch({ type: 'TRAVEL', destination });
       },
       depositToBank: (amount) => {
         const { isPro } = get();
         if (isPro) {
-          get().dispatchPro({ type: 'BANK_DEPOSIT', amount });
+          return get().dispatchPro({ type: 'BANK_DEPOSIT', amount });
         } else {
-          get().dispatch({ type: 'BANK_DEPOSIT', amount });
+          return get().dispatch({ type: 'BANK_DEPOSIT', amount });
         }
       },
       withdrawFromBank: (amount) => {
         const { isPro } = get();
         if (isPro) {
-          get().dispatchPro({ type: 'BANK_WITHDRAW', amount });
+          return get().dispatchPro({ type: 'BANK_WITHDRAW', amount });
         } else {
-          get().dispatch({ type: 'BANK_WITHDRAW', amount });
+          return get().dispatch({ type: 'BANK_WITHDRAW', amount });
         }
       },
       payLoanShark: (amount) => {
         const { isPro } = get();
         if (isPro) {
-          get().dispatchPro({ type: 'PAY_DEBT', amount });
+          return get().dispatchPro({ type: 'PAY_DEBT', amount });
         } else {
-          get().dispatch({ type: 'PAY_DEBT', amount });
+          return get().dispatch({ type: 'PAY_DEBT', amount });
         }
       },
       fight: () => {
         const { isPro } = get();
         if (isPro) {
-          get().dispatchPro({ type: 'COMBAT_FIGHT' });
+          return get().dispatchPro({ type: 'COMBAT_FIGHT' });
         } else {
-          get().dispatch({ type: 'COMBAT_FIGHT' });
+          return get().dispatch({ type: 'COMBAT_FIGHT' });
         }
       },
       run: () => {
         const { isPro } = get();
         if (isPro) {
-          get().dispatchPro({ type: 'COMBAT_RUN' });
+          return get().dispatchPro({ type: 'COMBAT_RUN' });
         } else {
-          get().dispatch({ type: 'COMBAT_RUN' });
+          return get().dispatch({ type: 'COMBAT_RUN' });
         }
       },
       acceptEvent: () => {
         const { isPro } = get();
         if (isPro) {
-          get().dispatchPro({ type: 'EVENT_ACCEPT' });
+          return get().dispatchPro({ type: 'EVENT_ACCEPT' });
         } else {
-          get().dispatch({ type: 'EVENT_ACCEPT' });
+          return get().dispatch({ type: 'EVENT_ACCEPT' });
         }
       },
       declineEvent: () => {
         const { isPro } = get();
         if (isPro) {
-          get().dispatchPro({ type: 'EVENT_DECLINE' });
+          return get().dispatchPro({ type: 'EVENT_DECLINE' });
         } else {
-          get().dispatch({ type: 'EVENT_DECLINE' });
+          return get().dispatch({ type: 'EVENT_DECLINE' });
         }
       },
 
       // Pro convenience actions
       travelPro: (destination) => {
-        get().dispatchPro({ type: 'TRAVEL', destination });
-        useUIStore.getState().setActiveProTab('market');
+        const success = get().dispatchPro({ type: 'TRAVEL', destination });
+        if (success) useUIStore.getState().setActiveProTab('market');
+        return success;
       },
       buyAsset: (assetType) => get().dispatchPro({ type: 'BUY_ASSET', assetType }),
       cutDrugs: (drug, cutPercentage) => get().dispatchPro({ type: 'CUT_DRUGS', drug, cutPercentage }),

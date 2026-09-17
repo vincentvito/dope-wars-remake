@@ -26,7 +26,7 @@ function Toast({ notification }: { notification: GameNotification }) {
   return (
     <div
       className={`
-        font-pixel text-[10px] leading-tight px-3 py-2 whitespace-nowrap
+        font-pixel text-[10px] leading-tight px-3 py-2 whitespace-normal break-words
         border-2 rounded bg-cyan-900/80 backdrop-blur-sm
         ${style.classes}
       `}
@@ -47,7 +47,7 @@ export function GameToast() {
   if (notifications.length === 0) return null;
 
   return (
-    <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center">
+    <div role="status" aria-live="polite" className="w-[calc(100%-2rem)] max-w-md fixed top-3 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center">
       {notifications.map((n) => (
         <Toast key={n.id} notification={n} />
       ))}

@@ -21,7 +21,6 @@ export function AssetCard({ definition, isOwned, canAfford, onBuy, onClick }: As
             ? 'border-border'
             : 'border-dashed border-muted-foreground/30 opacity-60'
       } ${isOwned && onClick ? 'cursor-pointer hover:bg-[var(--row-hover)] transition-colors' : ''}`}
-      onClick={isOwned && onClick ? onClick : undefined}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
@@ -40,9 +39,11 @@ export function AssetCard({ definition, isOwned, canAfford, onBuy, onClick }: As
           </div>
         </div>
 
+        {isOwned && onClick && <button className="retro-btn ml-2" onClick={onClick}>Open {definition.type}</button>}
         {!isOwned && (
           <button
             className="retro-btn text-[10px] py-1 px-3 ml-2 shrink-0"
+            aria-label={`Buy ${definition.type}`}
             disabled={!canAfford}
             onClick={onBuy}
           >

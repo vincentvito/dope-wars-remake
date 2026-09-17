@@ -28,6 +28,8 @@ export function HomeClient({ heroContent }: { heroContent: ReactNode }) {
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
   const theme = useUIStore((s) => s.theme);
   const setTheme = useUIStore((s) => s.setTheme);
+  const savedState = useGameStore((s) => s.isPro ? s.proGameState : s.gameState);
+  const saveError = useGameStore((s) => s.saveError);
   const startNewGame = useGameStore((s) => s.startNewGame);
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const isPro = useAuthStore((s) => s.isPro);
@@ -78,11 +80,19 @@ export function HomeClient({ heroContent }: { heroContent: ReactNode }) {
             )
           )}
 
+          {saveError && <p role="status" className="text-xs text-crt-amber">{saveError}</p>}
           {/* Menu Buttons */}
           <div className="w-full space-y-3">
+            {savedState && (
+              <Link href="/game" className="retro-btn block w-full py-3 text-xs text-center font-pixel">
+                {savedState.phase === 'game_over' ? 'VIEW LAST RESULT' : `CONTINUE · DAY ${savedState.currentDay}`}
+              </Link>
+            )}
             <button
               className="retro-btn block w-full py-4 text-sm font-bold text-center font-pixel"
-              onClick={() => setOverlay('mode-select')}
+              onClick={() => {
+                if (!savedState || savedState.phase === 'game_over' || window.confirm('Start a new game? This replaces your saved run.')) setOverlay('mode-select');
+              }}
             >
               NEW GAME
             </button>

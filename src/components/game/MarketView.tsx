@@ -32,18 +32,16 @@ export function MarketView() {
   return (
     <div className="space-y-3">
       {/* Drug table */}
-      <div className="glass-panel overflow-hidden text-shadow-sm">
+      <div className="market-table glass-panel overflow-hidden text-shadow-sm">
         {/* Header row */}
-        <div className="flex items-center px-3 py-1.5 text-[10px] tracking-wider text-muted-foreground">
-          <div className="w-[64px]">DRUG</div>
-          <div className="w-[72px]">PRICE</div>
-          <div className="flex-1 flex justify-center gap-6">
-            <span className="w-8 text-right">QTY</span>
-            <span className="w-[72px] text-right">AVG COST</span>
-          </div>
-          <div className="flex gap-1.5">
-            <span className="w-10 text-center">BUY</span>
-            <span className="w-10 text-center">SELL</span>
+        <div className="market-row text-[10px] text-muted-foreground">
+          <div className="min-w-0">DRUG</div>
+          <div className="min-w-0">PRICE</div>
+          <div className="text-center" title="Quantity owned">QTY</div>
+          <div className="text-center" title="Average purchase price">AVG</div>
+          <div className="market-actions market-action-headings">
+            <span className="w-11 text-center">BUY</span>
+            <span className="w-11 text-center">SELL</span>
           </div>
         </div>
         <div>
@@ -89,9 +87,9 @@ const DrugRow = memo(function DrugRow({
   const isCuttable = showCut && CUTTABLE_DRUGS.has(drug);
 
   return (
-    <div className="flex items-center px-3 py-2 text-xs hover:bg-[var(--row-hover)] transition-colors">
+    <div className="market-row text-xs hover:bg-[var(--row-hover)] transition-colors">
       {/* Drug name */}
-      <div className="w-[64px] font-medium">
+      <div className="min-w-0 font-medium">
         {isCuttable ? (
           <button
             className="text-left text-foreground cursor-pointer hover:underline hover:text-crt-cyan transition-colors flex items-center gap-0.5"
@@ -108,7 +106,7 @@ const DrugRow = memo(function DrugRow({
       </div>
 
       {/* Price */}
-      <div className="w-[72px]">
+      <div className="min-w-0">
         {isAvailable ? (
           <span className="text-foreground">{formatCurrency(price)}</span>
         ) : (
@@ -116,31 +114,28 @@ const DrugRow = memo(function DrugRow({
         )}
       </div>
 
-      {/* Qty + Avg Cost centered in remaining space */}
-      <div className="flex-1 flex justify-center gap-6">
-        <span className="w-8 text-right">
-          {owned > 0 && (
-            <span className="text-crt-cyan">{owned}</span>
-          )}
-        </span>
-        <span className="w-[72px] text-right">
-          {owned > 0 && avgBuyPrice != null && (
-            <span className="text-muted-foreground">{formatCurrency(avgBuyPrice)}</span>
-          )}
-        </span>
+      {/* Separate inventory columns share the header's centered alignment. */}
+      <div className="min-w-0 text-center tabular-nums whitespace-nowrap">
+        <span className="text-crt-cyan">{owned || '—'}</span>
+      </div>
+      <div className="min-w-0 text-center tabular-nums whitespace-nowrap text-muted-foreground" title="Average purchase price">
+        {owned > 0 && avgBuyPrice != null ? formatCurrency(avgBuyPrice) : '—'}
       </div>
 
       {/* Actions */}
-      <div className="flex gap-1.5">
+      <div className="market-actions">
         <button
-          className="retro-btn text-[10px] w-10 py-1 !px-0 flex items-center justify-center"
+          className="retro-btn text-[10px] w-11 py-1 !px-0 flex items-center justify-center"
+          aria-label={`Buy ${drug}`}
+          title={!isAvailable ? "Unavailable in this district" : availableSpace <= 0 ? "Your coat is full" : cash < price ? "Not enough cash" : `Buy ${drug}`}
           disabled={!canBuy}
           onClick={() => openModal('buy', drug)}
         >
           BUY
         </button>
         <button
-          className="retro-btn text-[10px] w-10 py-1 !px-0 flex items-center justify-center"
+          className="retro-btn text-[10px] w-11 py-1 !px-0 flex items-center justify-center"
+          aria-label={`Sell ${drug}`}
           disabled={!canSell}
           onClick={() => openModal('sell', drug)}
         >

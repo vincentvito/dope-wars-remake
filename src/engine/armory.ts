@@ -26,7 +26,7 @@ export function addWeapon(state: ProGameState, weapon: Weapon): ProGameState {
  * Discard a weapon from the armory by index.
  */
 export function discardWeapon(state: ProGameState, weaponIndex: number): ProGameState {
-  if (weaponIndex < 0 || weaponIndex >= state.armory.length) {
+  if (!Number.isSafeInteger(weaponIndex) || weaponIndex < 0 || weaponIndex >= state.armory.length) {
     throw new Error(`Invalid weapon index: ${weaponIndex}`);
   }
 
@@ -44,7 +44,7 @@ export function swapWeapon(
   discardIndex: number,
   newWeapon: Weapon
 ): ProGameState {
-  if (discardIndex < 0 || discardIndex >= state.armory.length) {
+  if (!Number.isSafeInteger(discardIndex) || discardIndex < 0 || discardIndex >= state.armory.length) {
     throw new Error(`Invalid weapon index: ${discardIndex}`);
   }
 
@@ -93,9 +93,11 @@ export function selectLoadout(state: ProGameState, weaponIndices: number[]): Pro
     throw new Error(`Cannot select more than ${MAX_LOADOUT_SIZE} weapons`);
   }
 
+  if (new Set(weaponIndices).size !== weaponIndices.length) throw new Error("Each weapon can only be selected once");
+
   // Validate indices
   for (const idx of weaponIndices) {
-    if (idx < 0 || idx >= state.armory.length) {
+    if (!Number.isSafeInteger(idx) || idx < 0 || idx >= state.armory.length) {
       throw new Error(`Invalid weapon index: ${idx}`);
     }
   }

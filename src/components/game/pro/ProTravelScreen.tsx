@@ -81,6 +81,7 @@ export function ProTravelScreen() {
               isCurrent={city.name === state.currentDistrict}
               isUnlocked={canTravelToPro(city.name)}
               travelCost={getTravelCost(city.name)}
+              canAfford={state.cash >= getTravelCost(city.name)}
               onTravel={() => handleTravel(city.name)}
             />
           ))}

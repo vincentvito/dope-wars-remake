@@ -33,7 +33,7 @@ export async function getLeaderboard(options: {
   const from = (page - 1) * pageSize;
   const to = from + pageSize - 1;
 
-  let query = supabase
+  const query = supabase
     .from('leaderboard')
     .select('*', { count: 'exact' })
     .eq('game_mode', gameMode)

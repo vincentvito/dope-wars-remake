@@ -9,7 +9,8 @@ export function useThemeSync() {
 
   // On mount: read saved theme from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('dope-wars-theme');
+    let saved: string | null = null;
+    try { saved = localStorage.getItem('dope-wars-theme'); } catch { return; }
     if (saved === 'crt' || saved === 'synthwave' || saved === 'miami') {
       setTheme(saved);
     }

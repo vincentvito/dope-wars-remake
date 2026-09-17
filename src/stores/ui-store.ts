@@ -61,7 +61,7 @@ export const useUIStore = create<UIStore>()((set) => ({
 
   setTheme: (theme) => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('dope-wars-theme', theme);
+      try { localStorage.setItem('dope-wars-theme', theme); } catch { /* Theme still works without storage. */ }
     }
     set({ theme });
   },

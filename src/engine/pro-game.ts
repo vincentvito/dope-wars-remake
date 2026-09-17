@@ -1,3 +1,4 @@
+import { assertAction, CHOICE_EVENTS } from './validation';
 import type {
   ProGameState,
   ProPlayerAction,
@@ -15,6 +16,7 @@ import {
   STARTING_DISTRICT,
   MAX_DAYS,
   LOAN_SHARK_INTEREST_RATE,
+  BANK_INTEREST_RATE,
 } from './constants';
 import { WEAPON_DEFINITIONS, LAB_REPUTATION_CHANCE, LAB_REPUTATION_PENALTY } from './pro-constants';
 import { generateProMarketPrices } from './pro-market';
@@ -23,7 +25,7 @@ import { initProCombat, resolveProFight, resolveProRun, determineEncounterType }
 import { buyAsset, hasAsset } from './assets';
 import { initiateCutting, confirmCutting, cancelCutting } from './lab';
 import { addWeapon, discardWeapon, selectLoadout, autoReplaceWeakest } from './armory';
-import { getEffectiveTravelCost } from './cities';
+import { getEffectiveTravelCost, meetsUnlockRequirements } from './cities';
 import { isValidProAction } from './state-machine';
 import { SeededRNG } from './rng';
 
@@ -79,7 +81,8 @@ export function createProGame(seed: string, gameMode: GameMode): ProGameState {
  * Apply a Pro player action to the game state.
  * Main dispatch function for Pro mode.
  */
-export function applyProAction(state: ProGameState, action: ProPlayerAction): ProGameState {
+export function applyProAction(state: ProGameState, action: ProPlayerAction, recordAction = true): ProGameState {
+  assertAction(action, true);
   if (!isValidProAction(state.phase, action.type)) {
     throw new Error(`Invalid action "${action.type}" in phase "${state.phase}"`);
   }
@@ -87,7 +90,7 @@ export function applyProAction(state: ProGameState, action: ProPlayerAction): Pr
   // Record action in the log
   const stateWithLog: ProGameState = {
     ...state,
-    actionLog: [...state.actionLog, action],
+    actionLog: recordAction ? [...state.actionLog, action] : state.actionLog,
   };
 
   switch (action.type) {
@@ -108,7 +111,8 @@ export function applyProAction(state: ProGameState, action: ProPlayerAction): Pr
       if (
         stateWithLog.armory.length > 0 &&
         stateWithLog.proCombat &&
-        stateWithLog.proCombat.selectedLoadout.length === 0
+        stateWithLog.proCombat.selectedLoadout.length === 0 &&
+        stateWithLog.proCombat.roundsElapsed === 0
       ) {
         return { ...stateWithLog, phase: 'loadout' };
       }
@@ -154,6 +158,8 @@ function handleProTravel(state: ProGameState, destination: LocationName): ProGam
     throw new Error('Cannot travel to your current location');
   }
 
+  if (!meetsUnlockRequirements(state, destination)) throw new Error('Destination is locked: buy the required assets first');
+
   // 1. Accrue loan shark interest
   let newState = proAccrueInterest(state);
 
@@ -174,6 +180,11 @@ function handleProTravel(state: ProGameState, destination: LocationName): ProGam
     combat: null,
     proCombat: null,
   };
+
+  // End the run before opening a deferred event on a day that cannot be played.
+  if (newDay >= state.maxDays) {
+    return { ...newState, market: {}, marketEvents: [], pendingReputationPenalty: null, phase: 'game_over' };
+  }
 
   // 4. Apply deferred reputation penalty from previous cut
   if (newState.pendingReputationPenalty) {
@@ -275,6 +286,10 @@ function handleProEventResponse(state: ProGameState, accept: boolean): ProGameSt
 
   let newState: ProGameState;
   const event = state.activeEvent;
+
+  if (!accept && !CHOICE_EVENTS.has(state.activeEvent.type)) {
+    throw new Error("This event must be resolved");
+  }
 
   if (accept) {
     newState = applyProEventEffects(state, event);
@@ -446,9 +461,7 @@ export function calculateProNetWorth(state: ProGameState): number {
 // ============================================================
 
 function proAccrueInterest(state: ProGameState): ProGameState {
-  if (state.debt <= 0) return state;
-  const interest = Math.floor(state.debt * LOAN_SHARK_INTEREST_RATE);
-  return { ...state, debt: state.debt + interest };
+  return { ...state, debt: state.debt + Math.floor(state.debt * LOAN_SHARK_INTEREST_RATE), bank: state.bank + Math.floor(state.bank * BANK_INTEREST_RATE) };
 }
 
 function proDeposit(state: ProGameState, amount: number): ProGameState {

@@ -80,10 +80,16 @@ export function LoanSharkDialog() {
                 type="range"
                 min={0}
                 max={maxPay}
-                value={payAmount}
+                aria-label="Debt payment"
+              value={payAmount}
                 onChange={(e) => setPayAmount(Number(e.target.value))}
                 className="w-full accent-crt-red"
               />
+            <label className="block text-xs text-muted-foreground">Exact amount
+              <input type="number" inputMode="numeric" aria-label="Exact debt payment" min={0} max={maxPay} step={1} value={payAmount}
+                onChange={e => setPayAmount(Math.max(0, Math.min(maxPay, Math.floor(Number(e.target.value) || 0))))}
+                className="mt-1 w-full border border-border bg-background p-2 text-base text-foreground" />
+            </label>
               <div className="flex gap-2">
                 <button
                   className="retro-btn text-[10px] px-2 flex-1"

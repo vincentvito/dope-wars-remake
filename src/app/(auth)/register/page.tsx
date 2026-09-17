@@ -10,15 +10,18 @@ function RegisterForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(formData: FormData) {
     setLoading(true);
     setError(null);
+    setMessage(null);
     useAuthStore.getState().clear();
     if (redirect) formData.set('redirectTo', redirect);
     try {
       const result = await signUp(formData);
+      if (result && 'message' in result) { setMessage(result.message ?? null); setLoading(false); }
       if (result?.error) {
         setError(result.error);
         setLoading(false);
@@ -42,9 +45,9 @@ function RegisterForm() {
 
       <form action={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <label className="text-xs text-muted-foreground">Username</label>
+          <label htmlFor="username" className="text-xs text-muted-foreground">Username</label>
           <input
-            name="username"
+            id="username" name="username"
             type="text"
             required
             minLength={3}
@@ -57,9 +60,9 @@ function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs text-muted-foreground">Email</label>
+          <label htmlFor="email" className="text-xs text-muted-foreground">Email</label>
           <input
-            name="email"
+            id="email" name="email"
             type="email"
             required
             className="w-full bg-background border border-[var(--border-strong)] text-xs text-foreground px-3 py-2"
@@ -68,9 +71,9 @@ function RegisterForm() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs text-muted-foreground">Password</label>
+          <label htmlFor="password" className="text-xs text-muted-foreground">Password</label>
           <input
-            name="password"
+            id="password" name="password"
             type="password"
             required
             minLength={6}
@@ -80,6 +83,7 @@ function RegisterForm() {
           <p className="text-[10px] text-muted-foreground">Minimum 6 characters</p>
         </div>
 
+        {message && <p role="status" className="text-sm text-crt-green">{message}</p>}
         {error && (
           <div className="text-xs text-crt-red border border-crt-red/30 bg-crt-red/5 px-3 py-2">
             {error}

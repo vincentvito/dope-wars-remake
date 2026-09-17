@@ -1,9 +1,11 @@
+import { assertRun } from './validation';
 import { createProGame, applyProAction, calculateProNetWorth } from './pro-game';
 import type { ProPlayerAction, GameMode } from './types';
 import { emptyStats, collectActionStats, type GameTradeStats } from './stats-extractor';
 
 export interface ProReplayResult {
   valid: boolean;
+  completed?: boolean;
   finalNetWorth: number;
   finalDay: number;
   finalCash: number;
@@ -30,6 +32,7 @@ export function replayProGame(
   withStats = false
 ): ProReplayResult {
   try {
+    assertRun({ seed, gameMode, actions });
     let state = createProGame(seed, gameMode);
     const stats = withStats ? emptyStats() : undefined;
 
@@ -62,7 +65,7 @@ export function replayProGame(
           }
         }
       }
-      state = applyProAction(state, action);
+      state = applyProAction(state, action, false);
     }
 
     const netWorth = calculateProNetWorth(state);
@@ -73,6 +76,7 @@ export function replayProGame(
 
     return {
       valid: true,
+      completed: state.phase === 'game_over',
       finalNetWorth: netWorth,
       finalDay: state.currentDay,
       finalCash: state.cash,

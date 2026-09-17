@@ -1,5 +1,6 @@
 'use client';
 
+import { MarketNews } from '../MarketNews';
 import { useGameStore } from '@/stores/game-store';
 import { ProStatusBar } from './ProStatusBar';
 import { ProTabContent } from './ProTabContent';
@@ -17,7 +18,6 @@ import { GameOverScreen } from '../GameOverScreen';
 
 export function ProGameShell() {
   const phase = useGameStore((s) => s.proGameState?.phase);
-  const marketEvents = useGameStore((s) => s.proGameState?.marketEvents);
 
   if (!phase) return null;
 
@@ -27,25 +27,14 @@ export function ProGameShell() {
 
   return (
     <>
-      <div className="flex flex-col h-[100dvh] max-w-3xl mx-auto px-3 relative z-10">
+      <div className="game-scroll h-[100dvh] overflow-y-auto max-w-3xl mx-auto px-3 relative z-10">
         <div className="shrink-0 pt-3 space-y-3">
           <ProStatusBar />
-          {marketEvents && marketEvents.length > 0 && (
-            <div className="space-y-1">
-              {marketEvents.map((event, i) => (
-                <div
-                  key={i}
-                  className="px-3 py-2 text-xs border border-crt-cyan text-crt-cyan bg-[var(--card)]/90 backdrop-blur-sm"
-                >
-                  {event.message}
-                </div>
-              ))}
-            </div>
-          )}
+          <MarketNews />
           <GameToast />
         </div>
 
-        <div className="flex-1 overflow-y-auto pt-3 pb-24">
+        <div className="pt-3 pb-6">
           <ProTabContent />
         </div>
       </div>

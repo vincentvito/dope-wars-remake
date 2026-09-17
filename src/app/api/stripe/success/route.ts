@@ -1,3 +1,4 @@
+import { isPaidProCheckout } from '@/lib/checkout';
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { createServiceClient } from '@/lib/supabase/server';
@@ -16,6 +17,10 @@ export async function GET(request: NextRequest) {
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
+    const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 2 });
+    if (!isPaidProCheckout(session, items.data.map(item => item.price?.id), process.env.STRIPE_PRO_PRICE_ID)) {
+      return NextResponse.redirect(new URL('/upgrade?payment=pending', appUrl));
+    }
     loggedInUserId = session.metadata?.user_id ?? null;
 
     if (session.payment_status === 'paid') {
@@ -66,6 +71,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (err) {
     console.error('Error verifying Stripe session:', err);
+    return NextResponse.redirect(new URL('/upgrade?payment=unverified', appUrl));
   }
 
   // Logged-in user: skip setup-account, go straight to game with mode select
@@ -74,5 +80,5 @@ export async function GET(request: NextRequest) {
   }
 
   // Anonymous user: existing setup-account flow
-  return NextResponse.redirect(new URL(`/setup-account?session_id=${sessionId}`, appUrl));
+  return NextResponse.redirect(new URL(`/setup-account?session_id=${encodeURIComponent(sessionId)}`, appUrl));
 }

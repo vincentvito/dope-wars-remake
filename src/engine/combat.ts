@@ -103,7 +103,7 @@ export function resolveRun(state: GameState): GameState {
 
   if (roll <= escapeChance) {
     // Successful escape — but may lose some drugs
-    let newState = { ...state };
+    const newState = { ...state };
 
     // 30% chance to drop some inventory while running
     if (rng.chance(3) && newState.inventory.length > 0) {

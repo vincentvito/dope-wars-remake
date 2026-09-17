@@ -58,6 +58,7 @@ export function BankDialog() {
         </DialogHeader>
 
         <div className="space-y-4">
+          <p className="text-xs text-muted-foreground">Bank savings earn 5% interest each time you travel.</p>
           {/* Balances */}
           <div className="flex justify-between text-xs">
             <div>
@@ -80,10 +81,16 @@ export function BankDialog() {
               type="range"
               min={0}
               max={cash}
+              aria-label="Deposit amount"
               value={depositAmount}
               onChange={(e) => setDepositAmount(Number(e.target.value))}
               className="w-full accent-crt-amber"
             />
+            <label className="block text-xs text-muted-foreground">Exact amount
+              <input type="number" inputMode="numeric" aria-label="Exact deposit amount" min={0} max={cash} step={1} value={depositAmount}
+                onChange={e => setDepositAmount(Math.max(0, Math.min(cash, Math.floor(Number(e.target.value) || 0))))}
+                className="mt-1 w-full border border-border bg-background p-2 text-base text-foreground" />
+            </label>
             <div className="flex gap-2">
               <button
                 className="retro-btn text-[10px] px-2 flex-1"
@@ -111,10 +118,16 @@ export function BankDialog() {
               type="range"
               min={0}
               max={bank}
+              aria-label="Withdrawal amount"
               value={withdrawAmount}
               onChange={(e) => setWithdrawAmount(Number(e.target.value))}
               className="w-full accent-crt-amber"
             />
+            <label className="block text-xs text-muted-foreground">Exact amount
+              <input type="number" inputMode="numeric" aria-label="Exact withdrawal amount" min={0} max={bank} step={1} value={withdrawAmount}
+                onChange={e => setWithdrawAmount(Math.max(0, Math.min(bank, Math.floor(Number(e.target.value) || 0))))}
+                className="mt-1 w-full border border-border bg-background p-2 text-base text-foreground" />
+            </label>
             <div className="flex gap-2">
               <button
                 className="retro-btn text-[10px] px-2 flex-1"

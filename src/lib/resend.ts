@@ -11,6 +11,6 @@ export function getResend(): Resend {
 
 export const resend = new Proxy({} as Resend, {
   get(_, prop) {
-    return (getResend() as any)[prop];
+    return Reflect.get(getResend(), prop);
   },
 });

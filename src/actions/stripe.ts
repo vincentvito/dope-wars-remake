@@ -47,11 +47,11 @@ export async function createCheckoutSession() {
 }
 
 export async function setupProAccount(formData: FormData) {
-  const sessionId = formData.get('sessionId') as string;
-  const username = formData.get('username') as string;
-  const password = formData.get('password') as string;
+  const sessionId = formData.get('sessionId');
+  const username = formData.get('username');
+  const password = formData.get('password');
 
-  if (!sessionId || !username || !password) {
+  if (typeof sessionId !== 'string' || typeof username !== 'string' || typeof password !== 'string' || !/^cs_[a-zA-Z0-9_]+$/.test(sessionId) || sessionId.length > 255 || !username || !password) {
     return { error: 'All fields are required' };
   }
 
@@ -63,7 +63,7 @@ export async function setupProAccount(formData: FormData) {
     return { error: 'Username can only contain letters, numbers, hyphens, and underscores' };
   }
 
-  if (password.length < 6) {
+  if (password.length < 6 || password.length > 128) {
     return { error: 'Password must be at least 6 characters' };
   }
 
@@ -146,10 +146,27 @@ export async function setupProAccount(formData: FormData) {
 
   // 6. Sign in the user on the regular client
   const supabase = await createClient();
-  await supabase.auth.signInWithPassword({
+  const { error: signInError } = await supabase.auth.signInWithPassword({
     email: purchase.email,
     password,
   });
+  if (signInError) return { error: 'Your Pro account is ready. Please sign in to continue.' };
 
+  redirect('/game?pro_success=1');
+}
+
+// Possession of the private checkout link plus a matching signed-in account is
+// required; an arbitrary account claiming the same email is not enough.
+export async function claimProPurchase(sessionId: string) {
+  if (typeof sessionId !== 'string' || !/^cs_[a-zA-Z0-9_]+$/.test(sessionId) || sessionId.length > 255) return { error: 'Invalid setup link' };
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user?.email) return { error: 'Sign in to the account matching your purchase email first.' };
+  const service = await createServiceClient();
+  const { data: purchase } = await service.from('purchases').select('id, email, user_id, status').eq('stripe_checkout_session_id', sessionId).single();
+  if (!purchase || purchase.status !== 'completed' || purchase.email.toLowerCase() !== user.email.toLowerCase() || (purchase.user_id && purchase.user_id !== user.id)) return { error: 'This purchase cannot be linked to your account.' };
+  const { error } = await service.from('profiles').update({ is_pro: true, pro_purchased_at: new Date().toISOString() }).eq('id', user.id);
+  if (error) return { error: 'Could not activate Pro. Please try again.' };
+  await service.from('purchases').update({ user_id: user.id }).eq('id', purchase.id);
   redirect('/game?pro_success=1');
 }
