@@ -4,6 +4,9 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { DRUGS, DISTRICTS } from '@/engine/constants';
 import { blogBaseUrl, strategyPost } from '@/lib/blog';
 import styles from '../blog.module.css';
+import { siteIds } from '@/lib/site';
+import guideRun from '@/lib/guide-run.json';
+import { InterestCalculator } from '@/components/seo/InterestCalculator';
 
 const articleUrl = `${blogBaseUrl}${strategyPost.path}`;
 const money = (value: number) => `$${value.toLocaleString('en-US')}`;
@@ -15,6 +18,8 @@ const sections = [
   ['districts', 'Where to travel'],
   ['thirty-day-plan', 'Your 30-day plan'],
   ['final-day', 'The final-day checklist'],
+  ['recorded-run', 'A recorded Classic run'],
+  ['interest-calculator', 'Interest calculator'],
   ['questions', 'Common questions'],
 ] as const;
 
@@ -174,6 +179,17 @@ export default function StrategyPost() {
           <p>Use the <Link href="/leaderboard">Classic leaderboard</Link> to compare completed runs. A score is the result of trading, interest, inventory valuation, and survival together, rather than the biggest cash balance you briefly held.</p>
         </section>
 
+        <section id="recorded-run" className={styles.section}>
+          <h2>A recorded Classic run: decisions and results</h2>
+          <p>This automated demonstration used one fixed seed, selected before running: <code>{guideRun.seed}</code>. Every action went through the same Classic game engine as normal play, and replaying the complete action log reproduced the final state. It was not submitted to the public leaderboard.</p>
+          <p>The policy uses only the current market: sell at a 25% gain or on day 30; buy the deepest discount below 75% of the normal price midpoint with up to 80% of cash; keep $2,000 when repaying debt; bank cash above $10,000 after clearing debt; alternate Manhattan and Central Park; decline optional offers and run from combat. It is a simple demonstration, not an optimal strategy.</p>
+          <div className={styles.callout}><p><strong>Observed result: {money(guideRun.netWorth)} net worth.</strong> The run reached its time limit with {money(guideRun.cash)} cash, {money(guideRun.bank)} in the bank, no debt, and {guideRun.health} health. One successful run does not establish a typical result or guarantee the same outcome on a new seed.</p></div>
+          <p>The first trade bought six Hashish for $234 each and sold them for $720 each on day 2: $2,916 gross trading profit. A final-day price spike also helped: 14 Crack bought on day 29 for $542 sold on day 30 for $3,934. These favorable quotes materially affected the result.</p>
+          <div className={styles.tableScroll} role="region" aria-label="Recorded run checkpoints" tabIndex={0}><table><caption>Selected actions, in order. Balances are after the action.</caption><thead><tr><th scope="col">Day</th><th scope="col">Decision</th><th scope="col">Cash</th><th scope="col">Debt</th><th scope="col">Bank</th></tr></thead><tbody>{guideRun.rows.map((row, i) => <tr key={i}><td>{row.day}</td><td>{row.decision}</td><td>{money(row.cash)}</td><td>{money(row.debt)}</td><td>{money(row.bank)}</td></tr>)}</tbody></table></div>
+          <p><a href="/press/recorded-classic-run.json" download>Download all 104 actions and observed balances (JSON)</a>. This is an automated engine run, not a claim of human playtesting. The public script <a href="https://github.com/vincentvito/dope-wars-remake/blob/main/scripts/generate-guide-run.ts">generate-guide-run.ts</a> records the decision policy.</p>
+        </section>
+        <section id="interest-calculator" className={styles.section}><h2>Debt and bank interest calculator</h2><p>Compare the effect of travel on unchanged balances. This calculation uses Classic’s 10% debt and 5% bank interest, rounded down to whole dollars after every trip. It excludes trades, payments, encounters and deaths.</p><InterestCalculator /></section>
+
         <section id="questions" className={styles.section}>
           <h2>Common Dope Wars strategy questions</h2>
           <h3>What should I buy first in Dope Wars?</h3>
@@ -190,7 +206,7 @@ export default function StrategyPost() {
 
         <section id="sources" className={`${styles.section} ${styles.sources}`}>
           <h2>Sources and how this guide was checked</h2>
-          <p>This article was prepared with AI assistance and checked against this remake’s Classic game rules on September 17, 2026. The price table comes directly from the game’s item definitions; the district table uses its danger settings. Interest examples apply the game’s whole-dollar rounding on every trip. Trading examples are illustrative, not recorded runs or guaranteed outcomes.</p>
+          <p>This article was prepared with AI assistance and checked against this remake’s Classic game rules on September 18, 2026. The price table comes directly from the game’s item definitions; the district table uses its danger settings. Interest examples apply the game’s whole-dollar rounding on every trip. The recorded-run section is a reproducible engine demonstration. Other trading examples are illustrative; none guarantees an outcome.</p>
           <p>We also checked travel timing, inventory valuation, banking, and combat behavior against the game logic. The <Link href="/how-to-play">rules page</Link> provides a shorter introduction. For background on why editions differ, the separate <a href="https://dopewars.sourceforge.io/">Unix/Windows dopewars project</a> documents its configurable rewrite and additional features. Its settings are not the source of the numbers in this guide.</p>
         </section>
 
@@ -207,11 +223,11 @@ export default function StrategyPost() {
         '@id': `${articleUrl}#article`, url: articleUrl, mainEntityOfPage: { '@type': 'WebPage', '@id': articleUrl },
         headline: strategyPost.title, description: strategyPost.description,
         datePublished: strategyPost.published, dateModified: strategyPost.modified,
-        author: { '@type': 'Organization', name: strategyPost.author, url: `${blogBaseUrl}/about` },
-        publisher: { '@type': 'Organization', name: 'Dope Wars', url: blogBaseUrl, logo: { '@type': 'ImageObject', url: `${blogBaseUrl}/icon-512.png` } },
+        author: { '@id': siteIds.publisher },
+        publisher: { '@id': siteIds.publisher },
         image: { '@type': 'ImageObject', url: `${blogBaseUrl}${strategyPost.image}`, width: 1200, height: 630 },
         articleSection: 'Game strategy', inLanguage: 'en', isAccessibleForFree: true,
-        about: { '@type': 'VideoGame', name: 'Dope Wars', url: blogBaseUrl },
+        about: { '@id': siteIds.game },
       }} />
       <JsonLd data={{
         '@context': 'https://schema.org', '@type': 'BreadcrumbList',

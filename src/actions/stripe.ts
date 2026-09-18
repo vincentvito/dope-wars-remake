@@ -1,10 +1,11 @@
 'use server';
 
 import { createClient, createServiceClient } from '@/lib/supabase/server';
+import { sanitizeAcquisition } from '@/lib/acquisition';
 import { stripe } from '@/lib/stripe';
 import { redirect } from 'next/navigation';
 
-export async function createCheckoutSession() {
+export async function createCheckoutSession(acquisition?: unknown) {
   // If user is already logged in and pro, bail early
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -37,7 +38,7 @@ export async function createCheckoutSession() {
       line_items: [{ price: priceId, quantity: 1 }],
       success_url: `${appUrl}/api/stripe/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${appUrl}/upgrade`,
-      ...(user ? { metadata: { user_id: user.id } } : {}),
+      metadata: { ...(user ? { user_id: user.id } : {}), acquisition_channel: sanitizeAcquisition(acquisition).channel, acquisition_landing: sanitizeAcquisition(acquisition).landing },
     });
     return { url: session.url };
   } catch (err) {

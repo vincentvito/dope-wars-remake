@@ -1,5 +1,6 @@
 'use client';
 
+import { trackRunEvent } from '@/lib/analytics';
 import { MotionImage } from '@/components/game/MotionImage';
 import { useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
@@ -67,6 +68,7 @@ export function GameOverScreen() {
         setSubmitError(result.error);
       } else {
         setSubmitStatus('success');
+        trackRunEvent('score_submitted', state.seed, { mode: state.gameMode });
         if (!isLoggedIn) {
           try { localStorage.setItem('dope-wars-nickname', nickname.trim()); } catch { /* Posting works without local storage. */ }
         }

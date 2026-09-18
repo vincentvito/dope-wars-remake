@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
+  alternates: { canonical: '/privacy' },
 };
 
 export default function PrivacyPage() {
@@ -81,7 +82,7 @@ export default function PrivacyPage() {
                 </a>
               </li>
               <li>
-                <strong>Vercel:</strong> Hosting and deployment. See their{' '}
+                <strong>Vercel:</strong> Hosting, deployment, and privacy-focused web analytics. See their{' '}
                 <a href="https://vercel.com/legal/privacy-policy" className="text-crt-cyan hover:underline" target="_blank" rel="noopener noreferrer">
                   privacy policy
                 </a>
@@ -96,7 +97,13 @@ export default function PrivacyPage() {
               guest identifier when you post a Classic score. The guest cookie lasts up to one year
               and helps prevent duplicate submissions and limit repeated posting. Your last chosen
               guest nickname and current run are saved locally in your browser. We do not use
-              advertising or tracking cookies.
+              advertising or tracking cookies. We use session storage for a broad acquisition category
+              (search, AI referral, other referral, or direct) and the public landing page. A local
+              record helps avoid counting the same game milestone twice. Analytics events describe
+              game starts, first trades, completed games, score submissions, and checkout starts.
+              They do not include nicknames, emails, seeds, exact scores, or action logs. Query strings
+              and account setup pages are excluded from our analytics page events. Checkout metadata
+              includes the broad category and landing page so we can measure paid purchases in Stripe.
             </p>
           </section>
 

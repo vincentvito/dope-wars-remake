@@ -5,11 +5,12 @@ import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/stores/auth-store';
 import { useAuthHydration } from '@/hooks/useAuthHydration';
+import { getAcquisition, trackFunnel } from '@/lib/analytics';
 import { createCheckoutSession } from '@/actions/stripe';
 
 const PRO_BENEFITS = [
   'Choose your campaign: 30, 45, or 60 days',
-  'Buy a Lab — cut drugs for 2x profit',
+  'Buy a Lab — cut inventory, balancing yield and risk',
   'Build a Warehouse for bulk storage',
   'Unlock Plane routes to Miami, LA & Medellin',
   'Buy a Plantation in Colombia',
@@ -37,7 +38,7 @@ export default function UpgradePage() {
     setError(null);
 
     try {
-      const result = await createCheckoutSession();
+      const result = await createCheckoutSession(getAcquisition());
 
       if ('error' in result && result.error) {
         setError(result.error);
@@ -46,6 +47,7 @@ export default function UpgradePage() {
       }
 
       if (result.url) {
+        trackFunnel('checkout_started');
         window.location.href = result.url;
       } else {
         setError('Failed to create checkout session. Please try again.');
@@ -59,7 +61,7 @@ export default function UpgradePage() {
   };
 
   return (
-    <main className="fixed inset-0 bg-black flex flex-col items-center justify-center overflow-y-auto">
+    <main className="min-h-[100dvh] bg-black flex flex-col items-center justify-start">
       <div className="w-full max-w-sm px-6 py-10 space-y-8">
         <Suspense><PaymentNotice /></Suspense>
         {/* Header */}
@@ -130,6 +132,19 @@ export default function UpgradePage() {
           </>
         )}
 
+        <section aria-labelledby="compare-modes" className="space-y-4">
+          <h2 id="compare-modes" className="text-sm font-bold text-crt-cyan">Classic or Pro?</h2>
+          <table className="w-full text-xs text-left border-collapse"><caption className="sr-only">Classic and Pro features</caption>
+            <thead><tr><th className="py-3" scope="col">Feature</th><th scope="col">Classic</th><th scope="col">Pro</th></tr></thead>
+            <tbody>{[
+              ['Price', 'Free', '$7.99 USD once'], ['Campaign', '30 days', '30, 45 or 60 days'],
+              ['Markets', '6 NYC districts', 'NYC + 3 cities'], ['Labs & assets', 'No', 'Yes'],
+              ['Score posting', 'Guest or account', 'Pro account'], ['Saving', 'Local browser', 'Local browser'],
+            ].map(([feature, classic, pro]) => <tr key={feature} className="border-t border-white/15"><th className="py-3 pr-2 font-normal" scope="row">{feature}</th><td className="pr-2">{classic}</td><td>{pro}</td></tr>)}</tbody>
+          </table>
+          <p className="text-xs text-muted-foreground">No subscription. Pro requires an account for access. Saves stay on this browser; buying Pro does not add cloud sync. New destinations and assets are unlocked during play.</p>
+          <Link href="/game" className="text-sm text-crt-cyan underline">Try Classic free first</Link>
+        </section>
         {/* Back */}
         <Link
           href="/"

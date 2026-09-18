@@ -1,7 +1,8 @@
+import { siteUrl, siteIds } from '@/lib/site';
 import type { Metadata } from 'next';
 import { JsonLd } from '@/components/seo/JsonLd';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const appUrl = siteUrl;
 
 export const metadata: Metadata = {
   title: 'Go Pro — Unlock the Full Dope Wars Experience',
@@ -17,6 +18,8 @@ export default function UpgradeLayout({ children }: { children: React.ReactNode 
         '@context': 'https://schema.org',
         '@type': 'SoftwareApplication',
         name: 'Dope Wars Pro',
+        publisher: { '@id': siteIds.publisher },
+        isPartOf: { '@id': siteIds.game },
         applicationCategory: 'GameApplication',
         operatingSystem: 'Any',
         offers: {

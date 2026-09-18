@@ -1,0 +1,1513 @@
+{
+  "generated": "2026-09-18",
+  "seed": "play-dope-wars-guide-2026-09-18",
+  "gameMode": "30",
+  "policy": "Current quotes only; sell at 25% gain or on day 30; buy the deepest discount below 75% of normal midpoint with up to 80% cash; keep $2,000 when repaying debt; bank above $10,000 after debt repayment; travel Manhattan/Central Park; decline offers; run from combat. No lookahead or seed selection.",
+  "outcome": "Time limit reached",
+  "day": 31,
+  "netWorth": 720905,
+  "cash": 10000,
+  "bank": 710905,
+  "debt": 0,
+  "health": 94,
+  "actions": [
+    {
+      "type": "BUY",
+      "drug": "Hashish",
+      "quantity": 6
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "EVENT_DECLINE"
+    },
+    {
+      "type": "SELL",
+      "drug": "Hashish",
+      "quantity": 6
+    },
+    {
+      "type": "PAY_DEBT",
+      "amount": 2916
+    },
+    {
+      "type": "BUY",
+      "drug": "Ecstasy",
+      "quantity": 100
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "SELL",
+      "drug": "Ecstasy",
+      "quantity": 100
+    },
+    {
+      "type": "PAY_DEBT",
+      "amount": 1300
+    },
+    {
+      "type": "BUY",
+      "drug": "Peyote",
+      "quantity": 6
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Peyote",
+      "quantity": 6
+    },
+    {
+      "type": "PAY_DEBT",
+      "amount": 1696
+    },
+    {
+      "type": "BUY",
+      "drug": "Speed",
+      "quantity": 18
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "SELL",
+      "drug": "Speed",
+      "quantity": 18
+    },
+    {
+      "type": "BUY",
+      "drug": "Weed",
+      "quantity": 8
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "BUY",
+      "drug": "Opium",
+      "quantity": 1
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "EVENT_ACCEPT"
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Weed",
+      "quantity": 8
+    },
+    {
+      "type": "BUY",
+      "drug": "Opium",
+      "quantity": 10
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "EVENT_DECLINE"
+    },
+    {
+      "type": "BUY",
+      "drug": "Peyote",
+      "quantity": 4
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Opium",
+      "quantity": 11
+    },
+    {
+      "type": "SELL",
+      "drug": "Peyote",
+      "quantity": 4
+    },
+    {
+      "type": "BUY",
+      "drug": "Hashish",
+      "quantity": 64
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "SELL",
+      "drug": "Hashish",
+      "quantity": 64
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 48562
+    },
+    {
+      "type": "BUY",
+      "drug": "Speed",
+      "quantity": 100
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "COMBAT_RUN"
+    },
+    {
+      "type": "COMBAT_RUN"
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "SELL",
+      "drug": "Speed",
+      "quantity": 92
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 9244
+    },
+    {
+      "type": "BUY",
+      "drug": "Smack",
+      "quantity": 9
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Smack",
+      "quantity": 9
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 18432
+    },
+    {
+      "type": "BUY",
+      "drug": "Ecstasy",
+      "quantity": 100
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "EVENT_DECLINE"
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Ecstasy",
+      "quantity": 100
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 600
+    },
+    {
+      "type": "BUY",
+      "drug": "Speed",
+      "quantity": 97
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "SELL",
+      "drug": "Speed",
+      "quantity": 97
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 16005
+    },
+    {
+      "type": "BUY",
+      "drug": "Weed",
+      "quantity": 24
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Weed",
+      "quantity": 24
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 8352
+    },
+    {
+      "type": "BUY",
+      "drug": "Heroin",
+      "quantity": 2
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "SELL",
+      "drug": "Heroin",
+      "quantity": 2
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 20558
+    },
+    {
+      "type": "BUY",
+      "drug": "Peyote",
+      "quantity": 31
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "EVENT_ACCEPT"
+    },
+    {
+      "type": "BUY",
+      "drug": "Peyote",
+      "quantity": 15
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "EVENT_DECLINE"
+    },
+    {
+      "type": "BUY",
+      "drug": "Speed",
+      "quantity": 6
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Peyote",
+      "quantity": 46
+    },
+    {
+      "type": "SELL",
+      "drug": "Speed",
+      "quantity": 6
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 22502
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "BUY",
+      "drug": "Peyote",
+      "quantity": 32
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Peyote",
+      "quantity": 32
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 75776
+    },
+    {
+      "type": "BUY",
+      "drug": "Shrooms",
+      "quantity": 25
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "SELL",
+      "drug": "Shrooms",
+      "quantity": 25
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 115275
+    },
+    {
+      "type": "BUY",
+      "drug": "Hashish",
+      "quantity": 25
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Hashish",
+      "quantity": 25
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 12175
+    },
+    {
+      "type": "BUY",
+      "drug": "Opium",
+      "quantity": 16
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "SELL",
+      "drug": "Opium",
+      "quantity": 16
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 5792
+    },
+    {
+      "type": "BUY",
+      "drug": "Cocaine",
+      "quantity": 2
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Cocaine",
+      "quantity": 2
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 33246
+    },
+    {
+      "type": "BUY",
+      "drug": "Weed",
+      "quantity": 66
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    },
+    {
+      "type": "SELL",
+      "drug": "Weed",
+      "quantity": 66
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 22704
+    },
+    {
+      "type": "BUY",
+      "drug": "Crack",
+      "quantity": 14
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Manhattan"
+    },
+    {
+      "type": "SELL",
+      "drug": "Crack",
+      "quantity": 14
+    },
+    {
+      "type": "BANK_DEPOSIT",
+      "amount": 47488
+    },
+    {
+      "type": "TRAVEL",
+      "destination": "Central Park"
+    }
+  ],
+  "rows": [
+    {
+      "day": 1,
+      "district": "Bronx",
+      "decision": "Buy 6 Hashish at $234; quote below 75% of normal midpoint",
+      "cash": 596,
+      "bank": 0,
+      "debt": 5000,
+      "health": 100,
+      "netWorth": -3000
+    },
+    {
+      "day": 2,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 596,
+      "bank": 0,
+      "debt": 5500,
+      "health": 100,
+      "netWorth": -3500
+    },
+    {
+      "day": 2,
+      "district": "Manhattan",
+      "decision": "Decline optional offer",
+      "cash": 596,
+      "bank": 0,
+      "debt": 5500,
+      "health": 100,
+      "netWorth": -584
+    },
+    {
+      "day": 2,
+      "district": "Manhattan",
+      "decision": "Sell 6 Hashish at $720 per unit",
+      "cash": 4916,
+      "bank": 0,
+      "debt": 5500,
+      "health": 100,
+      "netWorth": -584
+    },
+    {
+      "day": 2,
+      "district": "Manhattan",
+      "decision": "Repay $2916; keep $2,000 working cash",
+      "cash": 2000,
+      "bank": 0,
+      "debt": 2584,
+      "health": 100,
+      "netWorth": -584
+    },
+    {
+      "day": 2,
+      "district": "Manhattan",
+      "decision": "Buy 100 Ecstasy at $5; quote below 75% of normal midpoint",
+      "cash": 1500,
+      "bank": 0,
+      "debt": 2584,
+      "health": 100,
+      "netWorth": -584
+    },
+    {
+      "day": 3,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 1500,
+      "bank": 0,
+      "debt": 2842,
+      "health": 100,
+      "netWorth": 458
+    },
+    {
+      "day": 3,
+      "district": "Central Park",
+      "decision": "Sell 100 Ecstasy at $18 per unit",
+      "cash": 3300,
+      "bank": 0,
+      "debt": 2842,
+      "health": 100,
+      "netWorth": 458
+    },
+    {
+      "day": 3,
+      "district": "Central Park",
+      "decision": "Repay $1300; keep $2,000 working cash",
+      "cash": 2000,
+      "bank": 0,
+      "debt": 1542,
+      "health": 100,
+      "netWorth": 458
+    },
+    {
+      "day": 3,
+      "district": "Central Park",
+      "decision": "Buy 6 Peyote at $229; quote below 75% of normal midpoint",
+      "cash": 626,
+      "bank": 0,
+      "debt": 1542,
+      "health": 100,
+      "netWorth": 458
+    },
+    {
+      "day": 4,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 626,
+      "bank": 0,
+      "debt": 1696,
+      "health": 100,
+      "netWorth": 2590
+    },
+    {
+      "day": 4,
+      "district": "Manhattan",
+      "decision": "Sell 6 Peyote at $610 per unit",
+      "cash": 4286,
+      "bank": 0,
+      "debt": 1696,
+      "health": 100,
+      "netWorth": 2590
+    },
+    {
+      "day": 4,
+      "district": "Manhattan",
+      "decision": "Repay $1696; keep $2,000 working cash",
+      "cash": 2590,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 2590
+    },
+    {
+      "day": 4,
+      "district": "Manhattan",
+      "decision": "Buy 18 Speed at $115; quote below 75% of normal midpoint",
+      "cash": 520,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 2590
+    },
+    {
+      "day": 5,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 520,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 3310
+    },
+    {
+      "day": 5,
+      "district": "Central Park",
+      "decision": "Sell 18 Speed at $155 per unit",
+      "cash": 3310,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 3310
+    },
+    {
+      "day": 5,
+      "district": "Central Park",
+      "decision": "Buy 8 Weed at $312; quote below 75% of normal midpoint",
+      "cash": 814,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 3310
+    },
+    {
+      "day": 6,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 814,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 3310
+    },
+    {
+      "day": 6,
+      "district": "Manhattan",
+      "decision": "Buy 1 Opium at $456; quote below 75% of normal midpoint",
+      "cash": 358,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 3310
+    },
+    {
+      "day": 7,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 358,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 3310
+    },
+    {
+      "day": 7,
+      "district": "Central Park",
+      "decision": "Acknowledge mugging",
+      "cash": 242,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 3810
+    },
+    {
+      "day": 8,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 242,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 5958
+    },
+    {
+      "day": 8,
+      "district": "Manhattan",
+      "decision": "Sell 8 Weed at $662 per unit",
+      "cash": 5538,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 5958
+    },
+    {
+      "day": 8,
+      "district": "Manhattan",
+      "decision": "Buy 10 Opium at $420; quote below 75% of normal midpoint",
+      "cash": 1338,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 5958
+    },
+    {
+      "day": 9,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 1338,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 5991
+    },
+    {
+      "day": 9,
+      "district": "Central Park",
+      "decision": "Decline optional offer",
+      "cash": 1338,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 5573
+    },
+    {
+      "day": 9,
+      "district": "Central Park",
+      "decision": "Buy 4 Peyote at $229; quote below 75% of normal midpoint",
+      "cash": 422,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 5573
+    },
+    {
+      "day": 10,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 422,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 9218
+    },
+    {
+      "day": 10,
+      "district": "Manhattan",
+      "decision": "Sell 11 Opium at $616 per unit",
+      "cash": 7198,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 9218
+    },
+    {
+      "day": 10,
+      "district": "Manhattan",
+      "decision": "Sell 4 Peyote at $505 per unit",
+      "cash": 9218,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 9218
+    },
+    {
+      "day": 10,
+      "district": "Manhattan",
+      "decision": "Buy 64 Hashish at $115; quote below 75% of normal midpoint",
+      "cash": 1858,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 9218
+    },
+    {
+      "day": 11,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 1858,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 58562
+    },
+    {
+      "day": 11,
+      "district": "Central Park",
+      "decision": "Sell 64 Hashish at $886 per unit",
+      "cash": 58562,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 58562
+    },
+    {
+      "day": 11,
+      "district": "Central Park",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 48562,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 58562
+    },
+    {
+      "day": 11,
+      "district": "Central Park",
+      "decision": "Buy 100 Speed at $75; quote below 75% of normal midpoint",
+      "cash": 2500,
+      "bank": 48562,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 58562
+    },
+    {
+      "day": 12,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2500,
+      "bank": 50990,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 60990
+    },
+    {
+      "day": 12,
+      "district": "Manhattan",
+      "decision": "Attempt to run from combat",
+      "cash": 2500,
+      "bank": 50990,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 60990
+    },
+    {
+      "day": 12,
+      "district": "Manhattan",
+      "decision": "Attempt to run from combat",
+      "cash": 2500,
+      "bank": 50990,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 60390
+    },
+    {
+      "day": 13,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2500,
+      "bank": 53539,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 72783
+    },
+    {
+      "day": 13,
+      "district": "Central Park",
+      "decision": "Sell 92 Speed at $182 per unit",
+      "cash": 19244,
+      "bank": 53539,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 72783
+    },
+    {
+      "day": 13,
+      "district": "Central Park",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 62783,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 72783
+    },
+    {
+      "day": 13,
+      "district": "Central Park",
+      "decision": "Buy 9 Smack at $825; quote below 75% of normal midpoint",
+      "cash": 2575,
+      "bank": 62783,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 72783
+    },
+    {
+      "day": 14,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2575,
+      "bank": 65922,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 94354
+    },
+    {
+      "day": 14,
+      "district": "Manhattan",
+      "decision": "Sell 9 Smack at $2873 per unit",
+      "cash": 28432,
+      "bank": 65922,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 94354
+    },
+    {
+      "day": 14,
+      "district": "Manhattan",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 84354,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 94354
+    },
+    {
+      "day": 14,
+      "district": "Manhattan",
+      "decision": "Buy 100 Ecstasy at $12; quote below 75% of normal midpoint",
+      "cash": 8800,
+      "bank": 84354,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 94354
+    },
+    {
+      "day": 15,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 8800,
+      "bank": 88571,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 98571
+    },
+    {
+      "day": 15,
+      "district": "Central Park",
+      "decision": "Decline optional offer",
+      "cash": 8800,
+      "bank": 88571,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 97971
+    },
+    {
+      "day": 16,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 8800,
+      "bank": 92999,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 103599
+    },
+    {
+      "day": 16,
+      "district": "Manhattan",
+      "decision": "Sell 100 Ecstasy at $18 per unit",
+      "cash": 10600,
+      "bank": 92999,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 103599
+    },
+    {
+      "day": 16,
+      "district": "Manhattan",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 93599,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 103599
+    },
+    {
+      "day": 16,
+      "district": "Manhattan",
+      "decision": "Buy 97 Speed at $82; quote below 75% of normal midpoint",
+      "cash": 2046,
+      "bank": 93599,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 103599
+    },
+    {
+      "day": 17,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2046,
+      "bank": 98278,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 124283
+    },
+    {
+      "day": 17,
+      "district": "Central Park",
+      "decision": "Sell 97 Speed at $247 per unit",
+      "cash": 26005,
+      "bank": 98278,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 124283
+    },
+    {
+      "day": 17,
+      "district": "Central Park",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 114283,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 124283
+    },
+    {
+      "day": 17,
+      "district": "Central Park",
+      "decision": "Buy 24 Weed at $328; quote below 75% of normal midpoint",
+      "cash": 2128,
+      "bank": 114283,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 124283
+    },
+    {
+      "day": 18,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2128,
+      "bank": 119997,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 138349
+    },
+    {
+      "day": 18,
+      "district": "Manhattan",
+      "decision": "Sell 24 Weed at $676 per unit",
+      "cash": 18352,
+      "bank": 119997,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 138349
+    },
+    {
+      "day": 18,
+      "district": "Manhattan",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 128349,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 138349
+    },
+    {
+      "day": 18,
+      "district": "Manhattan",
+      "decision": "Buy 2 Heroin at $2899; quote below 75% of normal midpoint",
+      "cash": 4202,
+      "bank": 128349,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 138349
+    },
+    {
+      "day": 19,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 4202,
+      "bank": 134766,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 165324
+    },
+    {
+      "day": 19,
+      "district": "Central Park",
+      "decision": "Sell 2 Heroin at $13178 per unit",
+      "cash": 30558,
+      "bank": 134766,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 165324
+    },
+    {
+      "day": 19,
+      "district": "Central Park",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 155324,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 165324
+    },
+    {
+      "day": 19,
+      "district": "Central Park",
+      "decision": "Buy 31 Peyote at $257; quote below 75% of normal midpoint",
+      "cash": 2033,
+      "bank": 155324,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 165324
+    },
+    {
+      "day": 20,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2033,
+      "bank": 163090,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 173090
+    },
+    {
+      "day": 20,
+      "district": "Manhattan",
+      "decision": "Acknowledge mugging",
+      "cash": 1787,
+      "bank": 163090,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 167698
+    },
+    {
+      "day": 20,
+      "district": "Manhattan",
+      "decision": "Buy 15 Peyote at $91; quote below 75% of normal midpoint",
+      "cash": 422,
+      "bank": 163090,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 167698
+    },
+    {
+      "day": 21,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 422,
+      "bank": 171244,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 180958
+    },
+    {
+      "day": 21,
+      "district": "Central Park",
+      "decision": "Decline optional offer",
+      "cash": 422,
+      "bank": 171244,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 180958
+    },
+    {
+      "day": 21,
+      "district": "Central Park",
+      "decision": "Buy 6 Speed at $50; quote below 75% of normal midpoint",
+      "cash": 122,
+      "bank": 171244,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 180958
+    },
+    {
+      "day": 22,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 122,
+      "bank": 179806,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 212308
+    },
+    {
+      "day": 22,
+      "district": "Manhattan",
+      "decision": "Sell 46 Peyote at $688 per unit",
+      "cash": 31770,
+      "bank": 179806,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 212308
+    },
+    {
+      "day": 22,
+      "district": "Manhattan",
+      "decision": "Sell 6 Speed at $122 per unit",
+      "cash": 32502,
+      "bank": 179806,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 212308
+    },
+    {
+      "day": 22,
+      "district": "Manhattan",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 202308,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 212308
+    },
+    {
+      "day": 23,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 10000,
+      "bank": 212423,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 222423
+    },
+    {
+      "day": 23,
+      "district": "Central Park",
+      "decision": "Buy 32 Peyote at $248; quote below 75% of normal midpoint",
+      "cash": 2064,
+      "bank": 212423,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 222423
+    },
+    {
+      "day": 24,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2064,
+      "bank": 223044,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 308820
+    },
+    {
+      "day": 24,
+      "district": "Manhattan",
+      "decision": "Sell 32 Peyote at $2616 per unit",
+      "cash": 85776,
+      "bank": 223044,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 308820
+    },
+    {
+      "day": 24,
+      "district": "Manhattan",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 298820,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 308820
+    },
+    {
+      "day": 24,
+      "district": "Manhattan",
+      "decision": "Buy 25 Shrooms at $309; quote below 75% of normal midpoint",
+      "cash": 2275,
+      "bank": 298820,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 308820
+    },
+    {
+      "day": 25,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2275,
+      "bank": 313761,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 439036
+    },
+    {
+      "day": 25,
+      "district": "Central Park",
+      "decision": "Sell 25 Shrooms at $4920 per unit",
+      "cash": 125275,
+      "bank": 313761,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 439036
+    },
+    {
+      "day": 25,
+      "district": "Central Park",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 429036,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 439036
+    },
+    {
+      "day": 25,
+      "district": "Central Park",
+      "decision": "Buy 25 Hashish at $315; quote below 75% of normal midpoint",
+      "cash": 2125,
+      "bank": 429036,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 439036
+    },
+    {
+      "day": 26,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2125,
+      "bank": 450487,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 472662
+    },
+    {
+      "day": 26,
+      "district": "Manhattan",
+      "decision": "Sell 25 Hashish at $802 per unit",
+      "cash": 22175,
+      "bank": 450487,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 472662
+    },
+    {
+      "day": 26,
+      "district": "Manhattan",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 462662,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 472662
+    },
+    {
+      "day": 26,
+      "district": "Manhattan",
+      "decision": "Buy 16 Opium at $491; quote below 75% of normal midpoint",
+      "cash": 2144,
+      "bank": 462662,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 472662
+    },
+    {
+      "day": 27,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2144,
+      "bank": 485795,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 501587
+    },
+    {
+      "day": 27,
+      "district": "Central Park",
+      "decision": "Sell 16 Opium at $853 per unit",
+      "cash": 15792,
+      "bank": 485795,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 501587
+    },
+    {
+      "day": 27,
+      "district": "Central Park",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 491587,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 501587
+    },
+    {
+      "day": 27,
+      "district": "Central Park",
+      "decision": "Buy 2 Cocaine at $3918; quote below 75% of normal midpoint",
+      "cash": 2164,
+      "bank": 491587,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 501587
+    },
+    {
+      "day": 28,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2164,
+      "bank": 516166,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 559412
+    },
+    {
+      "day": 28,
+      "district": "Manhattan",
+      "decision": "Sell 2 Cocaine at $20541 per unit",
+      "cash": 43246,
+      "bank": 516166,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 559412
+    },
+    {
+      "day": 28,
+      "district": "Manhattan",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 549412,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 559412
+    },
+    {
+      "day": 28,
+      "district": "Manhattan",
+      "decision": "Buy 66 Weed at $120; quote below 75% of normal midpoint",
+      "cash": 2080,
+      "bank": 549412,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 559412
+    },
+    {
+      "day": 29,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2080,
+      "bank": 576882,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 609586
+    },
+    {
+      "day": 29,
+      "district": "Central Park",
+      "decision": "Sell 66 Weed at $464 per unit",
+      "cash": 32704,
+      "bank": 576882,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 609586
+    },
+    {
+      "day": 29,
+      "district": "Central Park",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 599586,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 609586
+    },
+    {
+      "day": 29,
+      "district": "Central Park",
+      "decision": "Buy 14 Crack at $542; quote below 75% of normal midpoint",
+      "cash": 2412,
+      "bank": 599586,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 609586
+    },
+    {
+      "day": 30,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2412,
+      "bank": 629565,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 687053
+    },
+    {
+      "day": 30,
+      "district": "Manhattan",
+      "decision": "Sell 14 Crack at $3934 per unit",
+      "cash": 57488,
+      "bank": 629565,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 687053
+    },
+    {
+      "day": 30,
+      "district": "Manhattan",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 677053,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 687053
+    },
+    {
+      "day": 31,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 10000,
+      "bank": 710905,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 720905
+    }
+  ]
+}

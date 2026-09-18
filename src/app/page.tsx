@@ -3,7 +3,8 @@ import { MotionImage } from '@/components/game/MotionImage';
 import { HomeClient } from '@/components/home/HomeClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.playdopewars.com';
+import { siteUrl as appUrl, siteIds, publisherName } from '@/lib/site';
+import { EditionFacts } from '@/components/seo/EditionFacts';
 
 export default function HomePage() {
   return (
@@ -26,10 +27,11 @@ export default function HomePage() {
             <div className="text-center space-y-4">
               <h1 className="font-pixel text-3xl text-crt-cyan text-glow-blue tracking-wider">
                 DOPE WARS
+                <span className="block text-xs mt-4 text-crt-green">PLAY FREE ONLINE</span>
               </h1>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Buy low, sell high, and survive 30 days on the streets of New York.
-                Pay off your debt to the loan shark and build your empire.
+                Classic is free, with no download or account required.
               </p>
             </div>
           }
@@ -37,7 +39,7 @@ export default function HomePage() {
 
         {/* Footer — always pinned to bottom */}
         <div className="relative mt-auto px-4 z-10 text-[10px] text-muted-foreground text-center space-y-1">
-          <p>A modern remake of the original 1984 dope wars game by John E. Dell</p>
+          <p>An independent browser remake, published by Play Dope Wars.</p>
           <p>
             <Link href="/how-to-play" className="hover:text-muted-foreground transition-colors">How to Play</Link>
             {' · '}
@@ -47,6 +49,8 @@ export default function HomePage() {
             {' · '}
             <Link href="/leaderboard" className="hover:text-muted-foreground transition-colors">Leaderboard</Link>
             {' · '}
+            <Link href="/press" className="hover:underline">Press kit</Link>
+            {' · '}
             <Link href="/terms" className="hover:text-muted-foreground transition-colors">Terms</Link>
             {' · '}
             <Link href="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</Link>
@@ -54,16 +58,16 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* Below-fold SEO content — accessible to crawlers, not visible in viewport */}
+      {/* Game details and guides */}
       <section className="bg-black text-muted-foreground px-6 py-16 max-w-2xl mx-auto space-y-8" aria-label="About Dope Wars">
         <h2 className="font-pixel text-sm text-crt-green text-glow-green">
           The Classic Drug Trading Game — Free Online
         </h2>
         <div className="text-sm leading-relaxed space-y-4">
           <p>
-            Dope Wars is a classic drug trading strategy game originally created by John E. Dell in 1984.
-            This free online remake brings the full experience to your browser — no download, no app store,
-            no install. Play instantly on desktop or mobile.
+            Play Dope Wars is an independent browser remake of the Drug Wars / Dope Wars trading-game formula.
+            Buy low, sell high, manage debt, and survive a 30-day Classic run. Play on desktop, Android,
+            or iPhone through a modern browser; this is a web game, not a native app download.
           </p>
           <p>
             Start with $2,000 in cash and $5,000 in debt to a loan shark. Travel between six New York City
@@ -73,12 +77,18 @@ export default function HomePage() {
           </p>
         </div>
 
+        <EditionFacts />
+        <figure>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/press/classic-market.png" alt="Classic Dope Wars market with prices, cash, debt and travel controls" width={1280} height={800} loading="lazy" className="w-full h-auto border border-crt-green/20" />
+          <figcaption className="text-xs mt-3">The Classic market. Compare quotes before using your cash and coat space.</figcaption>
+        </figure>
         <h3 className="font-pixel text-xs text-crt-amber">Why Play This Remake?</h3>
         <ul className="text-sm space-y-2">
-          <li><span className="text-crt-cyan">Instant play</span> — No download or installation required. Works on any browser.</li>
-          <li><span className="text-crt-cyan">Retro pixel art</span> — Handcrafted pixel art visuals with a CRT screen aesthetic.</li>
+          <li><span className="text-crt-cyan">Instant play</span> — No download or installation required. Play in a modern desktop or mobile browser.</li>
+          <li><span className="text-crt-cyan">Retro pixel art</span> — Retro pixel art visuals with a CRT screen aesthetic.</li>
           <li><span className="text-crt-cyan">Global leaderboard</span> — Compete against players worldwide for the highest net worth.</li>
-          <li><span className="text-crt-cyan">Fair competition</span> — Server-validated scores ensure nobody can cheat.</li>
+          <li><span className="text-crt-cyan">Fair competition</span> — Submitted runs are replayed on the server to validate scores. This is not a guarantee against all abuse.</li>
           <li><span className="text-crt-cyan">Pro mode available</span> — Extended campaigns up to 60 days with labs, warehouses, and international routes.</li>
         </ul>
 
@@ -95,8 +105,8 @@ export default function HomePage() {
           </p>
           <p>
             Curious about the history? Learn about the{' '}
-            <Link href="/about" className="text-crt-cyan hover:underline">original 1984 Dope Wars game</Link>{' '}
-            and how it spread from DOS to TI-83 calculators to the modern web.
+            <Link href="/about" className="text-crt-cyan hover:underline">Drug Wars and Dope Wars editions</Link>{' '}
+            including calculator games, Palm handhelds, and today’s browser version.
           </p>
           <p>
             Ready to prove yourself? Check the{' '}
@@ -111,9 +121,12 @@ export default function HomePage() {
       <JsonLd data={{
         '@context': 'https://schema.org',
         '@type': 'VideoGame',
-        name: 'Dope Wars',
-        alternateName: ['Dope Wars Remake', 'Dope War Game'],
-        description: 'A modern web remake of the classic 1984 drug trading game by John E. Dell. Buy low, sell high, survive 30 days on the streets of New York.',
+        '@id': siteIds.game,
+        name: 'Play Dope Wars',
+        alternateName: ['Dope Wars', 'Dope Wars browser remake'],
+        description: 'An independent browser trading game. Play Classic free: buy low, sell high, manage debt and survive 30 days in New York. No account or download required.',
+        screenshot: `${appUrl}/press/classic-market.png`,
+        publisher: { '@id': siteIds.publisher },
         url: appUrl,
         genre: ['Strategy', 'Simulation'],
         gamePlatform: ['Web Browser', 'Mobile Web'],
@@ -133,18 +146,16 @@ export default function HomePage() {
             description: 'Pro mode with extended campaigns',
           },
         ],
-        author: {
-          '@type': 'Organization',
-          name: 'Dope Wars',
-          url: appUrl,
-        },
+        author: { '@id': siteIds.publisher },
         inLanguage: 'en',
         isAccessibleForFree: true,
       }} />
       <JsonLd data={{
         '@context': 'https://schema.org',
         '@type': 'WebSite',
-        name: 'Dope Wars',
+        '@id': siteIds.website,
+        name: publisherName,
+        publisher: { '@id': siteIds.publisher },
         url: appUrl,
       }} />
     </>

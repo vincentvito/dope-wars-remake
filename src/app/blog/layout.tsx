@@ -15,9 +15,10 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
       </header>
       {children}
       <footer className={styles.footer}>
-        <p>Dope Wars · Know the market. Make your move.</p>
+        <p>Play Dope Wars · Know the market. Make your move.</p>
         <nav aria-label="Footer navigation">
           <Link href="/about">About</Link>
+          <Link href="/press">Press kit</Link>
           <Link href="/leaderboard">Leaderboard</Link>
           <Link href="/">Back to the game</Link>
         </nav>

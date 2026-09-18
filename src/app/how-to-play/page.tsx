@@ -1,8 +1,9 @@
+import { siteUrl } from '@/lib/site';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { JsonLd } from '@/components/seo/JsonLd';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.playdopewars.com';
+const appUrl = siteUrl;
 
 export const metadata: Metadata = {
   title: 'How to Play Dope Wars — Rules & Beginner Tips',
@@ -189,6 +190,16 @@ export default function HowToPlayPage() {
               <li><strong className="text-crt-green">Avoid danger.</strong> Stick to safer districts early. Losing cash to muggers or drugs to cops can be devastating.</li>
             </ol>
           </div>
+        </section>
+
+        <section className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+          <h2 className="font-pixel text-sm text-crt-amber">PLAYING, SAVING &amp; SCORES</h2>
+          <h3 className="font-bold text-foreground">Can I play on my phone without downloading an app?</h3>
+          <p>Yes. Classic runs in a modern desktop or mobile browser, including Android and iPhone. No download or account is needed to start. Pro is an optional paid upgrade.</p>
+          <h3 className="font-bold text-foreground">Where is my game saved?</h3>
+          <p>Your current run saves automatically in this browser when local storage is available. Return on the same browser and device to continue. Clearing site data, private browsing, or starting a new run can remove or replace it. An account does not provide cloud save sync.</p>
+          <h3 className="font-bold text-foreground">Can I post a Classic score without an account?</h3>
+          <p>A completed Classic run can be posted with a public nickname. Posting is optional. Submitted actions are replayed on the server before a score is accepted; validation does not prevent every form of abuse. Pro has separate boards.</p>
         </section>
 
         {/* Cross-links */}

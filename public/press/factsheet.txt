@@ -1,0 +1,21 @@
+PLAY DOPE WARS — PRESS FACTSHEET
+Updated September 18, 2026
+Publisher: Play Dope Wars
+Website: https://www.playdopewars.com
+Genre: solo, turn-based trading / strategy
+Platform: modern desktop and mobile browsers; no native app download
+Language: English
+Classic: free, 30 in-game trading days, no account required
+Pro: $7.99 USD one-time upgrade; account required; 30/45/60-day campaigns
+Saves: one current run stored in the same browser; no cloud sync
+Scores: optional public nickname posting for completed Classic runs; separate Pro boards
+Themes: fictional drug trading, police encounters and combat
+
+Play Dope Wars is an independent browser remake inspired by the Drug Wars / Dope Wars trading-game formula. Start with $2,000 cash and $5,000 debt, compare prices across six New York districts, and manage risk through a 30-day Classic run. Pro adds labs, assets, weapons and international destinations unlocked during play.
+
+Not an official continuation of the calculator, Palm or Unix/Windows projects. Edition history and sources: https://www.playdopewars.com/about
+Rules: https://www.playdopewars.com/how-to-play
+Strategy and recorded example: https://www.playdopewars.com/blog/dope-wars-strategy
+
+Assets: classic-market.png (1280x800), classic-mobile.png (390x844), classic-gameplay.mp4 (silent), icon-512.png.
+Use the supplied assets for editorial coverage of Play Dope Wars with attribution and a link to https://www.playdopewars.com. This permission excludes third-party marks and does not imply endorsement.

@@ -1,0 +1,125 @@
+{
+  "generated": "2026-09-18",
+  "seed": "play-dope-wars-guide-2026-09-18",
+  "gameMode": "30",
+  "policy": "Current quotes only; sell at 25% gain or on day 30; buy the deepest discount below 75% of normal midpoint with up to 80% cash; keep $2,000 when repaying debt; bank above $10,000 after debt repayment; travel Manhattan/Central Park; decline offers; run from combat. No lookahead or seed selection.",
+  "outcome": "Time limit reached",
+  "day": 31,
+  "netWorth": 720905,
+  "cash": 10000,
+  "bank": 710905,
+  "debt": 0,
+  "health": 94,
+  "rows": [
+    {
+      "day": 1,
+      "district": "Bronx",
+      "decision": "Buy 6 Hashish at $234; quote below 75% of normal midpoint",
+      "cash": 596,
+      "bank": 0,
+      "debt": 5000,
+      "health": 100,
+      "netWorth": -3000
+    },
+    {
+      "day": 2,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 596,
+      "bank": 0,
+      "debt": 5500,
+      "health": 100,
+      "netWorth": -3500
+    },
+    {
+      "day": 2,
+      "district": "Manhattan",
+      "decision": "Decline optional offer",
+      "cash": 596,
+      "bank": 0,
+      "debt": 5500,
+      "health": 100,
+      "netWorth": -584
+    },
+    {
+      "day": 2,
+      "district": "Manhattan",
+      "decision": "Sell 6 Hashish at $720 per unit",
+      "cash": 4916,
+      "bank": 0,
+      "debt": 5500,
+      "health": 100,
+      "netWorth": -584
+    },
+    {
+      "day": 2,
+      "district": "Manhattan",
+      "decision": "Repay $2916; keep $2,000 working cash",
+      "cash": 2000,
+      "bank": 0,
+      "debt": 2584,
+      "health": 100,
+      "netWorth": -584
+    },
+    {
+      "day": 4,
+      "district": "Manhattan",
+      "decision": "Repay $1696; keep $2,000 working cash",
+      "cash": 2590,
+      "bank": 0,
+      "debt": 0,
+      "health": 100,
+      "netWorth": 2590
+    },
+    {
+      "day": 29,
+      "district": "Central Park",
+      "decision": "Buy 14 Crack at $542; quote below 75% of normal midpoint",
+      "cash": 2412,
+      "bank": 599586,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 609586
+    },
+    {
+      "day": 30,
+      "district": "Manhattan",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 2412,
+      "bank": 629565,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 687053
+    },
+    {
+      "day": 30,
+      "district": "Manhattan",
+      "decision": "Sell 14 Crack at $3934 per unit",
+      "cash": 57488,
+      "bank": 629565,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 687053
+    },
+    {
+      "day": 30,
+      "district": "Manhattan",
+      "decision": "Bank cash above a $10,000 trading reserve",
+      "cash": 10000,
+      "bank": 677053,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 687053
+    },
+    {
+      "day": 31,
+      "district": "Central Park",
+      "decision": "Travel between lower-risk districts; interest accrues",
+      "cash": 10000,
+      "bank": 710905,
+      "debt": 0,
+      "health": 94,
+      "netWorth": 720905
+    }
+  ]
+}

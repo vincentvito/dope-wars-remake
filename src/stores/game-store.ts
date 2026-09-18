@@ -11,6 +11,7 @@ import { createProGame, applyProAction, calculateProNetWorth, isProMode } from '
 import { getMaxBuyQuantity } from '@/engine/inventory';
 import { getAvailableDestinations, getEffectiveTravelCost, canTravelTo } from '@/engine/cities';
 import { restoreGame, serializeGame, SAVE_KEY } from '@/engine/saved-game';
+import { trackRunEvent } from '@/lib/analytics';
 import { useUIStore } from '@/stores/ui-store';
 
 
@@ -99,6 +100,7 @@ const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
       isPro: false,
 
       startNewGame: (gameMode: GameMode = '30') => {
+        const returning = Boolean(get().gameState || get().proGameState);
         useUIStore.setState({ activeModal: null, selectedDrug: null, settingsOpen: false, activeProTab: 'market', notifications: [] });
         const seed = typeof crypto !== 'undefined' && crypto.randomUUID
           ? crypto.randomUUID()
@@ -124,6 +126,7 @@ const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
           });
         }
         get().saveProgress();
+        trackRunEvent('game_start', seed, { mode: gameMode, returning });
       },
 
       dispatch: (action: PlayerAction) => {
@@ -132,6 +135,8 @@ const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
 
         try {
           const newState = applyAction(gameState, action);
+          if ((action.type === 'BUY' || action.type === 'SELL') && !gameState.actionLog.some(a => a.type === 'BUY' || a.type === 'SELL')) trackRunEvent('first_trade', gameState.seed, { mode: gameState.gameMode });
+          if (newState.phase === 'game_over' && gameState.phase !== 'game_over') trackRunEvent('game_complete', gameState.seed, { mode: gameState.gameMode, outcome: newState.health <= 0 ? 'death' : 'time_limit' });
           set({
             gameState: newState,
             isPlaying: newState.phase !== 'game_over',
@@ -151,6 +156,8 @@ const storeImpl: import('zustand').StateCreator<GameStore> = (set, get) => ({
 
         try {
           const newState = applyProAction(proGameState, action);
+          if ((action.type === 'BUY' || action.type === 'SELL') && !proGameState.actionLog.some(a => a.type === 'BUY' || a.type === 'SELL')) trackRunEvent('first_trade', proGameState.seed, { mode: proGameState.gameMode });
+          if (newState.phase === 'game_over' && proGameState.phase !== 'game_over') trackRunEvent('game_complete', proGameState.seed, { mode: proGameState.gameMode, outcome: newState.health <= 0 ? 'death' : 'time_limit' });
           set({
             proGameState: newState,
             isPlaying: newState.phase !== 'game_over',

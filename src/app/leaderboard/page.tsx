@@ -1,3 +1,4 @@
+import { siteUrl } from '@/lib/site';
 import type { Metadata } from 'next';
 import { getLeaderboard } from '@/actions/leaderboard';
 import { LeaderboardClient } from '@/components/leaderboard/LeaderboardClient';
@@ -5,7 +6,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import Link from 'next/link';
 import { isLeaderboardMode } from '@/lib/leaderboard';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const appUrl = siteUrl;
 
 export const metadata: Metadata = {
   title: 'Leaderboard — Top Drug Dealers',
@@ -54,11 +55,12 @@ export default async function LeaderboardPage({
         initialError={error}
       />
 
-      {/* Cross-links for SEO */}
+      <p className="text-xs text-muted-foreground mt-8">Classic scores count cash plus bank savings, minus debt, plus inventory value. At the time limit, unsold inventory uses its recorded average cost. Submitted runs are replayed and validated on the server. This does not eliminate every form of automated play.</p>
+      {/* Related guides */}
       <div className="text-xs text-muted-foreground leading-relaxed mt-8 space-y-2 border-t border-crt-green/10 pt-6">
         <p>
           Want to climb the ranks? Read the{' '}
-          <Link href="/how-to-play" className="text-crt-cyan hover:underline">strategy guide</Link>{' '}
+          <Link href="/blog/dope-wars-strategy" className="text-crt-cyan hover:underline">strategy guide</Link>{' '}
           for tips on maximizing your net worth.
         </p>
         <p>

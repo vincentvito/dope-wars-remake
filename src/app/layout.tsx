@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Press_Start_2P, JetBrains_Mono } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react";
+import { AcquisitionAnalytics } from '@/components/analytics/AcquisitionAnalytics';
+import { publisher, siteUrl } from '@/lib/site';
 import { GamePersistence } from "@/components/game/GamePersistence";
 import { ThemeSync } from "@/components/ThemeSync";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -17,29 +18,28 @@ const monoFont = JetBrains_Mono({
   variable: "--font-geist-mono",
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.playdopewars.com';
+const appUrl = siteUrl;
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
   title: {
-    default: 'Dope Wars — Play the Classic Drug Trading Game Online Free',
+    default: 'Dope Wars Online — Play Free in Your Browser',
     template: '%s | Dope Wars',
   },
   description:
-    'Play Dope Wars online free — the original 1984 drug dealing game remade for the web. Buy low, sell high, survive 30 days in New York. No download required.',
-  keywords: ['dope wars', 'dope war game', 'drug games', 'video game dealer', 'original dope wars', 'drug trading game', 'dope wars online', 'dope wars remake'],
+    'Play Dope Wars online free. Trade across New York in a 30-day Classic game, save locally, and post your score. No download or account required for Classic.',
   openGraph: {
-    title: 'Dope Wars — Play the Classic Drug Trading Game Online Free',
+    title: 'Dope Wars Online — Play Free in Your Browser',
     description:
-      'The original 1984 drug dealing game, remade for the web. Trade drugs, dodge cops, survive 30 days on the streets of New York.',
-    siteName: 'Dope Wars',
+      'An independent browser remake of Drug Wars. Free Classic play, local saves and guest scores. No download required.',
+    siteName: 'Play Dope Wars',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dope Wars — Play the Classic Drug Trading Game Online Free',
+    title: 'Dope Wars Online — Play Free in Your Browser',
     description:
-      'The original 1984 drug dealing game, remade for the web. Buy low, sell high, survive 30 days.',
+      'An independent browser remake of Drug Wars. Free Classic play, local saves and guest scores. No download required.',
   },
   icons: {
     icon: '/favicon.ico',
@@ -67,14 +67,8 @@ export default function RootLayout({
           <div className="crt-overlay" />
           {children}
         </div>
-        <JsonLd data={{
-          '@context': 'https://schema.org',
-          '@type': 'Organization',
-          name: 'Dope Wars',
-          url: appUrl,
-          logo: `${appUrl}/icon-512.png`,
-        }} />
-        {process.env.VERCEL === '1' && <Analytics />}
+        <JsonLd data={{ '@context': 'https://schema.org', ...publisher }} />
+        <AcquisitionAnalytics enabled={process.env.VERCEL === '1'} customEventsEnabled={process.env.NEXT_PUBLIC_FUNNEL_ANALYTICS === '1'} />
       </body>
     </html>
   );
