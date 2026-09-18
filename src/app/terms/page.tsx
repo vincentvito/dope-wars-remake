@@ -14,7 +14,7 @@ export default function TermsPage() {
             TERMS OF SERVICE
           </h1>
           <p className="text-[10px] text-muted-foreground">
-            Last updated: February 2025
+            Last updated: September 18, 2026
           </p>
         </div>
 
@@ -40,14 +40,15 @@ export default function TermsPage() {
           <section className="space-y-2">
             <h2 className="text-sm text-foreground font-bold">3. Accounts</h2>
             <p>
-              You may play the Game as a guest without an account. To submit scores to the
-              leaderboard, you must create an account with a valid email address, username, and
-              password. You are responsible for maintaining the confidentiality of your credentials.
+              You may play and submit Classic scores as a guest using a public nickname, without
+              an account. Guest names are not reserved and are marked as guests on the leaderboard.
+              Pro score submission requires a Pro account. When you create an account, use a valid
+              email address, username, and password, and keep your credentials confidential.
             </p>
             <p>
               You must provide accurate information. Usernames must be 3-20 characters and may
               contain letters, numbers, hyphens, and underscores. We reserve the right to remove
-              accounts with offensive or misleading usernames.
+              accounts or scores with offensive or misleading names.
             </p>
           </section>
 

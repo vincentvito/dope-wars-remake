@@ -17,7 +17,7 @@ const monoFont = JetBrains_Mono({
   variable: "--font-geist-mono",
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.playdopewars.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),

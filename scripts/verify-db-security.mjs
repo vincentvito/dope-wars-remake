@@ -11,7 +11,8 @@ CREATE SCHEMA auth; CREATE TABLE auth.users(id uuid PRIMARY KEY, raw_user_meta_d
 CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$ SELECT nullif(current_setting('request.jwt.claim.sub', true),'')::uuid $$;
 GRANT USAGE ON SCHEMA public, auth TO anon, authenticated, service_role;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated, service_role;`);
-for (const file of (await fs.readdir(root+'/supabase/migrations')).sort()) await db.exec(await fs.readFile(root+'/supabase/migrations/'+file,'utf8'));
+const migrations = (await fs.readdir(root+'/supabase/migrations')).sort();
+for (const file of migrations) await db.exec(await fs.readFile(root+'/supabase/migrations/'+file,'utf8'));
 const player='11111111-1111-4111-8111-111111111111', other='22222222-2222-4222-8222-222222222222';
 await db.query(`INSERT INTO auth.users VALUES($1,'{"username":"tester"}'),($2,'{"username":"other"}')`,[player,other]);
 await db.exec(`SET ROLE authenticated; SET request.jwt.claim.sub='${player}';`);
@@ -35,5 +36,28 @@ const edited=await db.query(`UPDATE public.game_sessions SET final_cash=999999 W
 assert.equal(edited.rows.length,0);
 await db.exec(`SET request.jwt.claim.sub='${other}'`);
 assert.equal((await db.query('SELECT * FROM public.game_sessions')).rows.length,0);
+// Guests can publish Classic scores only through the server replay boundary.
+await db.exec('RESET ROLE; SET ROLE service_role;');
+const guest = { ...payload, user_id: null, guest_id: '33333333-3333-4333-8333-333333333333', game_mode: '30', seed: 'guest-0', username: 'GuestDealer' };
+const firstGuest = await db.query('SELECT public.record_game_score($1::jsonb) AS id', [JSON.stringify(guest)]);
+const repeatedGuest = await db.query('SELECT public.record_game_score($1::jsonb) AS id', [JSON.stringify(guest)]);
+assert.equal(firstGuest.rows[0].id, repeatedGuest.rows[0].id);
+assert.equal((await db.query('SELECT is_guest FROM public.leaderboard WHERE game_session_id=$1', [firstGuest.rows[0].id])).rows[0].is_guest, true);
+await assert.rejects(db.query('SELECT public.record_game_score($1::jsonb)', [JSON.stringify({ ...guest, game_mode: 'pro_30' })]), /invalid_guest_score/);
+await assert.rejects(db.query('SELECT public.record_game_score($1::jsonb)', [JSON.stringify({ ...guest, user_id: player })]), /invalid_score_identity/);
+await assert.rejects(db.query('SELECT public.record_game_score($1::jsonb)', [JSON.stringify({ ...guest, username: '<script>' })]), /invalid_guest_score/);
+for (let i = 1; i < 10; i++) await db.query('SELECT public.record_game_score($1::jsonb)', [JSON.stringify({ ...guest, seed: `guest-${i}` })]);
+await assert.rejects(db.query('SELECT public.record_game_score($1::jsonb)', [JSON.stringify({ ...guest, seed: 'guest-limit' })]), /guest_score_limit/);
+assert.equal((await db.query("SELECT count(*)::int AS n FROM public.game_sessions WHERE seed='guest-limit'")).rows[0].n, 0);
+// A retry still succeeds at the limit, and older entries don't count against it.
+assert.equal((await db.query('SELECT public.record_game_score($1::jsonb) AS id', [JSON.stringify(guest)])).rows[0].id, firstGuest.rows[0].id);
+await db.query("UPDATE public.game_sessions SET completed_at=now()-interval '2 hours' WHERE guest_id=$1", [guest.guest_id]);
+await db.query('SELECT public.record_game_score($1::jsonb)', [JSON.stringify({ ...guest, seed: 'guest-next-hour' })]);
+await db.exec('RESET ROLE; SET ROLE anon;');
+assert.equal((await db.query('SELECT * FROM public.game_sessions')).rows.length, 0);
+assert((await db.query('SELECT username FROM public.leaderboard WHERE is_guest')).rows.length > 0);
+await assert.rejects(db.query('SELECT public.record_game_score($1::jsonb)', [JSON.stringify(guest)]), /permission denied/);
+await assert.rejects(db.query("INSERT INTO public.game_sessions(guest_id,seed,status) VALUES($1,'forged','completed')", [guest.guest_id]), /row-level security/);
+await assert.rejects(db.query("INSERT INTO public.leaderboard(game_session_id,username,net_worth,final_cash,final_bank,final_debt,final_day,validated) VALUES($1,'Forged',1,1,0,0,30,true)", [firstGuest.rows[0].id]), /row-level security/);
 await db.close();
-console.log('PASS: all 6 migrations; Pro escalation denied; forged scores denied; cross-user saves hidden; atomic rollback; repeat score idempotent.');
+console.log(`PASS: all ${migrations.length} migrations; Pro escalation denied; forged scores denied; private sessions hidden; atomic rollback; account/guest retries idempotent; guest Classic restriction and hourly limit.`);

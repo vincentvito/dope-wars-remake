@@ -3,7 +3,7 @@ import { MotionImage } from '@/components/game/MotionImage';
 import { HomeClient } from '@/components/home/HomeClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.playdopewars.com';
 
 export default function HomePage() {
   return (
@@ -40,6 +40,8 @@ export default function HomePage() {
           <p>A modern remake of the original 1984 dope wars game by John E. Dell</p>
           <p>
             <Link href="/how-to-play" className="hover:text-muted-foreground transition-colors">How to Play</Link>
+            {' · '}
+            <Link href="/blog" className="hover:text-muted-foreground transition-colors">Blog</Link>
             {' · '}
             <Link href="/about" className="hover:text-muted-foreground transition-colors">About</Link>
             {' · '}
@@ -83,8 +85,13 @@ export default function HomePage() {
         <div className="text-sm leading-relaxed space-y-2">
           <p>
             New to the game? Read the{' '}
-            <Link href="/how-to-play" className="text-crt-cyan hover:underline">complete strategy guide</Link>{' '}
+            <Link href="/how-to-play" className="text-crt-cyan hover:underline">rules and beginner tips</Link>{' '}
             to learn the rules, district dangers, and tips for maximizing your score.
+          </p>
+          <p>
+            Looking for a better run? Our{' '}
+            <Link href="/blog/dope-wars-strategy" className="text-crt-cyan hover:underline">Dope Wars strategy and price guide</Link>{' '}
+            covers all 11 price ranges, debt and bank interest, and a practical 30-day plan.
           </p>
           <p>
             Curious about the history? Learn about the{' '}

@@ -1,11 +1,14 @@
 import type { MetadataRoute } from 'next';
+import { blogBaseUrl, strategyPost } from '@/lib/blog';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const baseUrl = blogBaseUrl;
 
   return [
-    { url: baseUrl, lastModified: new Date('2026-03-12'), changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${baseUrl}/how-to-play`, lastModified: new Date('2026-03-12'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: baseUrl, lastModified: new Date('2026-09-17'), changeFrequency: 'weekly', priority: 1.0 },
+    { url: `${baseUrl}/how-to-play`, lastModified: new Date('2026-09-17'), changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${baseUrl}/blog`, lastModified: new Date(strategyPost.modified), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}${strategyPost.path}`, lastModified: new Date(strategyPost.modified), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/about`, lastModified: new Date('2026-03-12'), changeFrequency: 'monthly', priority: 0.8 },
     { url: `${baseUrl}/leaderboard`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: `${baseUrl}/leaderboard?mode=pro_30`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.6 },

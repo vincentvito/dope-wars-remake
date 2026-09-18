@@ -1,0 +1,92 @@
+/* Long-form reading gets more room; the game keeps its existing viewport. */
+:global(.app-viewport):has(.shell) {
+  max-width: 1120px;
+}
+
+.shell {
+  color: #c7cecc;
+  background: #0a0e0d;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.shell a { color: #82eac6; text-underline-offset: 4px; }
+.shell a:hover { color: #d7fff1; }
+.shell a:focus-visible, .tableScroll:focus-visible {
+  outline: 2px solid #82eac6;
+  outline-offset: 5px;
+}
+.shell strong { color: #f0f5f3; }
+.shell p { margin: 0 0 1.2em; }
+.shell h1, .shell h2, .shell h3 { color: #f0f5f3; line-height: 1.2; }
+.shell h1 { font-size: clamp(2rem, 5.5vw, 3.6rem); letter-spacing: -0.045em; font-weight: 750; margin: 20px 0; }
+.shell h2 { font-size: clamp(1.5rem, 3vw, 2rem); letter-spacing: -0.025em; font-weight: 700; margin: 0 0 24px; }
+.shell h3 { font-size: 1.15rem; font-weight: 700; margin: 28px 0 12px; }
+.shell ul, .shell ol { padding-left: 24px; margin: 0 0 24px; }
+.shell li { margin-bottom: 10px; }
+
+.masthead, .footer { padding: 28px 40px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
+.masthead { border-bottom: 1px solid #27332e; }
+.masthead nav, .footer nav { display: flex; gap: 24px; flex-wrap: wrap; font-size: 14px; }
+.masthead a, .footer a { text-decoration: none; }
+.brand { font-family: var(--font-pixel), monospace; font-size: 13px; white-space: nowrap; }
+.playLink { font-weight: 700; }
+.skipLink { position: absolute; left: 20px; top: -100px; z-index: 10000; padding: 8px 16px; background: #0a0e0d; }
+.skipLink:focus { top: 8px; }
+.main { max-width: 880px; margin: 0 auto; padding: 36px 40px 72px; }
+.breadcrumbs { font-size: 13px; margin-bottom: 40px; display: flex; gap: 10px; flex-wrap: wrap; }
+.breadcrumbs a { color: #a5b4ad; }
+.eyebrow { font-family: var(--font-geist-mono), monospace; color: #82eac6; text-transform: uppercase; font-size: 11px; letter-spacing: 0.14em; }
+.dek { font-size: 20px; line-height: 1.65; color: #b8c5bf; }
+.byline { display: flex; flex-wrap: wrap; column-gap: 20px; font-size: 13px; color: #a5b4ad; padding-bottom: 28px; border-bottom: 1px solid #27332e; }
+.summary { margin: 32px 0; padding: 28px; border: 1px solid #375646; background: #102019; border-radius: 4px; }
+.summary h2 { color: #a7efd2; font-size: 20px; margin-bottom: 16px; }
+.summary p:last-child, .callout p:last-child, .cta p:last-child { margin-bottom: 0; }
+.toc { margin: 32px 0 48px; padding-bottom: 20px; border-bottom: 1px solid #27332e; }
+.toc h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; }
+.toc ol { columns: 2; column-gap: 40px; font-size: 15px; }
+.toc li { break-inside: avoid; }
+.section { margin: 48px 0; scroll-margin-top: 24px; }
+.section h3 { scroll-margin-top: 24px; }
+.callout { padding: 22px 24px; border-left: 3px solid #e8b775; background: #191a14; margin: 24px 0; }
+.tableScroll { overflow-x: auto; margin: 24px 0; border: 1px solid #304238; border-radius: 4px; }
+.shell table { border-collapse: collapse; width: 100%; text-align: left; font-size: 14px; font-variant-numeric: tabular-nums; }
+.shell caption { text-align: left; padding: 16px; color: #c7cecc; background: #142019; font-size: 13px; }
+.shell th, .shell td { padding: 13px 16px; border-bottom: 1px solid #27332e; }
+.shell thead th { color: #91d7b8; background: #101b15; font-size: 12px; }
+.shell tbody th { color: #e1eae5; font-weight: 600; }
+.shell tbody tr:last-child th, .shell tbody tr:last-child td { border-bottom: 0; }
+.prices { min-width: 610px; }
+.prices td { white-space: nowrap; }
+.tableHint { display: none; }
+.note { font-size: 14px; color: #a5b4ad; }
+.formula { font-family: var(--font-geist-mono), monospace; font-size: 15px; color: #a7efd2; padding: 20px; border: 1px solid #304238; }
+.phase { display: block; color: #e8b775; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+.cta { border: 1px solid #375646; padding: 32px; background: #102019; margin-top: 48px; }
+.cta a.button { display: inline-block; padding: 12px 22px; background: #a7efd2; color: #0a1911; font-weight: 700; text-decoration: none; border-radius: 3px; }
+.sources { border-top: 1px solid #27332e; padding-top: 32px; font-size: 14px; }
+.sources h2 { font-size: 20px; }
+.footer { border-top: 1px solid #27332e; font-size: 13px; align-items: flex-start; flex-wrap: wrap; color: #a5b4ad; }
+.footer p { margin: 0; }
+.postCard { border: 1px solid #375646; padding: 32px; margin: 40px 0; background: #102019; }
+.postCard h2 { margin-top: 16px; }
+.postCard h2 a { color: #f0f5f3; text-decoration: none; }
+
+@media (max-width: 700px) {
+  .tableHint { display: block; font-size: 13px; color: #a5b4ad; }
+}
+
+@media (max-width: 600px) {
+  .shell { font-size: 16px; }
+  .masthead { padding: 22px 20px; flex-wrap: wrap; gap: 16px; }
+  .masthead nav { gap: 24px; font-size: 13px; }
+  .main { padding: 24px 20px 48px; }
+  .breadcrumbs { margin-bottom: 28px; }
+  .dek { font-size: 18px; }
+  .summary, .postCard, .cta { padding: 22px; }
+  .toc ol { columns: 1; }
+  .shell th, .shell td { padding: 11px 12px; }
+  .footer { padding: 24px 20px; }
+}

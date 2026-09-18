@@ -47,6 +47,7 @@ export function ModeSelectOverlay({ onClose, onModeSelected }: ModeSelectOverlay
           <p className="text-[10px] text-muted-foreground mt-1">
             The original drug trading experience. Buy low, sell high in NYC.
           </p>
+          <p className="text-[10px] text-crt-green mt-2">Finish a run and post your score for free. No account needed.</p>
         </div>
         <button
           className="retro-btn w-full py-2 text-[10px] font-pixel"

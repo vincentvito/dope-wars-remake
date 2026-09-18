@@ -2,12 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { JsonLd } from '@/components/seo/JsonLd';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.playdopewars.com';
 
 export const metadata: Metadata = {
-  title: 'How to Play Dope Wars — Rules, Tips & Strategy Guide',
+  title: 'How to Play Dope Wars — Rules & Beginner Tips',
   description:
-    'Learn how to play Dope Wars. Complete guide to drug trading, districts, events, combat, and strategies to maximize your score in this classic drug game.',
+    'Learn the rules of Dope Wars Classic: buying and selling, district travel, inventory, banking, debt, encounters, and how your final score is calculated.',
   alternates: { canonical: '/how-to-play' },
 };
 
@@ -42,7 +42,7 @@ export default function HowToPlayPage() {
               and <span className="text-crt-red">$5,000</span> in debt to a loan shark.
               Your debt grows by <span className="text-crt-red">10% every day</span>, so
               paying it off quickly is critical. After 30 days, your final score is your
-              net worth — cash plus bank savings minus any remaining debt.
+              net worth — cash plus bank savings plus inventory value minus any remaining debt.
             </p>
           </div>
         </section>
@@ -56,22 +56,23 @@ export default function HowToPlayPage() {
             <p>
               Travel between 6 districts across New York City. Each trip to a new
               district advances the clock by one day. Each district has its own danger
-              level that affects how likely you are to encounter cops or muggers.
+              level that affects how likely you are to encounter cops. Classic districts use
+              the same price ranges; higher danger does not guarantee better deals.
             </p>
-            <h3 className="font-pixel text-xs text-crt-cyan">Safe Zones</h3>
+            <h3 className="font-pixel text-xs text-crt-cyan">Lower-Risk Districts</h3>
             <div className="retro-card p-4 border-crt-green/20">
               <ul className="space-y-2">
-                <li><span className="text-crt-cyan">Manhattan</span> — Safest area, lower prices on upscale goods</li>
-                <li><span className="text-crt-cyan">Central Park</span> — Relatively safe, balanced market</li>
+                <li><span className="text-crt-cyan">Manhattan</span> — Lowest police risk, danger level 1</li>
+                <li><span className="text-crt-cyan">Central Park</span> — Danger level 2</li>
+                <li><span className="text-crt-cyan">Brooklyn</span> — Danger level 2, the same police risk as Central Park</li>
               </ul>
             </div>
             <h3 className="font-pixel text-xs text-crt-cyan">Danger Zones</h3>
             <div className="retro-card p-4 border-crt-green/20">
               <ul className="space-y-2">
-                <li><span className="text-crt-cyan">Brooklyn</span> — Moderate danger, good deals on street drugs</li>
-                <li><span className="text-crt-cyan">Bronx</span> — Dangerous, higher risk but better prices</li>
-                <li><span className="text-crt-cyan">Coney Island</span> — Dangerous, volatile drug market</li>
-                <li><span className="text-crt-cyan">Ghetto</span> — Most dangerous, biggest risks and rewards</li>
+                <li><span className="text-crt-cyan">Bronx</span> — Danger level 3</li>
+                <li><span className="text-crt-cyan">Coney Island</span> — Danger level 3</li>
+                <li><span className="text-crt-cyan">Ghetto</span> — Highest police risk, danger level 4</li>
               </ul>
             </div>
           </div>
@@ -89,20 +90,20 @@ export default function HowToPlayPage() {
               Random market events can cause prices to spike or crash dramatically.
             </p>
             <div className="retro-card p-4 border-crt-green/20">
-              <p className="text-xs text-crt-amber mb-3">Available drugs (cheapest to most expensive):</p>
+              <p className="text-xs text-crt-amber mb-3">Available drugs (by minimum normal price):</p>
               <div className="grid grid-cols-2 gap-1.5 text-xs">
-                <span>Weed</span><span>Shrooms</span>
-                <span>Peyote</span><span>Speed</span>
-                <span>Ecstasy</span><span>Hashish</span>
-                <span>Opium</span><span>Smack</span>
+                <span>Ecstasy</span><span>Speed</span>
+                <span>Peyote</span><span>Weed</span>
+                <span>Opium</span><span>Hashish</span>
+                <span>Shrooms</span><span>Smack</span>
                 <span>Crack</span><span>Heroin</span>
                 <span className="col-span-2">Cocaine</span>
               </div>
             </div>
             <p>
-              Expensive drugs like Cocaine and Heroin offer the highest profit margins but
-              require more capital. Cheap drugs like Weed and Shrooms are low-risk and good
-              for building your starting cash.
+              Expensive drugs like Cocaine and Heroin can offer more profit per inventory space
+              but require more capital. Ecstasy and Speed have the lowest normal entry prices.
+              Profit depends on your purchase and sale prices, not simply the item you choose.
             </p>
           </div>
         </section>
@@ -180,10 +181,10 @@ export default function HowToPlayPage() {
           </h2>
           <div className="text-sm text-muted-foreground leading-relaxed">
             <ol className="list-decimal list-inside space-y-2">
-              <li><strong className="text-crt-green">Pay off debt first.</strong> At 10% daily interest, your $5,000 debt becomes crushing fast.</li>
+              <li><strong className="text-crt-green">Reduce debt early.</strong> At 10% daily interest, your $5,000 debt grows fast. Keep enough cash for your next trade.</li>
               <li><strong className="text-crt-green">Buy low, sell high.</strong> Watch for market crashes (blue prices) to buy, and spikes (red prices) to sell.</li>
               <li><strong className="text-crt-green">Use the bank.</strong> Once debt-free, deposit cash for 5% daily interest. It compounds.</li>
-              <li><strong className="text-crt-green">Diversify early.</strong> Trade cheap drugs like Weed and Speed to build capital before going for Cocaine and Heroin.</li>
+              <li><strong className="text-crt-green">Compare actual quotes.</strong> Ecstasy and Speed are affordable early; larger bargains become accessible as your cash grows.</li>
               <li><strong className="text-crt-green">Watch your space.</strong> Your trenchcoat has limited capacity. Maximize profit per slot.</li>
               <li><strong className="text-crt-green">Avoid danger.</strong> Stick to safer districts early. Losing cash to muggers or drugs to cops can be devastating.</li>
             </ol>
@@ -192,6 +193,11 @@ export default function HowToPlayPage() {
 
         {/* Cross-links */}
         <div className="text-sm text-muted-foreground leading-relaxed space-y-2 border-t border-crt-green/10 pt-6">
+          <p>
+            Ready to plan a stronger run? Read the{' '}
+            <Link href="/blog/dope-wars-strategy" className="text-crt-cyan hover:underline">Dope Wars strategy and price guide</Link>{' '}
+            for exact price ranges, worked examples, and the final-day checklist.
+          </p>
           <p>
             Want to learn the full story? Read about the{' '}
             <Link href="/about" className="text-crt-cyan hover:underline">history of Dope Wars</Link> from
@@ -259,7 +265,7 @@ export default function HowToPlayPage() {
             name: 'What is the best strategy for Dope Wars?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Pay off your loan shark debt first — it grows at 10% daily. Then use the bank to earn 5% daily compound interest. Buy cheap drugs like Weed and Speed early to build capital, then invest in Cocaine and Heroin for the highest profit margins.',
+              text: 'Reduce loan shark debt early while keeping enough cash for your next trade. Debt grows 10% per travel day; the bank earns 5%. Compare actual quotes with normal price ranges and choose trades your cash and inventory space can support.',
             },
           },
           {
@@ -267,7 +273,7 @@ export default function HowToPlayPage() {
             name: 'Which districts are safest in Dope Wars?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Manhattan is the safest district with the lowest danger level. Central Park is also relatively safe. Brooklyn has moderate danger, while the Bronx, Coney Island, and the Ghetto are increasingly dangerous but offer better drug prices and bigger rewards.',
+              text: 'Manhattan has the lowest police risk. Central Park and Brooklyn are tied next, followed by the Bronx and Coney Island, then the Ghetto. Classic districts use the same price ranges; higher danger does not guarantee better deals.',
             },
           },
           {

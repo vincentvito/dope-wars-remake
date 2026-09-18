@@ -3,6 +3,7 @@ import { getLeaderboard } from '@/actions/leaderboard';
 import { LeaderboardClient } from '@/components/leaderboard/LeaderboardClient';
 import { JsonLd } from '@/components/seo/JsonLd';
 import Link from 'next/link';
+import { isLeaderboardMode } from '@/lib/leaderboard';
 
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
@@ -12,14 +13,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/leaderboard' },
 };
 
-export const revalidate = 300; // Revalidate every 5 minutes
-
-const VALID_MODES = ['pro_30', 'pro_45', 'pro_60'] as const;
-type LeaderboardMode = (typeof VALID_MODES)[number];
-
-function isValidMode(mode: string | undefined): mode is LeaderboardMode {
-  return VALID_MODES.includes(mode as LeaderboardMode);
-}
+export const dynamic = 'force-dynamic';
 
 export default async function LeaderboardPage({
   searchParams,
@@ -27,19 +21,19 @@ export default async function LeaderboardPage({
   searchParams: Promise<{ mode?: string }>;
 }) {
   const params = await searchParams;
-  const mode = isValidMode(params.mode) ? params.mode : 'pro_30';
-  const { entries, totalCount } = await getLeaderboard({ gameMode: mode, page: 1 });
+  const mode = isLeaderboardMode(params.mode) ? params.mode : '30';
+  const { entries, totalCount, error } = await getLeaderboard({ gameMode: mode, page: 1 });
 
   return (
     <main className="min-h-screen max-w-4xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap gap-4 items-center justify-between mb-6">
         <div>
           <h1 className="font-pixel text-lg text-crt-green text-glow-green">
             LEADERBOARD
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
-            Top Pro dealers
+            Finish a run. Post your score. Climb the ranks.
           </p>
         </div>
         <div className="flex gap-2">
@@ -53,9 +47,11 @@ export default async function LeaderboardPage({
       </div>
 
       <LeaderboardClient
+        key={mode}
         initialEntries={entries}
         totalCount={totalCount}
         initialMode={mode}
+        initialError={error}
       />
 
       {/* Cross-links for SEO */}

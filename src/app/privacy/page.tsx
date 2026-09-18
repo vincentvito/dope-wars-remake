@@ -14,7 +14,7 @@ export default function PrivacyPage() {
             PRIVACY POLICY
           </h1>
           <p className="text-[10px] text-muted-foreground">
-            Last updated: February 2025
+            Last updated: September 18, 2026
           </p>
         </div>
 
@@ -29,7 +29,8 @@ export default function PrivacyPage() {
               </li>
               <li>
                 <strong>Game data:</strong> Game scores, session data, action logs for score
-                validation, and leaderboard entries
+                validation, and leaderboard entries. If you post as a guest, your chosen nickname
+                and score are public; a private browser identifier supports retries and submission limits
               </li>
               <li>
                 <strong>Payment data:</strong> When purchasing Pro, Stripe processes your payment.
@@ -91,8 +92,10 @@ export default function PrivacyPage() {
           <section className="space-y-2">
             <h2 className="text-sm text-foreground font-bold">4. Cookies</h2>
             <p>
-              We use essential cookies for authentication (Supabase session cookies). These are
-              required for the Game to function and to keep you logged in. We do not use
+              We use essential cookies for authentication (Supabase session cookies) and a private
+              guest identifier when you post a Classic score. The guest cookie lasts up to one year
+              and helps prevent duplicate submissions and limit repeated posting. Your last chosen
+              guest nickname and current run are saved locally in your browser. We do not use
               advertising or tracking cookies.
             </p>
           </section>

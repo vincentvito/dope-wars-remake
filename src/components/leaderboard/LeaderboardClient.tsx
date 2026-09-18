@@ -1,105 +1,93 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { LEADERBOARD_MODES } from '@/lib/leaderboard';
 import { getLeaderboard, searchLeaderboard, type LeaderboardEntry } from '@/actions/leaderboard';
 import { formatCurrency } from '@/lib/utils';
-
-const MODES = [
-  { value: 'pro_30', label: '30 DAYS' },
-  { value: 'pro_45', label: '45 DAYS' },
-  { value: 'pro_60', label: '60 DAYS' },
-] as const;
 
 interface LeaderboardClientProps {
   initialEntries: LeaderboardEntry[];
   totalCount: number;
   initialMode?: string;
+  initialError?: string;
 }
 
-export function LeaderboardClient({ initialEntries, totalCount, initialMode = 'pro_30' }: LeaderboardClientProps) {
+export function LeaderboardClient({ initialEntries, totalCount, initialMode = '30', initialError }: LeaderboardClientProps) {
   const [entries, setEntries] = useState(initialEntries);
   const [count, setCount] = useState(totalCount);
   const [activeMode, setActiveMode] = useState(initialMode);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(initialError);
 
   // Request ID to discard stale responses
   const requestIdRef = useRef(0);
   // Debounce timer for search
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const handleModeSwitch = async (mode: string) => {
-    if (mode === activeMode) return;
-    setActiveMode(mode);
-    setSearchQuery('');
-    setIsSearching(false);
-    setIsLoading(true);
+  useEffect(() => () => {
+    clearTimeout(debounceRef.current);
+    requestIdRef.current++;
+  }, []);
 
+  const load = async (mode: string, query: string) => {
     const reqId = ++requestIdRef.current;
-
+    const searching = query.trim().length >= 2;
+    setIsLoading(true);
+    setError(undefined);
     try {
-      const result = await getLeaderboard({ gameMode: mode, page: 1 });
-      // Only apply if this is still the latest request
-      if (reqId === requestIdRef.current) {
-        setEntries(result.entries);
-        setCount(result.totalCount);
-        setIsLoading(false);
-      }
+      const result = searching
+        ? await searchLeaderboard(query.trim(), mode)
+        : await getLeaderboard({ gameMode: mode, page: 1 });
+      if (reqId !== requestIdRef.current) return;
+      setEntries(result.entries);
+      setCount(result.totalCount);
+      setIsSearching(searching);
+      setError(result.error);
     } catch {
-      if (reqId === requestIdRef.current) {
-        setIsLoading(false);
-      }
+      if (reqId !== requestIdRef.current) return;
+      setEntries([]);
+      setCount(0);
+      setError('The leaderboard is temporarily unavailable. Please try again.');
+    } finally {
+      if (reqId === requestIdRef.current) setIsLoading(false);
     }
   };
 
-  const executeSearch = useCallback(async (query: string, mode: string) => {
-    const reqId = ++requestIdRef.current;
-    setIsLoading(true);
-
-    try {
-      if (query.length < 2) {
-        const result = await getLeaderboard({ gameMode: mode, page: 1 });
-        if (reqId === requestIdRef.current) {
-          setEntries(result.entries);
-          setCount(result.totalCount);
-          setIsSearching(false);
-          setIsLoading(false);
-        }
-      } else {
-        const results = await searchLeaderboard(query, mode);
-        if (reqId === requestIdRef.current) {
-          setEntries(results);
-          setCount(results.length);
-          setIsSearching(true);
-          setIsLoading(false);
-        }
-      }
-    } catch {
-      if (reqId === requestIdRef.current) {
-        setIsLoading(false);
-      }
-    }
-  }, []);
+  const handleModeSwitch = (mode: string) => {
+    if (mode === activeMode) return;
+    clearTimeout(debounceRef.current);
+    setActiveMode(mode);
+    setSearchQuery('');
+    setIsSearching(false);
+    const url = new URL(window.location.href);
+    url.searchParams.set('mode', mode);
+    window.history.replaceState(null, '', url);
+    void load(mode, '');
+  };
 
   const handleSearchInput = (query: string) => {
     setSearchQuery(query);
-    // Debounce search by 300ms
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      executeSearch(query, activeMode);
-    }, 300);
+    clearTimeout(debounceRef.current);
+    // Invalidate in-flight results immediately, before the debounce fires.
+    requestIdRef.current++;
+    setIsLoading(true);
+    debounceRef.current = setTimeout(() => void load(activeMode, query), 300);
   };
 
   return (
     <div className="space-y-4">
       {/* Mode Tabs */}
       <div className="flex gap-1">
-        {MODES.map((mode) => (
+        {LEADERBOARD_MODES.map((mode) => (
           <button
             key={mode.value}
             onClick={() => handleModeSwitch(mode.value)}
-            className={`flex-1 py-2 text-[10px] font-pixel border transition-colors ${
+            aria-pressed={activeMode === mode.value}
+            aria-label={mode.name}
+            className={`flex-1 min-h-11 py-2 text-[10px] font-pixel border transition-colors ${
               activeMode === mode.value
                 ? 'bg-crt-amber/20 border-crt-amber/50 text-crt-amber'
                 : 'bg-transparent border-[#333] text-muted-foreground hover:border-[#555]'
@@ -110,14 +98,21 @@ export function LeaderboardClient({ initialEntries, totalCount, initialMode = 'p
         ))}
       </div>
 
+      <p className="text-xs text-muted-foreground">
+        {activeMode === '30'
+          ? 'Classic is free. Finish a run, enter a nickname and post your score. No account needed.'
+          : 'Pro runs compete separately. Finish a run and post from the result screen.'}
+      </p>
+
       {/* Search */}
       <div className="flex gap-2">
         <input
-          type="text"
+          type="search"
+          aria-label="Search by username"
           value={searchQuery}
           onChange={(e) => handleSearchInput(e.target.value)}
           placeholder="Search by username..."
-          className="flex-1 bg-[#0a0a0a] border border-[#333] text-xs text-foreground px-3 py-2"
+          className="min-w-0 flex-1 min-h-11 bg-[#0a0a0a] border border-[#333] text-xs text-foreground px-3 py-2"
         />
         {isLoading && (
           <span className="text-xs text-muted-foreground self-center">Loading...</span>
@@ -138,12 +133,20 @@ export function LeaderboardClient({ initialEntries, totalCount, initialMode = 'p
         </div>
 
         {/* Entries */}
-        {entries.length === 0 ? (
+        {isLoading ? (
+          <p role="status" className="px-4 py-8 text-center text-xs text-muted-foreground">Loading scores…</p>
+        ) : error ? (
+          <div className="px-4 py-8 text-center space-y-4">
+            <p role="alert" className="text-xs text-crt-amber">{error}</p>
+            <button onClick={() => void load(activeMode, searchQuery)} className="retro-btn min-h-11 px-4 text-xs">TRY AGAIN</button>
+          </div>
+        ) : entries.length === 0 ? (
           <div className="px-4 py-8 text-center text-xs text-muted-foreground">
-            {searchQuery
+            {isSearching
               ? 'No players found matching your search'
-              : 'No scores yet — be the first to play!'
+              : 'No scores yet — claim the first spot!'
             }
+            {!isSearching && <Link href={activeMode === '30' ? '/game' : '/'} className="retro-btn block w-fit mx-auto mt-4 px-4 py-3">PLAY & POST A SCORE</Link>}
           </div>
         ) : (
           <div className="divide-y divide-[#181818]">
@@ -173,10 +176,11 @@ export function LeaderboardClient({ initialEntries, totalCount, initialMode = 'p
                   </div>
 
                   {/* Username */}
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0 break-words pr-2">
                     <span className={isTop3 ? 'text-crt-green' : 'text-foreground'}>
                       {entry.display_name || entry.username}
                     </span>
+                    {entry.is_guest && <span className="block text-[10px] text-muted-foreground">Guest</span>}
                     {entry.display_name && (
                       <span className="text-muted-foreground ml-1">
                         @{entry.username}
@@ -220,12 +224,12 @@ export function LeaderboardClient({ initialEntries, totalCount, initialMode = 'p
       </div>
 
       {/* Total count */}
-      <div className="text-center text-[10px] text-muted-foreground">
+      {!error && !isLoading && <div className="text-center text-[10px] text-muted-foreground">
         {isSearching
           ? `${count} result${count !== 1 ? 's' : ''} found`
           : `${count} total scores`
         }
-      </div>
+      </div>}
     </div>
   );
 }

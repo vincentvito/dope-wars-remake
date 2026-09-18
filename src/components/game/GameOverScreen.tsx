@@ -1,7 +1,7 @@
 'use client';
 
 import { MotionImage } from '@/components/game/MotionImage';
-import { useState } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { ScreenDialog } from './ScreenDialog';
 import { useGameStore } from '@/stores/game-store';
@@ -23,9 +23,17 @@ export function GameOverScreen() {
   const isProGame = useGameStore((s) => s.isPro);
   const startNewGame = useGameStore((s) => s.startNewGame);
   const isProUser = useAuthStore((s) => s.isPro);
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const username = useAuthStore((s) => s.username);
   const isAuthLoaded = useAuthStore((s) => s.isLoaded);
+  const saveError = useGameStore((s) => s.saveError);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [nickname, setNickname] = useState(() => {
+    try { return typeof window !== 'undefined' ? localStorage.getItem('dope-wars-nickname') ?? '' : ''; }
+    catch { return ''; }
+  });
+  const submitting = useRef(false);
 
   const state = isProGame ? proGameState : gameState;
   if (!state || state.phase !== 'game_over') return null;
@@ -37,10 +45,12 @@ export function GameOverScreen() {
   const isPositive = netWorth >= 0;
   const maxDays = state.maxDays - 1;
 
-  // Leaderboard only for Pro game modes played by Pro users
-  const canSubmit = isAuthLoaded && isProGame && isProUser;
+  const canSubmit = isAuthLoaded && (!isProGame || (isLoggedIn && isProUser));
 
-  const handleSubmitScore = async () => {
+  const handleSubmitScore = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (submitting.current) return;
+    submitting.current = true;
     setSubmitStatus('submitting');
     setSubmitError(null);
 
@@ -49,6 +59,7 @@ export function GameOverScreen() {
         seed: state.seed,
         gameMode: state.gameMode,
         actions: state.actionLog,
+        ...(!isLoggedIn ? { nickname: nickname.trim() } : {}),
       });
 
       if ('error' in result && result.error) {
@@ -56,10 +67,15 @@ export function GameOverScreen() {
         setSubmitError(result.error);
       } else {
         setSubmitStatus('success');
+        if (!isLoggedIn) {
+          try { localStorage.setItem('dope-wars-nickname', nickname.trim()); } catch { /* Posting works without local storage. */ }
+        }
       }
     } catch {
       setSubmitStatus('error');
-      setSubmitError('Failed to submit score');
+      setSubmitError('Could not save your score. Keep this result open and try again.');
+    } finally {
+      submitting.current = false;
     }
   };
 
@@ -99,31 +115,40 @@ export function GameOverScreen() {
           </div>
         </div>
 
-        {/* Submit to Leaderboard (Pro users playing Pro mode only) */}
+        {/* Make posting a score the main end-of-run action, including for guests. */}
         {canSubmit && (
           <div className="w-full space-y-2">
-            {submitStatus === 'idle' && (
-              <button
-                className="retro-btn retro-btn-amber w-full py-2.5 text-xs font-bold font-pixel"
-                onClick={handleSubmitScore}
-              >
-                SUBMIT TO LEADERBOARD
-              </button>
-            )}
-
-            {submitStatus === 'submitting' && (
-              <div className="text-center text-xs text-crt-amber animate-pulse py-2.5">
-                Validating score...
-              </div>
+            {submitStatus !== 'success' && (
+              <form onSubmit={handleSubmitScore} className="space-y-3">
+                <p className="text-center text-sm text-crt-amber">Leave your mark on the leaderboard.</p>
+                {!isLoggedIn ? (
+                  <div className="space-y-2">
+                    <label htmlFor="score-nickname" className="block text-xs text-muted-foreground">Your nickname</label>
+                    <input id="score-nickname" name="nickname" value={nickname} onChange={(event) => setNickname(event.target.value)}
+                      required minLength={3} maxLength={20} pattern={'[a-zA-Z0-9_\\-]{3,20}'} autoComplete="nickname" autoCapitalize="none" spellCheck={false}
+                      disabled={submitStatus === 'submitting'} aria-describedby="score-nickname-help"
+                      className="w-full min-h-11 bg-black/70 border border-[#555] px-3 py-2 text-base" placeholder="Pick a street name" />
+                    <p id="score-nickname-help" className="text-xs text-muted-foreground">3–20 letters, numbers, hyphens or underscores. No account needed. Your nickname and score will be public.</p>
+                  </div>
+                ) : <p className="text-xs text-center text-muted-foreground">Posting publicly as @{username}</p>}
+                {submitError && <p role="alert" className="text-xs text-crt-red">{submitError}</p>}
+                <button type="submit" disabled={submitStatus === 'submitting'}
+                  className="retro-btn retro-btn-amber w-full min-h-11 py-3 text-xs font-bold font-pixel">
+                  {submitStatus === 'submitting' ? 'SAVING SCORE...' : submitStatus === 'error' ? 'TRY AGAIN' : 'POST MY SCORE'}
+                </button>
+                <p role="status" className="text-xs text-muted-foreground text-center">
+                  {submitStatus === 'submitting' ? 'Checking your run and saving your score…' : isProGame ? 'Compete on the Pro leaderboard.' : 'Free Classic leaderboard · every completed run counts.'}
+                </p>
+              </form>
             )}
 
             {submitStatus === 'success' && (
               <div className="text-center space-y-2">
-                <div className="text-xs text-crt-green text-glow-green py-2">
-                  Score submitted! Check the leaderboard.
+                <div role="status" className="text-xs text-crt-green text-glow-green py-2">
+                  Your score is on the leaderboard!
                 </div>
                 <Link
-                  href="/leaderboard"
+                  href={`/leaderboard?mode=${state.gameMode}`}
                   className="retro-btn retro-btn-amber block w-full py-2 text-xs text-center font-pixel"
                 >
                   VIEW LEADERBOARD
@@ -131,25 +156,20 @@ export function GameOverScreen() {
               </div>
             )}
 
-            {submitStatus === 'error' && (
-              <div className="text-center space-y-2">
-                <div className="text-xs text-crt-red py-2">
-                  {submitError || 'Failed to submit score'}
-                </div>
-                <button
-                  className="retro-btn retro-btn-amber w-full py-2 text-xs font-pixel"
-                  onClick={() => setSubmitStatus('idle')}
-                >
-                  RETRY
-                </button>
-              </div>
-            )}
           </div>
         )}
+
+        {isAuthLoaded && isProGame && !isLoggedIn && (
+          <Link href="/login?redirect=%2Fgame" className="retro-btn retro-btn-amber w-full py-3 text-xs text-center">
+            SIGN IN TO POST YOUR PRO SCORE
+          </Link>
+        )}
+        {saveError && <p role="alert" className="text-xs text-crt-amber">{saveError} Post your score before leaving this page.</p>}
 
         {/* Play Again */}
         <button
           className="retro-btn w-full py-3 text-xs font-bold font-pixel"
+          disabled={submitStatus === 'submitting'}
           onClick={() => startNewGame(state.gameMode)}
         >
           PLAY AGAIN

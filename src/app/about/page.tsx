@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { JsonLd } from '@/components/seo/JsonLd';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.playdopewars.com';
 
 export const metadata: Metadata = {
   title: 'About Dope Wars — History of the Original 1984 Game',
