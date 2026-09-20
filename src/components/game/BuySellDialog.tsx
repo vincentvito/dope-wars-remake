@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useId, type CSSProperties } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,8 +11,7 @@ import { useGameStore } from '@/stores/game-store';
 import { useUIStore } from '@/stores/ui-store';
 import { formatCurrency } from '@/lib/utils';
 import type { DrugName } from '@/engine/types';
-
-const ADAPTIVE_THRESHOLD = 10;
+import styles from './BuySellDialog.module.css';
 
 export function BuySellDialog() {
   const activeModal = useUIStore((s) => s.activeModal);
@@ -27,6 +26,7 @@ export function BuySellDialog() {
   const getMaxBuy = useGameStore((s) => s.getMaxBuy);
 
   const [quantity, setQuantity] = useState(0);
+  const quantityId = useId();
 
   const isBuy = activeModal === 'buy';
   const isSell = activeModal === 'sell';
@@ -82,7 +82,15 @@ export function BuySellDialog() {
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="retro-card border-crt-green/30 max-w-sm">
+      <DialogContent
+        className="retro-card border-crt-green/30 max-w-sm"
+        onOpenAutoFocus={event => {
+          if (maxQty > 0) {
+            event.preventDefault();
+            document.getElementById(quantityId)?.focus();
+          }
+        }}
+      >
         <DialogHeader>
           <DialogTitle className="font-pixel text-sm text-crt-green text-glow-green">
             {isBuy ? 'Buy' : 'Sell'} {selectedDrug}
@@ -110,100 +118,48 @@ export function BuySellDialog() {
             </div>
           )}
 
-          <div className="flex justify-between text-xs">
-            <span className="text-muted-foreground">Max quantity:</span>
-            <span className="text-foreground">{maxQty}</span>
+          <div className="border border-border bg-background/50 p-3">
+            <div className="flex items-center justify-between gap-3">
+              <label htmlFor={quantityId} className="text-xs text-muted-foreground">
+                Quantity
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  aria-label="Exact quantity"
+                  min={0}
+                  max={maxQty}
+                  step={1}
+                  value={quantity}
+                  disabled={maxQty === 0}
+                  onChange={e => clampAndSet(Math.floor(Number(e.target.value) || 0))}
+                  className={`${styles.quantity} w-20 min-h-11 border border-border bg-background px-2 text-center text-lg tabular-nums ${isSell ? 'text-crt-amber' : 'text-crt-green'}`}
+                />
+                <span className="text-xs text-muted-foreground">units</span>
+              </div>
+            </div>
+            <input
+              id={quantityId}
+              type="range"
+              min={0}
+              max={maxQty}
+              step={1}
+              value={quantity}
+              disabled={maxQty === 0}
+              aria-valuetext={`${quantity} of ${maxQty} units`}
+              onChange={e => clampAndSet(Number(e.target.value))}
+              className={styles.slider}
+              style={{
+                '--slider-fill': `${maxQty > 0 ? (quantity / maxQty) * 100 : 0}%`,
+                '--slider-color': isSell ? 'var(--crt-amber)' : 'var(--crt-green)',
+              } as CSSProperties}
+            />
+            <div className="flex justify-between text-[10px] text-muted-foreground tabular-nums">
+              <span>0</span>
+              <span>Max {maxQty}</span>
+            </div>
           </div>
-
-          {/* Quantity input */}
-          <div className="space-y-2">
-            {maxQty <= ADAPTIVE_THRESHOLD ? (
-              <>
-                {/* Stepper: [-] input [+] */}
-                <div className="flex items-center justify-center gap-2">
-                  <button
-                    className="retro-btn text-xs w-8 h-8 flex items-center justify-center"
-                    onClick={() => clampAndSet(quantity - 1)}
-                    disabled={quantity <= 0}
-                    aria-label="Decrease quantity"
-                  >
-                    -
-                  </button>
-                  <span className="w-16 bg-background border border-[var(--border-strong)] text-center text-xs text-foreground px-2 py-1 inline-flex items-center justify-center">
-                    {quantity}
-                  </span>
-                  <button
-                    className="retro-btn text-xs w-8 h-8 flex items-center justify-center"
-                    onClick={() => clampAndSet(quantity + 1)}
-                    disabled={quantity >= maxQty}
-                    aria-label="Increase quantity"
-                  >
-                    +
-                  </button>
-                </div>
-
-                {/* Direct quantity buttons */}
-                {maxQty > 0 && (
-                  <div className="flex gap-1.5 flex-wrap">
-                    {Array.from({ length: maxQty }, (_, i) => i + 1).map((n) => (
-                      <button
-                        key={n}
-                        onClick={() => setQuantity(n)}
-                        className={`retro-btn text-[10px] py-0.5 flex-1 min-w-[28px] ${
-                          quantity === n ? 'bg-crt-cyan text-black' : ''
-                        }`}
-                      >
-                        {n}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                {/* Slider + number input */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    aria-label="Quantity"
-                    min={0}
-                    max={maxQty}
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    className="flex-1 accent-crt-green"
-                  />
-                  <span className="w-16 bg-background border border-[var(--border-strong)] text-center text-xs text-foreground px-2 py-1 inline-flex items-center justify-center">
-                    {quantity}
-                  </span>
-                </div>
-
-                {/* Quick select buttons */}
-                <div className="flex gap-1.5">
-                  {[
-                    { label: '25%', value: Math.floor(maxQty * 0.25) },
-                    { label: '50%', value: Math.floor(maxQty * 0.5) },
-                    { label: '75%', value: Math.floor(maxQty * 0.75) },
-                    { label: 'Max', value: maxQty },
-                  ].map((opt) => (
-                    <button
-                      key={opt.label}
-                      onClick={() => setQuantity(opt.value)}
-                      className="retro-btn text-[10px] px-2 py-0.5 flex-1"
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-
-          <label className="block text-xs text-muted-foreground">
-            Exact quantity
-            <input type="number" inputMode="numeric" min={0} max={maxQty} step={1} value={quantity}
-              onChange={e => clampAndSet(Math.floor(Number(e.target.value) || 0))}
-              className="mt-1 w-full border border-border bg-background p-2 text-base text-foreground" />
-          </label>
           {isSell && selectedDrug && <p className="text-xs text-muted-foreground">Trade profit / loss: {formatCurrency((price - (inventory?.find(s => s.drug === selectedDrug)?.avgBuyPrice ?? price)) * quantity)}</p>}
           {maxQty === 0 && <p className="text-xs text-crt-amber">{isBuy ? 'Not enough cash or coat space for this drug.' : 'Nothing available to sell here.'}</p>}
           {/* Total */}
