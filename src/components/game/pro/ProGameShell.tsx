@@ -28,13 +28,13 @@ export function ProGameShell() {
   return (
     <>
       <div className="game-scroll h-[100dvh] overflow-y-auto max-w-3xl mx-auto px-3 relative z-10">
-        <div className="shrink-0 pt-3 space-y-3">
+        <div className="game-overview shrink-0 pt-3 space-y-3">
           <ProStatusBar />
           <MarketNews />
           <GameToast />
         </div>
 
-        <div className="pt-3 pb-6">
+        <div className="game-market-content pt-3 pb-6">
           <ProTabContent />
         </div>
       </div>

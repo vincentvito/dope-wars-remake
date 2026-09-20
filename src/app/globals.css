@@ -250,7 +250,7 @@
   }
 }
 
-/* Mobile viewport wrapper — constrains entire app to phone-like column on desktop */
+/* Default phone-width shell; the active game expands on larger screens below. */
 .app-viewport {
   max-width: 480px;
   width: 100%;
@@ -461,3 +461,68 @@ input[type="range"] { min-height: 32px; }
 }
 
 .game-scroll { padding-bottom: calc(10rem + env(safe-area-inset-bottom, 0px)); }
+
+/* Adapt the existing game to desktop without changing its mobile layout or theme. */
+@media (min-width: 768px) {
+  .app-viewport:has(.game-page .game-scroll) {
+    width: calc(100% - 48px);
+    max-width: 1180px;
+  }
+
+  .game-page .game-scroll {
+    max-width: none;
+    padding-inline: 24px;
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .game-page .game-finances {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .game-page .market-row {
+    grid-template-columns: minmax(100px, 1.2fr) minmax(95px, 1fr) minmax(45px, .55fr) minmax(95px, 1fr) 148px;
+    gap: 12px;
+    padding: 4px 8px;
+    min-height: 52px;
+    font-size: 14px;
+  }
+
+  .game-page .market-table > .market-row {
+    min-height: 36px;
+    font-size: 11px;
+  }
+
+  .game-page .market-actions { gap: 8px; }
+  .game-page .market-actions > * { width: 64px; }
+  .game-page .market-actions > button { font-size: 12px; }
+
+  .game-page .game-district-links,
+  .game-page .game-pro-tabs > div {
+    max-width: none;
+    padding-inline: 24px;
+  }
+
+  .game-page .game-district-links {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    padding-bottom: 16px;
+  }
+
+  .game-page .game-district-links > button,
+  .game-page .game-pro-tabs .font-pixel { font-size: 10px; }
+}
+
+@media (min-width: 1100px) {
+  .game-page .game-scroll {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+    padding-top: 28px;
+  }
+
+  .game-page .game-overview,
+  .game-page .game-market-content { min-width: 0; padding-top: 0; }
+  .game-page .game-status { padding-inline: 0; }
+  .game-page .game-status > :first-child { flex-wrap: wrap; gap: 12px; }
+  .game-page .game-finances { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

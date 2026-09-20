@@ -19,9 +19,9 @@ export function DistrictFooter() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 text-shadow-sm bg-black/25 backdrop-blur-md">
+    <div className="game-district-footer fixed bottom-0 left-0 right-0 z-40 text-shadow-sm bg-black/25 backdrop-blur-md">
       <p className="text-center text-xs text-muted-foreground pt-2">{isLastDay ? "Last day · travel ends your run" : "Travel · one day per trip"}</p>
-      <div className="max-w-3xl mx-auto grid grid-cols-3 gap-2 px-3 pt-2 pb-3">
+      <div className="game-district-links max-w-3xl mx-auto grid grid-cols-3 gap-2 px-3 pt-2 pb-3">
         {DISTRICTS.map((district) => {
           const isCurrent = district.name === currentDistrict;
           return (

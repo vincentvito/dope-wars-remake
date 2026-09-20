@@ -134,7 +134,7 @@ function GamePageContent() {
   const bgSrc = getBackgroundForLocation(currentDistrict);
 
   return (
-    <main className="min-h-screen relative">
+    <main className="game-page min-h-screen relative">
       {/* Location-specific background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <MotionImage

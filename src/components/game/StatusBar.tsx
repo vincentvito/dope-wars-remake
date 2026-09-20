@@ -30,7 +30,7 @@ export function StatusBar() {
   const dayProgress = ((currentDay - 1) / (maxDays - 2)) * 100;
 
   return (
-    <div className="glass-panel p-4 space-y-2 text-shadow-sm">
+    <div className="game-status glass-panel p-4 space-y-2 text-shadow-sm">
       {/* Day counter */}
       <div className="flex items-center justify-between">
         <span className="font-pixel text-sm text-crt-cyan">
@@ -53,7 +53,7 @@ export function StatusBar() {
       </div>
 
       {/* Financial stats grid */}
-      <div className="grid grid-cols-2 gap-2 text-xs">
+      <div className="game-finances grid grid-cols-2 gap-2 text-xs">
         <div>
           <span className="text-muted-foreground">Cash:</span>{' '}
           <span className="text-crt-green text-glow-green font-bold">
