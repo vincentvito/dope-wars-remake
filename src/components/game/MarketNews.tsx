@@ -15,12 +15,12 @@ export function MarketNews() {
         </details>
       )}
       {state.marketEvents.length > 0 && (
-        <details key={`${state.seed}-${state.currentDay}`} className="border border-crt-cyan/40 bg-background/90 p-2">
-          <summary className="text-crt-cyan cursor-pointer">Market news · {state.marketEvents.length} price {state.marketEvents.length === 1 ? 'change' : 'changes'}</summary>
-          <ul className="max-h-28 overflow-y-auto space-y-2 pt-2 text-crt-cyan">
+        <section aria-labelledby="market-news-heading" className="border border-crt-cyan/40 bg-background/90 p-2">
+          <h2 id="market-news-heading" className="text-crt-cyan">Market news · {state.marketEvents.length} price {state.marketEvents.length === 1 ? 'change' : 'changes'}</h2>
+          <ul className="space-y-2 pt-2 text-crt-cyan">
             {state.marketEvents.map((event, i) => <li key={i}>{event.message}</li>)}
           </ul>
-        </details>
+        </section>
       )}
     </div>
   );
