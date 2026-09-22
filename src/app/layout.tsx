@@ -49,7 +49,10 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   verification: {
-    google: 'PqXOvVj9kABgNqIho7NwHwifQnYvHF4KQ4cSGdCQPUg',
+    google: [
+      'PqXOvVj9kABgNqIho7NwHwifQnYvHF4KQ4cSGdCQPUg',
+      'NJWByiibk7LMD0--SUec2DYfO8kn7NNpT0gcCHPBGuc',
+    ],
   },
 };
 
