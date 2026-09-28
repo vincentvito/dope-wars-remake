@@ -101,7 +101,7 @@ export function ModeSelectOverlay({ onClose, onModeSelected }: ModeSelectOverlay
             </ul>
             <Link
               href="/upgrade"
-              className="retro-btn retro-btn-amber block w-full py-2 text-[10px] text-center font-pixel mt-2"
+              className="retro-btn retro-btn-amber flex items-center justify-center w-full py-2 text-[10px] text-center font-pixel mt-2"
             >
               GET PRO — $7.99
             </Link>

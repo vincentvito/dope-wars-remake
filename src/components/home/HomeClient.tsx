@@ -84,7 +84,7 @@ export function HomeClient({ heroContent }: { heroContent: ReactNode }) {
           {/* Menu Buttons */}
           <div className="w-full space-y-3">
             {savedState && (
-              <Link href="/game" className="retro-btn block w-full py-3 text-xs text-center font-pixel">
+              <Link href="/game" className="retro-btn flex items-center justify-center w-full py-3 text-xs text-center font-pixel">
                 {savedState.phase === 'game_over' ? 'VIEW LAST RESULT' : `CONTINUE · DAY ${savedState.currentDay}`}
               </Link>
             )}
@@ -110,7 +110,7 @@ export function HomeClient({ heroContent }: { heroContent: ReactNode }) {
             </button>
             <Link
               href="/leaderboard"
-              className="retro-btn retro-btn-amber block w-full py-3 text-xs text-center font-pixel"
+              className="retro-btn retro-btn-amber flex items-center justify-center w-full py-3 text-xs text-center font-pixel"
             >
               LEADERBOARD
             </Link>
@@ -123,7 +123,7 @@ export function HomeClient({ heroContent }: { heroContent: ReactNode }) {
             {isLoaded && !isPro && (
               <Link
                 href="/upgrade"
-                className="retro-btn retro-btn-amber block w-full py-3 text-xs text-center font-pixel"
+                className="retro-btn retro-btn-amber flex items-center justify-center w-full py-3 text-xs text-center font-pixel"
               >
                 GO PRO — $7.99
               </Link>
